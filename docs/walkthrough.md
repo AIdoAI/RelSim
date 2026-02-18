@@ -11,12 +11,19 @@ I have implemented a consulting firm simulation with the following components:
 2.  **Simulation Configuration** (`python/consulting_sim.yaml`): Defines resource capacities and the project lifecycle flow.
 
 ### Execution
-To generate the database and run the simulation with full relationship support, use the `generate-simulate` command:
-
 ```bash
 cd python
 python3 main.py generate-simulate consulting_db.yaml consulting_sim.yaml -o output -n consulting
 ```
+
+### Registering Project for UI
+To make the manually generated simulation visible in the Electron UI, run the registration script:
+
+```bash
+python3 register_project.py
+```
+This script registers the project in the internal database and organizes the output files so the UI can detect them.
+
 
 ### Verification Results
 - **Output Database**: `output/consulting.db`
