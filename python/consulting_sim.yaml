@@ -1,0 +1,86 @@
+simulation:
+  base_time_unit: hours
+  terminating_conditions: TIME(100)
+  start_date: 2024-01-01
+  random_seed: 55
+  resources:
+    - resource_table: Employee
+      capacities:
+        Tech Support: 2
+        Developer: 1
+        Manager: 1
+  queues: &a1
+    - name: FIFOQueue
+      type: FIFO
+
+event_simulation:
+  queues: *a1
+  event_flows:
+    - flow_id: flow_consulting_project
+      event_flow: Project_Lifecycle
+      steps:
+        - step_id: create_project
+          step_type: create
+          create_config:
+            entity_table: Project
+            interarrival_time:
+              formula: EXPO(2)
+              time_unit: hours
+            max_entities: n/a
+          next_steps:
+            - initial_consultation
+
+        - step_id: initial_consultation
+          step_type: event
+          event_config:
+            duration:
+              formula: NORM(1, 0.1)
+              time_unit: hours
+            resource_requirements:
+              - resource_table: Employee
+                value: Manager
+                count: 1
+                queue: FIFOQueue
+          next_steps:
+            - development_phase
+
+        - step_id: development_phase
+          step_type: event
+          event_config:
+            duration:
+              formula: NORM(4, 1)
+              time_unit: hours
+            resource_requirements:
+              - resource_table: Employee
+                value: Developer
+                count: 1
+                queue: FIFOQueue
+          next_steps:
+            - qa_support_review
+
+        - step_id: qa_support_review
+          step_type: event
+          event_config:
+            duration:
+              formula: NORM(2, 0.5)
+              time_unit: hours
+            resource_requirements:
+              - resource_table: Employee
+                value: Tech Support
+                count: 1
+                queue: FIFOQueue
+          next_steps:
+            - mark_completed
+
+        - step_id: mark_completed
+          step_type: assign
+          assign_config:
+            assignments:
+              - assignment_type: attribute
+                attribute_name: status
+                value: Completed
+          next_steps:
+            - project_release
+
+        - step_id: project_release
+          step_type: release
