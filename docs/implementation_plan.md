@@ -2,10 +2,6 @@
 
 I will implement a synthetic database and simulation for a consulting firm as requested. This involves two configuration files: a database definition and a simulation definition.
 
-## User Review Required
-> [!NOTE]
-> I have inferred the exact schema details from the provided text and image context, simplifying slightly to ensure compatibility with the RelSim generator (e.g., flattening some normalized tables if they aren't critical for the simulation flow).
-
 ## Proposed Changes
 
 ### Configuration Files
