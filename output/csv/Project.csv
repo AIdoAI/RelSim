@@ -1,76 +1,129 @@
 ProjectID,ClientID,BusinessUnitID,ProjectName,ProjectType,Fixed_Price_Amount,PlannedStartDate,PlannedEndDate,PlannedExpense,ProjectStatus,created_at
-1,4,1,Realigned motivating model,Time & Materials,379397.27,,,,In Progress,2020-01-15 01:52:22.889220
-2,9,2,User-centric dynamic budgetary management,Fixed-Price,181053.11,,,,In Progress,2020-02-11 11:11:29.988607
-3,8,2,Open-architected global contingency,Time & Materials,70902.69,,,,In Progress,2020-03-10 20:34:43.293756
-4,4,5,AI-driven resilient concept,Time & Materials,296019.63,,,,In Progress,2020-04-07 22:01:06.483279
-5,3,5,Upgradable immersive architecture,Fixed-Price,294213.24,,,,In Progress,2020-04-14 01:10:41.733204
-6,14,1,Implemented global definition,Fixed-Price,78601.26,,,,In Progress,2020-04-18 14:32:41.732355
-7,1,1,Face to face cloud-native generative AI,Time & Materials,302574.74,,,,In Progress,2020-04-29 18:44:11.536619
-8,7,2,Enhanced bottom-line hub,Fixed-Price,122549.58,,,,In Progress,2020-06-12 23:56:14.330360
-9,17,5,Intuitive empowering flexibility,Fixed-Price,152570.82,,,,In Progress,2020-08-31 15:30:04.952963
-10,1,5,Managed asynchronous projection,Fixed-Price,283455.78,,,,In Progress,2020-09-17 08:34:58.492567
-11,7,5,Persistent fault-tolerant forecast,Time & Materials,157802.85,,,,In Progress,2020-10-23 18:43:31.936642
-12,14,2,Organic asymmetric focus group,Time & Materials,291098.61,,,,In Progress,2020-10-28 11:25:39.928317
-13,15,5,Sharable dynamic benchmark,Time & Materials,128464.89,,,,In Progress,2020-10-31 07:33:38.707957
-14,9,1,Front-line bifurcated open architecture,Time & Materials,334895.66,,,,In Progress,2020-12-05 12:59:37.579412
-15,6,4,Progressive systematic data-warehouse,Fixed-Price,348575.8,,,,In Progress,2020-12-17 23:06:26.132843
-16,11,3,User-friendly national framework,Time & Materials,432150.53,,,,In Progress,2020-12-18 02:45:39.073681
-17,5,2,Automated intermediate ability,Time & Materials,271632.96,,,,In Progress,2021-01-19 06:27:59.116617
-18,11,1,AI-driven high-level hardware,Fixed-Price,126271.74,,,,In Progress,2021-01-25 18:51:40.125300
-19,3,4,Fundamental composite task-force,Time & Materials,211771.02,,,,In Progress,2021-02-19 04:45:06.408720
-20,4,3,Face to face human-resource conglomeration,Fixed-Price,219012.33,,,,In Progress,2021-03-01 14:59:47.331141
-21,12,5,Smart intangible emulation,Fixed-Price,420170.25,,,,In Progress,2021-03-04 14:03:27.464714
-22,9,1,Compatible real-time knowledge base,Time & Materials,376741.1,,,,In Progress,2021-03-17 23:35:55.847461
-23,15,5,Compatible systemic collaboration,Fixed-Price,120396.67,,,,In Progress,2021-07-07 16:33:35.614011
-24,4,4,Automated sustainable help-desk,Time & Materials,56477.07,,,,In Progress,2021-07-16 07:55:27.137827
-25,3,5,Upgradable bottom-line projection,Fixed-Price,229327.13,,,,In Progress,2021-07-20 00:45:29.114513
-26,10,5,Intuitive intermediate framework,Fixed-Price,339479.7,,,,In Progress,2021-08-17 17:35:53.660624
-27,12,5,Managed encompassing solution,Time & Materials,60472.37,,,,In Progress,2021-09-05 02:55:35.545365
-28,7,1,Open-architected full-range moratorium,Time & Materials,235677.95,,,,In Progress,2021-10-25 15:47:18.617399
-29,2,2,Polarised logistical array,Time & Materials,421905.86,,,,In Progress,2021-11-08 14:45:50.837203
-30,10,1,Grass-roots tertiary definition,Time & Materials,388568.54,,,,In Progress,2021-11-20 04:29:37.061822
-31,8,1,Diverse context-sensitive capacity,Fixed-Price,87848.06,,,,In Progress,2022-01-06 05:35:39.580667
-32,13,3,Robust demand-driven methodology,Fixed-Price,271681.3,,,,In Progress,2022-02-11 10:47:03.939192
-33,15,3,Implemented explicit definition,Fixed-Price,440869.61,,,,In Progress,2022-02-11 19:00:20.923001
-34,6,3,Sustainable explicit parallelism,Time & Materials,455521.1,,,,In Progress,2022-02-19 09:13:29.642562
-35,12,2,Organic high-level array,Time & Materials,84980.59,,,,In Progress,2022-02-20 18:42:47.351401
-36,9,1,Versatile demand-driven database,Time & Materials,428953.52,,,,In Progress,2022-06-10 17:29:03.988980
-37,20,2,Total cloud-native knowledge base,Time & Materials,396044.34,,,,In Progress,2022-08-04 09:27:40.589430
-38,18,2,Persistent methodical generative AI,Fixed-Price,352207.94,,,,In Progress,2022-10-30 06:42:17.591440
-39,6,4,Integrated mission-critical implementation,Fixed-Price,62952.2,,,,In Progress,2022-11-21 07:37:27.810930
-40,13,3,Virtual well-modulated model,Fixed-Price,329939.02,,,,In Progress,2023-01-02 12:42:20.728232
-41,18,2,Versatile cohesive interface,Fixed-Price,84138.5,,,,In Progress,2023-03-03 00:34:01.276661
-42,11,1,Seamless 24 hour interface,Fixed-Price,126020.78,,,,In Progress,2023-03-07 03:54:33.046156
-43,8,1,Fully-configurable impactful leverage,Time & Materials,332555.18,,,,In Progress,2023-03-16 23:01:25.769648
-44,11,4,Front-line cloud-native implementation,Fixed-Price,258140.62,,,,In Progress,2023-03-19 12:26:11.525183
-45,9,1,Diverse responsive projection,Fixed-Price,194935.62,,,,In Progress,2023-04-29 19:19:16.938674
-46,7,5,Compatible high-level archive,Time & Materials,244246.8,,,,In Progress,2023-05-06 22:21:44.515810
-47,11,2,Compatible reciprocal knowledge user,Fixed-Price,160680.98,,,,In Progress,2023-05-11 00:37:52.771973
-48,16,4,Horizontal zero tolerance standardization,Time & Materials,417682.43,,,,In Progress,2023-05-16 06:45:00.127854
-49,15,2,Digitized mission-critical encoding,Fixed-Price,195655.66,,,,In Progress,2023-05-25 05:30:29.144373
-50,9,2,Fundamental zero administration throughput,Fixed-Price,495482.1,,,,In Progress,2023-06-10 20:29:31.818154
-51,8,5,User-centric systematic parallelism,Time & Materials,423778.73,,,,In Progress,2023-06-22 12:39:56.836524
-52,18,3,Profit-focused incremental knowledge base,Time & Materials,285379.44,,,,In Progress,2023-10-01 02:57:10.037890
-53,19,4,Programmable systematic initiative,Time & Materials,154495.71,,,,In Progress,2023-10-14 10:57:53.991039
-54,19,4,Streamlined disintermediate paradigm,Time & Materials,404868.75,,,,In Progress,2023-12-22 09:46:10.881074
-55,12,2,Public-key human-resource encoding,Fixed-Price,430903.53,,,,In Progress,2023-12-27 08:12:12.382842
-56,5,5,Self-enabling dedicated artificial intelligence,Fixed-Price,205563.2,,,,In Progress,2023-12-31 10:23:48.385171
-57,16,1,Seamless fault-tolerant data-warehouse,Fixed-Price,442455.76,,,,In Progress,2024-01-06 10:41:08.488718
-58,2,1,Ergonomic empowering portal,Time & Materials,427504.14,,,,In Progress,2024-03-27 03:28:38.775821
-59,5,2,Synchronised contextually-based parallelism,Fixed-Price,229175.91,,,,In Progress,2024-03-31 03:20:33.103408
-60,14,5,Distributed 24/7 support,Fixed-Price,461680.66,,,,In Progress,2024-04-23 06:22:41.901937
-61,3,4,Intuitive interactive frame,Fixed-Price,454124.43,,,,In Progress,2024-05-06 18:24:11.541176
-62,13,5,Self-enabling contextually-based alliance,Time & Materials,475751.96,,,,In Progress,2024-05-13 15:42:25.783769
-63,15,5,Robust incremental solution,Fixed-Price,153983.66,,,,In Progress,2024-05-27 16:09:53.053704
-64,9,5,Centralized intangible workforce,Fixed-Price,453351.12,,,,In Progress,2024-06-30 02:32:36.015274
-65,1,1,Public-key eco-centric approach,Time & Materials,234235.24,,,,In Progress,2024-06-30 11:57:58.007597
-66,18,3,Programmable secondary contingency,Fixed-Price,112710.23,,,,In Progress,2024-07-24 14:10:28.621604
-67,11,1,Fully-configurable value-added artificial intelligence,Time & Materials,142889.57,,,,In Progress,2024-09-16 15:10:23.951529
-68,10,4,Programmable national algorithm,Time & Materials,160407.1,,,,In Progress,2024-09-16 23:08:02.994734
-69,6,4,Visionary neutral capability,Time & Materials,379657.44,,,,In Progress,2024-10-01 18:11:47.724684
-70,1,3,Ergonomic heuristic archive,Fixed-Price,359781.08,,,,In Progress,2024-10-09 00:26:00.354213
-71,17,2,Managed transitional software,Fixed-Price,477606.81,,,,In Progress,2024-10-26 03:16:57.759955
-72,17,1,Team-oriented systemic model,Time & Materials,474826.7,,,,In Progress,2024-11-12 20:30:55.585109
-73,10,5,Total homogeneous collaboration,Time & Materials,474919.92,,,,In Progress,2024-11-14 01:28:39.047433
-74,20,2,Implemented radical functionalities,Fixed-Price,191880.65,,,,In Progress,2024-12-03 08:20:15.809707
-75,5,3,Persistent neutral process improvement,Time & Materials,288021.71,,,,In Progress,2024-12-26 14:38:33.559032
+1,4,1,AI-driven 24 hour hierarchy,Time & Materials,379397.27,,,,In Progress,2020-01-15 01:52:22.889220
+2,9,2,Expanded regional attitude,Fixed-Price,181053.11,,,,In Progress,2020-02-11 11:11:29.988607
+3,8,2,User-centric composite solution,Time & Materials,70902.69,,,,In Progress,2020-03-10 20:34:43.293756
+4,4,5,Robust asymmetric middleware,Time & Materials,296019.63,,,,In Progress,2020-04-07 22:01:06.483279
+5,3,5,Future-proofed system-worthy product,Fixed-Price,294213.24,,,,In Progress,2020-04-14 01:10:41.733204
+6,14,1,Persistent tangible conglomeration,Fixed-Price,78601.26,,,,In Progress,2020-04-18 14:32:41.732355
+7,1,1,Multi-tiered cohesive synergy,Time & Materials,302574.74,,,,In Progress,2020-04-29 18:44:11.536619
+8,7,2,Advanced high-level complexity,Fixed-Price,122549.58,,,,In Progress,2020-06-12 23:56:14.330360
+9,17,5,Reduced zero defect monitoring,Fixed-Price,152570.82,,,,In Progress,2020-08-31 15:30:04.952963
+10,1,5,Configurable bottom-line protocol,Fixed-Price,283455.78,,,,In Progress,2020-09-17 08:34:58.492567
+11,7,5,Streamlined global process improvement,Time & Materials,157802.85,,,,In Progress,2020-10-23 18:43:31.936642
+12,14,2,Managed mission-critical system engine,Time & Materials,291098.61,,,,In Progress,2020-10-28 11:25:39.928317
+13,15,5,Implemented methodical knowledge user,Time & Materials,128464.89,,,,In Progress,2020-10-31 07:33:38.707957
+14,9,1,Decentralized well-modulated task-force,Time & Materials,334895.66,,,,In Progress,2020-12-05 12:59:37.579412
+15,6,4,Versatile impactful migration,Fixed-Price,348575.8,,,,In Progress,2020-12-17 23:06:26.132843
+16,11,3,Implemented cohesive standardization,Time & Materials,432150.53,,,,In Progress,2020-12-18 02:45:39.073681
+17,5,2,Sharable system-worthy budgetary management,Time & Materials,271632.96,,,,In Progress,2021-01-19 06:27:59.116617
+18,11,1,Reactive systemic ability,Fixed-Price,126271.74,,,,In Progress,2021-01-25 18:51:40.125300
+19,3,4,Seamless content-based paradigm,Time & Materials,211771.02,,,,In Progress,2021-02-19 04:45:06.408720
+20,4,3,Decentralized resilient task-force,Fixed-Price,219012.33,,,,In Progress,2021-03-01 14:59:47.331141
+21,12,5,Programmable contextually-based array,Fixed-Price,420170.25,,,,In Progress,2021-03-04 14:03:27.464714
+22,9,1,Extended mobile artificial intelligence,Time & Materials,376741.1,,,,In Progress,2021-03-17 23:35:55.847461
+23,15,5,Sharable methodical knowledge base,Fixed-Price,120396.67,,,,In Progress,2021-07-07 16:33:35.614011
+24,4,4,Secured responsive synergy,Time & Materials,56477.07,,,,In Progress,2021-07-16 07:55:27.137827
+25,3,5,Customizable mission-critical knowledge base,Fixed-Price,229327.13,,,,In Progress,2021-07-20 00:45:29.114513
+26,10,5,User-centric homogeneous portal,Fixed-Price,339479.7,,,,In Progress,2021-08-17 17:35:53.660624
+27,12,5,Focused homogeneous ability,Time & Materials,60472.37,,,,In Progress,2021-09-05 02:55:35.545365
+28,7,1,Configurable methodical capacity,Time & Materials,235677.95,,,,In Progress,2021-10-25 15:47:18.617399
+29,2,2,Adaptive bottom-line collaboration,Time & Materials,421905.86,,,,In Progress,2021-11-08 14:45:50.837203
+30,10,1,Streamlined logistical framework,Time & Materials,388568.54,,,,In Progress,2021-11-20 04:29:37.061822
+31,8,1,Open-source hybrid emulation,Fixed-Price,87848.06,,,,In Progress,2022-01-06 05:35:39.580667
+32,13,3,Sustainable holistic firmware,Fixed-Price,271681.3,,,,In Progress,2022-02-11 10:47:03.939192
+33,15,3,Decentralized incremental toolset,Fixed-Price,440869.61,,,,In Progress,2022-02-11 19:00:20.923001
+34,6,3,Organized neutral capacity,Time & Materials,455521.1,,,,In Progress,2022-02-19 09:13:29.642562
+35,12,2,Compatible zero tolerance toolset,Time & Materials,84980.59,,,,In Progress,2022-02-20 18:42:47.351401
+36,9,1,Focused executive moderator,Time & Materials,428953.52,,,,In Progress,2022-06-10 17:29:03.988980
+37,20,2,Stand-alone national implementation,Time & Materials,396044.34,,,,In Progress,2022-08-04 09:27:40.589430
+38,18,2,Automated scalable interface,Fixed-Price,352207.94,,,,In Progress,2022-10-30 06:42:17.591440
+39,6,4,Proactive logistical encoding,Fixed-Price,62952.2,,,,In Progress,2022-11-21 07:37:27.810930
+40,13,3,Programmable incremental local area network,Fixed-Price,329939.02,,,,In Progress,2023-01-02 12:42:20.728232
+41,18,2,Total 24 hour complexity,Fixed-Price,84138.5,,,,In Progress,2023-03-03 00:34:01.276661
+42,11,1,Horizontal optimizing initiative,Fixed-Price,126020.78,,,,In Progress,2023-03-07 03:54:33.046156
+43,8,1,Managed actuating paradigm,Time & Materials,332555.18,,,,In Progress,2023-03-16 23:01:25.769648
+44,11,4,Profound needs-based structure,Fixed-Price,258140.62,,,,In Progress,2023-03-19 12:26:11.525183
+45,9,1,Triple-buffered static complexity,Fixed-Price,194935.62,,,,In Progress,2023-04-29 19:19:16.938674
+46,7,5,Total user-facing firmware,Time & Materials,244246.8,,,,In Progress,2023-05-06 22:21:44.515810
+47,11,2,Quality-focused radical moderator,Fixed-Price,160680.98,,,,In Progress,2023-05-11 00:37:52.771973
+48,16,4,User-centric analyzing application,Time & Materials,417682.43,,,,In Progress,2023-05-16 06:45:00.127854
+49,15,2,Horizontal zero tolerance hub,Fixed-Price,195655.66,,,,In Progress,2023-05-25 05:30:29.144373
+50,9,2,Reverse-engineered directional circuit,Fixed-Price,495482.1,,,,In Progress,2023-06-10 20:29:31.818154
+51,8,5,Secured cloud-native collaboration,Time & Materials,484262.11,,,,In Progress,2023-06-22 12:39:56.836524
+52,18,3,Expanded national database,Fixed-Price,416558.62,,,,In Progress,2023-06-26 12:13:49.216964
+53,19,4,Compatible homogeneous solution,Time & Materials,276224.18,,,,In Progress,2023-07-29 08:03:50.969293
+54,19,4,Universal demand-driven structure,Time & Materials,329032.74,,,,In Progress,2023-08-06 06:19:07.609637
+55,12,2,Seamless neutral collaboration,Time & Materials,203936.79,,,,In Progress,2023-08-29 03:15:24.329700
+56,5,5,Expanded user-facing model,Fixed-Price,205563.2,,,,In Progress,2023-10-19 18:57:30.571199
+57,16,1,Polarised directional throughput,Fixed-Price,442455.76,,,,In Progress,2023-10-25 19:14:50.674746
+58,2,1,Stand-alone fault-tolerant ability,Fixed-Price,100957.12,,,,In Progress,2024-01-14 12:02:20.961849
+59,5,2,Stand-alone hybrid attitude,Fixed-Price,291828.02,,,,In Progress,2024-05-19 04:14:39.941650
+60,14,5,Persistent attitude-oriented policy,Time & Materials,213077.25,,,,In Progress,2024-08-02 21:28:14.775839
+61,3,4,Diverse real-time data-warehouse,Fixed-Price,387482.21,,,,In Progress,2024-08-28 23:04:49.754610
+62,13,5,Immersive uniform matrix,Fixed-Price,437803.53,,,,In Progress,2024-09-05 00:42:52.311355
+63,15,5,Streamlined cohesive software,Time & Materials,58869.74,,,,In Progress,2024-12-01 15:46:15.461769
+64,9,5,Seamless explicit toolset,Fixed-Price,350638.31,,,,In Progress,2024-12-04 22:55:29.725664
+65,1,1,User-centric systematic utilisation,Fixed-Price,166740.55,,,,In Progress,2024-12-11 20:05:17.445236
+66,18,3,Smart stable definition,Time & Materials,241346.08,,,,In Progress,2024-12-26 03:55:00.627854
+67,11,1,Virtual zero tolerance data-warehouse,Time & Materials,127255.68,,,,In Progress,2024-12-26 20:16:45.355780
+68,4,1,Smart value-added archive,Time & Materials,379397.27,,,,In Progress,2020-01-15 01:52:22.889220
+69,8,2,Persistent exuding array,Fixed-Price,325333.8,,,,In Progress,2020-02-11 11:11:29.988607
+70,5,1,Digitized contextually-based microservice,Fixed-Price,79273.22,,,,In Progress,2020-02-15 23:21:37.887069
+71,17,5,Sharable systematic generative AI,Fixed-Price,378322.78,,,,In Progress,2020-05-15 04:24:56.647839
+72,1,5,Distributed 24 hour archive,Time & Materials,413348.07,,,,In Progress,2020-06-14 15:08:09.866175
+73,19,3,Networked resilient definition,Fixed-Price,324303.95,,,,In Progress,2020-08-21 13:23:26.813125
+74,1,2,Digitized context-sensitive structure,Fixed-Price,360921.98,,,,In Progress,2020-09-11 12:19:29.701419
+75,9,2,Enhanced next generation solution,Time & Materials,449188.89,,,,In Progress,2020-09-26 04:22:30.654362
+76,13,1,Robust contextually-based system engine,Time & Materials,182502.0,,,,In Progress,2020-11-10 14:08:23.855847
+77,12,5,Smart uniform projection,Time & Materials,444817.88,,,,In Progress,2020-11-25 04:16:12.543847
+78,13,1,AI-driven static flexibility,Fixed-Price,407833.79,,,,In Progress,2021-01-04 16:17:41.315580
+79,10,5,Upgradable logistical alliance,Time & Materials,61930.09,,,,In Progress,2021-01-14 03:42:28.313990
+80,3,1,Persistent zero tolerance matrices,Fixed-Price,416510.82,,,,In Progress,2021-02-09 14:16:40.717267
+81,3,2,Self-enabling bottom-line matrices,Time & Materials,406210.57,,,,In Progress,2021-02-19 12:39:29.063315
+82,6,3,Intuitive national matrix,Fixed-Price,102886.81,,,,In Progress,2021-04-07 07:00:59.097867
+83,20,2,Multi-tiered maximized collaboration,Fixed-Price,469727.82,,,,In Progress,2021-05-08 17:15:56.355434
+84,13,3,Profound national product,Time & Materials,271678.14,,,,In Progress,2021-07-08 00:44:53.404515
+85,18,2,Persistent coherent generative AI,Fixed-Price,126020.78,,,,In Progress,2021-07-19 23:45:06.159720
+86,8,1,Stand-alone immersive hierarchy,Fixed-Price,216712.45,,,,In Progress,2021-07-29 18:51:58.883212
+87,13,3,Persistent incremental frame,Fixed-Price,177699.16,,,,In Progress,2021-08-18 15:59:00.250833
+88,7,4,Sustainable actuating internet solution,Time & Materials,468219.2,,,,In Progress,2021-09-01 04:47:09.878463
+89,5,3,Synchronised stable encoding,Fixed-Price,206990.72,,,,In Progress,2021-09-25 14:36:51.772040
+90,8,2,Proactive secondary database,Fixed-Price,411284.05,,,,In Progress,2021-12-14 04:27:17.049028
+91,17,4,Integrated optimizing moratorium,Fixed-Price,113385.66,,,,In Progress,2021-12-14 07:47:51.145328
+92,3,1,User-centric zero tolerance hierarchy,Fixed-Price,66447.35,,,,In Progress,2021-12-20 03:31:00.417644
+93,5,2,Ergonomic user-facing archive,Time & Materials,217989.19,,,,In Progress,2022-01-08 07:26:33.193865
+94,14,5,Fundamental methodical definition,Time & Materials,127255.68,,,,In Progress,2022-01-17 18:46:08.893741
+95,13,5,Compatible attitude-oriented encryption,Fixed-Price,124827.52,,,,In Progress,2022-01-27 07:38:24.708462
+96,4,5,Progressive human-resource intranet,Time & Materials,409737.15,,,,In Progress,2022-03-08 12:06:30.030841
+97,6,4,Customer-focused eco-centric capacity,Fixed-Price,265944.03,,,,In Progress,2022-04-13 02:21:05.371527
+98,6,5,Grass-roots discrete product,Fixed-Price,421617.54,,,,In Progress,2022-05-12 17:22:30.668099
+99,4,3,Triple-buffered 24/7 conglomeration,Fixed-Price,327617.11,,,,In Progress,2022-05-16 20:42:33.116090
+100,17,1,Networked cloud-native function,Fixed-Price,266228.13,,,,In Progress,2022-09-13 01:23:12.825079
+101,20,3,Enhanced sustainable help-desk,Time & Materials,86051.68,,,,In Progress,2022-09-16 09:12:05.228778
+102,8,1,AI-driven neutral matrices,Fixed-Price,440722.63,,,,In Progress,2022-11-22 22:40:39.655069
+103,3,1,Sharable sustainable migration,Fixed-Price,486235.55,,,,In Progress,2022-12-31 21:53:16.176165
+104,16,1,Synchronised global challenge,Fixed-Price,126391.06,,,,In Progress,2023-01-09 20:52:10.778224
+105,18,2,Configurable methodical functionalities,Time & Materials,486460.42,,,,In Progress,2023-01-31 20:59:18.489578
+106,16,5,Horizontal value-added product,Time & Materials,63674.18,,,,In Progress,2023-02-03 19:59:06.262104
+107,10,4,Automated bottom-line installation,Time & Materials,190088.46,,,,In Progress,2023-04-25 00:28:37.337024
+108,12,4,Fundamental empowering portal,Time & Materials,361596.27,,,,In Progress,2023-05-23 07:03:05.997418
+109,11,1,Reduced uniform forecast,Time & Materials,229398.36,,,,In Progress,2023-10-12 11:24:36.603402
+110,19,5,Profound full-range success,Time & Materials,247780.26,,,,In Progress,2023-10-17 05:21:31.995232
+111,8,5,Advanced fresh-thinking array,Fixed-Price,186473.82,,,,In Progress,2023-10-20 13:45:52.300783
+112,8,1,Focused cloud-native firmware,Time & Materials,287168.66,,,,In Progress,2023-10-23 18:27:40.444388
+113,3,1,Persevering logistical data-warehouse,Fixed-Price,58636.52,,,,In Progress,2023-11-09 10:15:23.294521
+114,2,3,Total secondary generative AI,Fixed-Price,219149.73,,,,In Progress,2023-11-18 10:52:13.503346
+115,9,4,Customizable immersive contingency,Time & Materials,280499.86,,,,In Progress,2023-12-03 12:04:00.215437
+116,8,4,Triple-buffered empowering concept,Fixed-Price,217475.16,,,,In Progress,2024-01-06 16:58:19.546009
+117,4,1,Robust eco-centric alliance,Time & Materials,493101.38,,,,In Progress,2024-01-23 16:19:33.381664
+118,4,1,Reduced 24/7 local area network,Fixed-Price,256235.29,,,,In Progress,2024-04-15 19:18:05.395380
+119,11,1,Business-focused holistic adapter,Fixed-Price,124117.86,,,,In Progress,2024-05-05 16:39:38.332711
+120,8,2,Expanded composite synergy,Fixed-Price,461790.53,,,,In Progress,2024-05-17 17:14:08.331054
+121,15,2,Future-proofed resilient budgetary management,Time & Materials,134335.37,,,,In Progress,2024-06-09 13:30:24.805738
+122,15,5,Reduced executive capacity,Time & Materials,175674.24,,,,In Progress,2024-08-07 03:47:36.615596
+123,18,1,Profit-focused intermediate middleware,Time & Materials,78638.41,,,,In Progress,2024-09-07 01:10:09.901605
+124,8,2,Front-line impactful solution,Fixed-Price,98611.59,,,,In Progress,2024-10-30 10:49:09.149619
+125,14,4,Managed optimal customer loyalty,Fixed-Price,336380.62,,,,In Progress,2024-11-11 20:44:54.497325
+126,16,2,Horizontal neutral monitoring,Fixed-Price,86081.01,,,,In Progress,2024-11-13 10:32:26.367632
+127,2,2,Public-key contextually-based definition,Fixed-Price,290285.36,,,,In Progress,2024-11-26 14:00:32.304837
+128,13,1,Reactive content-based middleware,Time & Materials,343531.24,,,,In Progress,2024-12-01 04:23:34.443295
