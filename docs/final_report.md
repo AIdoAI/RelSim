@@ -233,13 +233,22 @@ These bridge tables are now fully populated.
 - Generates one row per month with linearly interpolated progress (0% → 100%)
 - Integrated as a post-simulation hook in `runner.py` (runs automatically after simulation)
 
-### 9.4 Project Status (All "In Progress")
-All 75 projects show status "In Progress" — none reached the "Complete" state. This indicates the simulation's 5-year time window (1825 days) was insufficient for all projects to complete the full 5-deliverable pipeline (each ~4 weeks × 5 phases = ~20 weeks minimum), or the resource pool was too constrained.
+### 9.4 Project Status (All "In Progress") — ✅ RESOLVED
+Previously all projects stayed "In Progress". Now **124 out of 126 projects reach "Complete"** status (98.4% completion rate). The 2 remaining are late-arriving projects.
 
-**Improvement**: Either extend the simulation time window, increase resource capacity, or reduce deliverable durations to allow more projects to reach completion.
+**Root causes identified and fixed:**
+1. **Entry point detection bug**: `FlowManager._find_flow_entry_points()` treated ALL Create steps as entry points, starting `create_deliverable_1-5` independently instead of only when triggered by the parent flow. Fixed to only start Create steps with `interarrival_time`.
+2. **PK column lookup bug**: `_resolve_grandparent_fk()` called non-existent `resolve_pk_column()` — fixed to use `get_primary_key()`.
+3. **Cross-entity FK resolution**: When `trigger_expenses` fires with a Deliverable entity, it now correctly reads the Deliverable's `ProjectID` from the DB to set `ProjectExpense.ProjectID`.
+4. **Cross-entity attribute assignment**: When `mark_complete` sets `ProjectStatus`, the assign processor detects this attribute isn't on the Deliverable table, looks up the parent Project via FK, and updates the correct entity.
+
+**YAML tuning (Fix B + Fix C):**
+- Increased resource capacities (Junior/Mid: 18→30, Senior: 12→20, Lead: 6→10, Principal/Executive: 3→5)
+- Reduced deliverable durations: NORM(28,7) → NORM(21,5)
+- Extended simulation window: 1825 → 3650 days (10 years)
 
 ### 9.5 Additional Enhancements
-- **BusinessUnit diversity**: Only 4 of 5 business units (Energy, Government, Healthcare, Media & Entertainment) were generated due to `DISC` distribution randomness. Consider using deterministic assignment for the 5-row table.
-- **Deliverable counts per project**: Currently each project only reaches 1 deliverable on average. The parent-child create pattern should be validated to ensure all 5 deliverables are spawned per project.
+- **BusinessUnit diversity**: Only 4 of 5 business units were generated due to `DISC` distribution randomness. Consider deterministic assignment.
+- **Deliverable counts per project**: Projects generate 4 deliverables on average via the parallel fork (D1 → D2∥D3 → D4). The D5 phase also completes for projects that reach completion.
 - **Richer consultant allocation**: Add skill-based matching between consultant expertise and deliverable requirements.
 - **Financial modeling**: Add formula-based attributes for actual cost calculation using billing rates × hours from `Consultant_Deliverable_Mapping`.

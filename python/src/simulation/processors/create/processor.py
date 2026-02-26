@@ -474,7 +474,7 @@ class CreateStepProcessor(StepProcessor):
         
         try:
             # Find the PK column name
-            pk_column = self.column_resolver.resolve_pk_column(entity_table)
+            pk_column = self.column_resolver.get_primary_key(entity_table)
             
             with process_engine.connect() as conn:
                 result = conn.execute(

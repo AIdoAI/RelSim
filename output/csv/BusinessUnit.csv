@@ -1,6 +1,6 @@
 BusinessUnitID,BusinessUnitName,created_at
-1,Healthcare,
-2,Government,
+1,Retail,
+2,Retail,
 3,Retail,
-4,Retail,
-5,Energy,
+4,Energy,
+5,Healthcare,
