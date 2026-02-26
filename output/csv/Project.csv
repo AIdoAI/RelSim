@@ -1,61 +1,76 @@
-id,company_id,name,description,created_at,status,budget
-1,1,Ergonomic Marble Sausages,Atqui cetera denuncio.,2024-01-01 00:11:43.672027,Completed,48866.24
-2,2,Tasty Marble Tuna,Sufficio provident tepidus acer.,2024-01-01 01:31:05.587828,Completed,21421.77
-3,2,Unbranded Bronze Bike,Soleo universe iste suscipit.,2024-01-01 05:29:18.163889,Completed,44683.4
-4,3,Frozen Ceramic Gloves,Ustulo creber conculco.,2024-01-01 06:29:58.786228,Completed,32341.86
-5,1,Bespoke Silk Shoes,Adiuvo adhuc ducimus sublime spes civitas barba advenio.,2024-01-01 09:31:11.479441,Completed,35998.78
-6,2,Bespoke Steel Pants,Argentum decens rem apparatus adhuc.,2024-01-01 12:07:06.303724,Completed,20135.88
-7,3,Elegant Ceramic Gloves,Aegrotatio acerbitas vulpes accusator subvenio desolo.,2024-01-01 12:40:13.197271,Completed,27190.64
-8,1,Tasty Steel Shirt,Animi tollo ut assentator crur tabella sumo venio comminor bene.,2024-01-01 17:46:01.406095,Completed,35427.72
-9,3,Refined Steel Pants,Terror video denego laborum constans.,2024-01-01 19:40:41.079481,Completed,23798.31
-10,4,Modern Plastic Computer,Decumbo dolor chirographum.,2024-01-01 20:07:30.681392,Completed,20409.28
-11,5,Awesome Marble Hat,Vilis volup synagoga vaco delibero deorsum cauda delicate centum crux.,2024-01-01 22:21:32.270329,Completed,31570.28
-12,4,Gorgeous Ceramic Sausages,Coniecto odio vita decerno.,2024-01-01 23:17:27.131371,Completed,22948.22
-13,4,Oriental Marble Pizza,Odio callide solitudo supplanto ciminatio.,2024-01-01 23:26:27.696836,Completed,20965.94
-14,5,Practical Silk Hat,Arca caelestis celer tenax ter asperiores amo.,2024-01-02 02:00:38.422840,Completed,11217.56
-15,4,Bespoke Cotton Shoes,Tunc textus eum adeo patrocinor tibi.,2024-01-02 05:30:57.119389,Completed,33326.37
-16,3,Sleek Rubber Pants,Tantum voco sub commodo.,2024-01-02 06:01:35.066610,Completed,39845.67
-17,4,Fresh Ceramic Towels,Error blanditiis cribro.,2024-01-02 08:55:35.541214,Completed,44415.45
-18,5,Soft Plastic Pants,Suffragium alii animadverto tres ipsam antea spectaculum.,2024-01-02 09:19:43.170014,Completed,21356.6
-19,1,Handmade Plastic Chips,Incidunt atrocitas aegre.,2024-01-02 09:59:27.467691,Completed,40200.63
-20,3,Unbranded Plastic Shirt,Coadunatio cerno ars.,2024-01-02 10:07:55.925607,Completed,31950.89
-21,1,Oriental Steel Pants,Centum denego conservo debitis ad commemoro acquiro deripio pel.,2024-01-02 11:37:54.514876,Completed,27505.5
-22,2,Luxurious Ceramic Soap,Supplanto terra curvo solitudo attero crapula voluptatum tum universe.,2024-01-02 12:10:11.570010,Completed,38976.66
-23,5,Ergonomic Aluminum Salad,Nesciunt vomer stipes modi ambitus ambitus truculenter dapifer crepusculum teres.,2024-01-02 13:34:25.908176,Completed,25036.53
-24,1,Unbranded Plastic Salad,Vinculum ex dedecor conatus tumultus.,2024-01-02 16:21:27.598267,Completed,18178.96
-25,5,Sleek Wooden Computer,Modi aro denuncio statim veritatis.,2024-01-02 19:28:25.295874,Completed,25937.84
-26,4,Incredible Bamboo Sausages,Tumultus aperiam cimentarius tamisium uterque tricesimus.,2024-01-02 19:56:28.116058,Completed,11883.88
-27,2,Soft Ceramic Towels,Commodo cupressus viscus commemoro.,2024-01-02 22:41:01.924128,Completed,17633.33
-28,1,Incredible Bamboo Soap,Vae confido eligendi amoveo defessus vae quia suffoco tabesco.,2024-01-02 23:07:04.129564,Completed,33165.7
-29,4,Soft Cotton Ball,Aureus confugo tibi derelinquo.,2024-01-02 23:15:58.906624,Completed,19054.48
-30,2,Oriental Ceramic Sausages,Ulciscor thesis deleniti commemoro officia vacuus utroque subiungo adipiscor.,2024-01-03 00:30:33.325199,Completed,13314.52
-31,1,Generic Metal Towels,Cado validus sed celebrer thalassinus volup peccatus socius volva vomito.,2024-01-03 02:33:12.725476,Completed,42254.1
-32,5,Generic Metal Sausages,Arbustum victoria tamdiu mollitia vitium copiose celo.,2024-01-03 03:20:09.968791,Completed,48997.15
-33,4,Handcrafted Aluminum Chicken,Consectetur cernuus spoliatio amo admiratio audeo.,2024-01-03 05:39:57.018979,Completed,14007.81
-34,2,Fresh Rubber Bacon,Arguo cimentarius urbs viridis culpo asporto inventore urbanus vigor testimonium.,2024-01-03 05:43:11.379008,Completed,23076.0
-35,2,Fresh Ceramic Shirt,Demulceo acer taceo denuo cerno villa.,2024-01-03 08:04:34.914272,Completed,34732.87
-36,2,Refined Rubber Bacon,At ademptio sublime sumptus tyrannus ancilla cena tres dolorum.,2024-01-03 16:08:08.681151,Completed,32784.61
-37,4,Awesome Marble Towels,Vulnus ultio acer.,2024-01-03 18:02:49.013235,Completed,20051.75
-38,2,Elegant Bronze Chicken,Utilis auctus consuasor ratione texo adsum.,2024-01-03 18:13:57.032700,Completed,20076.98
-39,3,Electronic Cotton Gloves,Ante ventosus nulla quod vitiosus tamisium averto cognomen.,2024-01-03 19:29:14.132579,Completed,15925.5
-40,3,Fresh Wooden Ball,Labore varietas pecto statim qui crepusculum.,2024-01-03 20:22:22.212472,Completed,24452.31
-41,1,Rustic Aluminum Towels,Causa administratio bonus tepidus quaerat sapiente.,2024-01-03 21:38:01.815310,Completed,10867.51
-42,1,Intelligent Wooden Computer,Pax chirographum terga vilis tremo corrumpo.,2024-01-03 22:58:27.183550,Completed,41502.89
-43,4,Licensed Metal Computer,Clibanus confugo cerno crebro campana molestias volaticus.,2024-01-04 04:10:54.532940,Completed,32748.28
-44,3,Sleek Bronze Bike,Amo attonbitus explicabo.,2024-01-04 09:05:40.603707,Completed,35064.44
-45,3,Generic Metal Car,Adsuesco ambulo subiungo tamdiu pecto color.,2024-01-04 11:20:17.462622,Completed,19876.17
-46,3,Rustic Aluminum Keyboard,Sono barba aer copia assentator compello est amo.,2024-01-04 13:56:25.176190,Completed,30576.3
-47,5,Electronic Wooden Bacon,Usus tardus crepusculum solus ulterius cresco ater.,2024-01-04 16:11:59.792350,Completed,27884.49
-48,2,Practical Bamboo Salad,Arbustum tero curriculum vapulus tonsor approbo velut officiis.,2024-01-04 16:43:29.000596,Completed,14102.96
-49,2,Rustic Wooden Sausages,Valetudo depromo sulum contabesco umquam.,2024-01-04 17:35:54.735244,Completed,16126.41
-50,4,Incredible Rubber Shirt,Tergo vespillo studio tactus.,2024-01-04 17:46:21.652920,Completed,41439.13
-51,2,Handcrafted Plastic Bacon,Tertius cotidie synagoga laudantium suscipio dedecor demonstro adfectus vix.,2024-01-04 18:13:21.544384,Completed,46605.36
-52,2,Unbranded Plastic Pants,Quas illo color defluo illum corpus.,2024-01-04 19:14:31.586825,Completed,40293.0
-53,2,Frozen Bamboo Pants,Caput arceo iure a addo defleo conforto ara.,2024-01-04 21:42:53.954000,,23050.34
-54,3,Luxurious Concrete Pants,Adaugeo esse conicio arbor utor vulgo uredo.,2024-01-04 22:04:30.727533,,22299.68
-55,5,Gorgeous Cotton Mouse,Ascisco peccatus incidunt accommodo veritas tergiversatio ea.,2024-01-04 23:32:07.041738,,48678.24
-56,2,Small Granite Table,Admoneo vel vita caput thymbra voluntarius perferendis aro laudantium.,2024-01-05 00:15:26.352861,,42877.55
-57,4,Handmade Aluminum Mouse,Quaerat bellicus torrens celebrer vitium quo sub cubicularis deficio.,2024-01-05 00:27:47.841546,,31013.71
-58,2,Incredible Rubber Soap,Crinis caelestis ara at confero casso vomer pel audeo.,2024-01-05 01:05:26.564584,,32942.18
-59,3,Fresh Steel Mouse,Totam praesentium ea subnecto vulgivagus veniam uxor.,2024-01-05 01:39:32.056345,,45628.62
-60,2,Soft Gold Sausages,Adfero tribuo sonitus solutio ait defaeco dignissimos summisse.,2024-01-05 03:51:03.657858,,26670.83
+ProjectID,ClientID,BusinessUnitID,ProjectName,ProjectType,Fixed_Price_Amount,PlannedStartDate,PlannedEndDate,PlannedExpense,ProjectStatus,created_at
+1,4,1,Realigned motivating model,Time & Materials,379397.27,,,,In Progress,2020-01-15 01:52:22.889220
+2,9,2,User-centric dynamic budgetary management,Fixed-Price,181053.11,,,,In Progress,2020-02-11 11:11:29.988607
+3,8,2,Open-architected global contingency,Time & Materials,70902.69,,,,In Progress,2020-03-10 20:34:43.293756
+4,4,5,AI-driven resilient concept,Time & Materials,296019.63,,,,In Progress,2020-04-07 22:01:06.483279
+5,3,5,Upgradable immersive architecture,Fixed-Price,294213.24,,,,In Progress,2020-04-14 01:10:41.733204
+6,14,1,Implemented global definition,Fixed-Price,78601.26,,,,In Progress,2020-04-18 14:32:41.732355
+7,1,1,Face to face cloud-native generative AI,Time & Materials,302574.74,,,,In Progress,2020-04-29 18:44:11.536619
+8,7,2,Enhanced bottom-line hub,Fixed-Price,122549.58,,,,In Progress,2020-06-12 23:56:14.330360
+9,17,5,Intuitive empowering flexibility,Fixed-Price,152570.82,,,,In Progress,2020-08-31 15:30:04.952963
+10,1,5,Managed asynchronous projection,Fixed-Price,283455.78,,,,In Progress,2020-09-17 08:34:58.492567
+11,7,5,Persistent fault-tolerant forecast,Time & Materials,157802.85,,,,In Progress,2020-10-23 18:43:31.936642
+12,14,2,Organic asymmetric focus group,Time & Materials,291098.61,,,,In Progress,2020-10-28 11:25:39.928317
+13,15,5,Sharable dynamic benchmark,Time & Materials,128464.89,,,,In Progress,2020-10-31 07:33:38.707957
+14,9,1,Front-line bifurcated open architecture,Time & Materials,334895.66,,,,In Progress,2020-12-05 12:59:37.579412
+15,6,4,Progressive systematic data-warehouse,Fixed-Price,348575.8,,,,In Progress,2020-12-17 23:06:26.132843
+16,11,3,User-friendly national framework,Time & Materials,432150.53,,,,In Progress,2020-12-18 02:45:39.073681
+17,5,2,Automated intermediate ability,Time & Materials,271632.96,,,,In Progress,2021-01-19 06:27:59.116617
+18,11,1,AI-driven high-level hardware,Fixed-Price,126271.74,,,,In Progress,2021-01-25 18:51:40.125300
+19,3,4,Fundamental composite task-force,Time & Materials,211771.02,,,,In Progress,2021-02-19 04:45:06.408720
+20,4,3,Face to face human-resource conglomeration,Fixed-Price,219012.33,,,,In Progress,2021-03-01 14:59:47.331141
+21,12,5,Smart intangible emulation,Fixed-Price,420170.25,,,,In Progress,2021-03-04 14:03:27.464714
+22,9,1,Compatible real-time knowledge base,Time & Materials,376741.1,,,,In Progress,2021-03-17 23:35:55.847461
+23,15,5,Compatible systemic collaboration,Fixed-Price,120396.67,,,,In Progress,2021-07-07 16:33:35.614011
+24,4,4,Automated sustainable help-desk,Time & Materials,56477.07,,,,In Progress,2021-07-16 07:55:27.137827
+25,3,5,Upgradable bottom-line projection,Fixed-Price,229327.13,,,,In Progress,2021-07-20 00:45:29.114513
+26,10,5,Intuitive intermediate framework,Fixed-Price,339479.7,,,,In Progress,2021-08-17 17:35:53.660624
+27,12,5,Managed encompassing solution,Time & Materials,60472.37,,,,In Progress,2021-09-05 02:55:35.545365
+28,7,1,Open-architected full-range moratorium,Time & Materials,235677.95,,,,In Progress,2021-10-25 15:47:18.617399
+29,2,2,Polarised logistical array,Time & Materials,421905.86,,,,In Progress,2021-11-08 14:45:50.837203
+30,10,1,Grass-roots tertiary definition,Time & Materials,388568.54,,,,In Progress,2021-11-20 04:29:37.061822
+31,8,1,Diverse context-sensitive capacity,Fixed-Price,87848.06,,,,In Progress,2022-01-06 05:35:39.580667
+32,13,3,Robust demand-driven methodology,Fixed-Price,271681.3,,,,In Progress,2022-02-11 10:47:03.939192
+33,15,3,Implemented explicit definition,Fixed-Price,440869.61,,,,In Progress,2022-02-11 19:00:20.923001
+34,6,3,Sustainable explicit parallelism,Time & Materials,455521.1,,,,In Progress,2022-02-19 09:13:29.642562
+35,12,2,Organic high-level array,Time & Materials,84980.59,,,,In Progress,2022-02-20 18:42:47.351401
+36,9,1,Versatile demand-driven database,Time & Materials,428953.52,,,,In Progress,2022-06-10 17:29:03.988980
+37,20,2,Total cloud-native knowledge base,Time & Materials,396044.34,,,,In Progress,2022-08-04 09:27:40.589430
+38,18,2,Persistent methodical generative AI,Fixed-Price,352207.94,,,,In Progress,2022-10-30 06:42:17.591440
+39,6,4,Integrated mission-critical implementation,Fixed-Price,62952.2,,,,In Progress,2022-11-21 07:37:27.810930
+40,13,3,Virtual well-modulated model,Fixed-Price,329939.02,,,,In Progress,2023-01-02 12:42:20.728232
+41,18,2,Versatile cohesive interface,Fixed-Price,84138.5,,,,In Progress,2023-03-03 00:34:01.276661
+42,11,1,Seamless 24 hour interface,Fixed-Price,126020.78,,,,In Progress,2023-03-07 03:54:33.046156
+43,8,1,Fully-configurable impactful leverage,Time & Materials,332555.18,,,,In Progress,2023-03-16 23:01:25.769648
+44,11,4,Front-line cloud-native implementation,Fixed-Price,258140.62,,,,In Progress,2023-03-19 12:26:11.525183
+45,9,1,Diverse responsive projection,Fixed-Price,194935.62,,,,In Progress,2023-04-29 19:19:16.938674
+46,7,5,Compatible high-level archive,Time & Materials,244246.8,,,,In Progress,2023-05-06 22:21:44.515810
+47,11,2,Compatible reciprocal knowledge user,Fixed-Price,160680.98,,,,In Progress,2023-05-11 00:37:52.771973
+48,16,4,Horizontal zero tolerance standardization,Time & Materials,417682.43,,,,In Progress,2023-05-16 06:45:00.127854
+49,15,2,Digitized mission-critical encoding,Fixed-Price,195655.66,,,,In Progress,2023-05-25 05:30:29.144373
+50,9,2,Fundamental zero administration throughput,Fixed-Price,495482.1,,,,In Progress,2023-06-10 20:29:31.818154
+51,8,5,User-centric systematic parallelism,Time & Materials,423778.73,,,,In Progress,2023-06-22 12:39:56.836524
+52,18,3,Profit-focused incremental knowledge base,Time & Materials,285379.44,,,,In Progress,2023-10-01 02:57:10.037890
+53,19,4,Programmable systematic initiative,Time & Materials,154495.71,,,,In Progress,2023-10-14 10:57:53.991039
+54,19,4,Streamlined disintermediate paradigm,Time & Materials,404868.75,,,,In Progress,2023-12-22 09:46:10.881074
+55,12,2,Public-key human-resource encoding,Fixed-Price,430903.53,,,,In Progress,2023-12-27 08:12:12.382842
+56,5,5,Self-enabling dedicated artificial intelligence,Fixed-Price,205563.2,,,,In Progress,2023-12-31 10:23:48.385171
+57,16,1,Seamless fault-tolerant data-warehouse,Fixed-Price,442455.76,,,,In Progress,2024-01-06 10:41:08.488718
+58,2,1,Ergonomic empowering portal,Time & Materials,427504.14,,,,In Progress,2024-03-27 03:28:38.775821
+59,5,2,Synchronised contextually-based parallelism,Fixed-Price,229175.91,,,,In Progress,2024-03-31 03:20:33.103408
+60,14,5,Distributed 24/7 support,Fixed-Price,461680.66,,,,In Progress,2024-04-23 06:22:41.901937
+61,3,4,Intuitive interactive frame,Fixed-Price,454124.43,,,,In Progress,2024-05-06 18:24:11.541176
+62,13,5,Self-enabling contextually-based alliance,Time & Materials,475751.96,,,,In Progress,2024-05-13 15:42:25.783769
+63,15,5,Robust incremental solution,Fixed-Price,153983.66,,,,In Progress,2024-05-27 16:09:53.053704
+64,9,5,Centralized intangible workforce,Fixed-Price,453351.12,,,,In Progress,2024-06-30 02:32:36.015274
+65,1,1,Public-key eco-centric approach,Time & Materials,234235.24,,,,In Progress,2024-06-30 11:57:58.007597
+66,18,3,Programmable secondary contingency,Fixed-Price,112710.23,,,,In Progress,2024-07-24 14:10:28.621604
+67,11,1,Fully-configurable value-added artificial intelligence,Time & Materials,142889.57,,,,In Progress,2024-09-16 15:10:23.951529
+68,10,4,Programmable national algorithm,Time & Materials,160407.1,,,,In Progress,2024-09-16 23:08:02.994734
+69,6,4,Visionary neutral capability,Time & Materials,379657.44,,,,In Progress,2024-10-01 18:11:47.724684
+70,1,3,Ergonomic heuristic archive,Fixed-Price,359781.08,,,,In Progress,2024-10-09 00:26:00.354213
+71,17,2,Managed transitional software,Fixed-Price,477606.81,,,,In Progress,2024-10-26 03:16:57.759955
+72,17,1,Team-oriented systemic model,Time & Materials,474826.7,,,,In Progress,2024-11-12 20:30:55.585109
+73,10,5,Total homogeneous collaboration,Time & Materials,474919.92,,,,In Progress,2024-11-14 01:28:39.047433
+74,20,2,Implemented radical functionalities,Fixed-Price,191880.65,,,,In Progress,2024-12-03 08:20:15.809707
+75,5,3,Persistent neutral process improvement,Time & Materials,288021.71,,,,In Progress,2024-12-26 14:38:33.559032

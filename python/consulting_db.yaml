@@ -1,129 +1,365 @@
+# Consulting Firm Client Engagements Database
+# 13 tables across static (generated once) and dynamic (simulation-populated) categories
+
 entities:
-  # Resource Table: Employee
-  - name: Employee
-    type: resource
-    rows: 15
+  # ============================================================
+  # PHASE 1: STATIC TABLES (generated at DB creation time)
+  # ============================================================
+
+  # Table 1: Location
+  - name: Location
+    type: entity
+    rows: 30
     attributes:
-      - name: id
+      - name: LocationID
         type: pk
-      - name: role
-        type: resource_type
-        generator:
-          type: distribution
-          formula: DISC(0.4, Tech Support, 0.4, Developer, 0.2, Manager)
-      - name: name
+      - name: State
         type: string
         generator:
           type: faker
-          method: person.fullName
-      - name: salary_range
-        type: integer
+          method: location.state()
+      - name: City
+        type: string
         generator:
-          type: distribution
-          formula: DISC(0.3, 60000, 0.4, 90000, 0.3, 120000)
+          type: faker
+          method: location.city()
 
-  # Entity Table: Project
-  - name: Project
+  # Table 2: Client
+  - name: Client
     type: entity
-    rows: n/a # This table is populated by the simulation as projects arrive
+    rows: 20
     attributes:
-      - name: id
+      - name: ClientID
         type: pk
-      - name: company_id
+      - name: ClientName
+        type: string
+        generator:
+          type: faker
+          method: company.name()
+      - name: LocationID
         type: fk
-        ref: Company.id
+        ref: Location.LocationID
         generator:
           type: foreign_key
           subtype: many_to_one
-      - name: name
+      - name: PhoneNumber
         type: string
         generator:
           type: faker
-          method: commerce.productName
-      - name: description
+          method: phone.number()
+      - name: Email
         type: string
         generator:
           type: faker
-          method: lorem.sentence
-      - name: created_at
-        type: datetime
-      - name: status
-        type: string
-      - name: budget
-        type: decimal(12,2)
-        generator:
-          type: distribution
-          formula: UNIF(10000, 50000)
+          method: internet.email()
 
-  # Supporting Client Table
-  - name: Company
+  # Table 3: BusinessUnit (deterministic, 5 fixed rows)
+  - name: BusinessUnit
+    type: entity
     rows: 5
     attributes:
-      - name: id
+      - name: BusinessUnitID
         type: pk
-      - name: name
+      - name: BusinessUnitName
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.2, Retail, 0.2, Healthcare, 0.2, Media & Entertainment, 0.2, Energy, 0.2, Government)
+
+  # Table 4: Title (deterministic, 6 fixed rows)
+  - name: Title
+    type: entity
+    rows: 6
+    attributes:
+      - name: TitleID
+        type: pk
+      - name: TitleName
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.167, Consultant, 0.167, Senior Consultant, 0.167, Manager, 0.167, Senior Manager, 0.166, Associate Partner, 0.166, Partner)
+
+  # Table 5: Consultant (resource table for simulation)
+  - name: Consultant
+    type: resource
+    rows: 60
+    attributes:
+      - name: ConsultantID
+        type: pk
+      - name: FirstName
         type: string
         generator:
           type: faker
-          method: company.name
-      - name: industry
+          method: person.firstName()
+      - name: LastName
         type: string
         generator:
-          type: distribution
-          formula: DISC(0.3, Tech, 0.3, Finance, 0.2, Healthcare, 0.2, Retail)
-
-  # Skills and Bridge Table
-  - name: Skill
-    rows: 5
-    attributes:
-      - name: id
-        type: pk
-      - name: name
+          type: faker
+          method: person.lastName()
+      - name: Email
         type: string
         generator:
+          type: faker
+          method: internet.email()
+      - name: Phone
+        type: string
+        generator:
+          type: faker
+          method: phone.number()
+      - name: BusinessUnitID
+        type: fk
+        ref: BusinessUnit.BusinessUnitID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: resource_type
+        type: resource_type
+        generator:
           type: distribution
-          formula: DISC(0.2, Python, 0.2, Javascript, 0.2, SQL, 0.2, Cloud, 0.2, Management)
+          formula: DISC(0.30, Junior, 0.30, Mid, 0.20, Senior, 0.10, Lead, 0.05, Principal, 0.05, Executive)
 
-  - name: SkillEmployee
+  # Table 6: Consultant_Title_History (bridge - populated by post-processing script)
+  # Complex promotion-chain logic: 1-3 rows per consultant
+  - name: Consultant_Title_History
     type: bridge
-    rows: 20
-    attributes:
-      - name: id
-        type: pk
-      - name: employee_id
-        type: resource_id
-        ref: Employee.id
-        generator:
-          type: foreign_key
-          subtype: many_to_many # Employees can have multiple skills
-      - name: skill_id
-        type: fk # Assuming standard FK here, not resource_id
-        ref: Skill.id
-        generator:
-          type: foreign_key
-          subtype: many_to_many
-      - name: level
-        type: integer
-        generator:
-          type: distribution
-          formula: DISC(0.4, 1, 0.4, 2, 0.2, 3)
-
-  # Event Tracking Table for Project Phases
-  - name: ProjectPhase
-    type: event
     rows: n/a
     attributes:
       - name: id
         type: pk
-      - name: project_id
-        type: entity_id
-        ref: Project.id
-      - name: phase_name
-        type: event_type
-      - name: start_time
-        type: datetime
-      - name: end_time
-        type: datetime
-      - name: employee_id
+      - name: ConsultantID
         type: resource_id
-        ref: Employee.id
+        ref: Consultant.ConsultantID
+      - name: TitleID
+        type: fk
+        ref: Title.TitleID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: StartDate
+        type: date
+      - name: EndDate
+        type: date
+      - name: Salary
+        type: decimal(12,2)
+      - name: event_type
+        type: event_type
+
+  # ============================================================
+  # PHASE 2: PROJECT TABLES (Dynamic — populated by simulation)
+  # ============================================================
+
+  # Table 7: Project
+  - name: Project
+    type: entity
+    rows: n/a
+    attributes:
+      - name: ProjectID
+        type: pk
+      - name: ClientID
+        type: fk
+        ref: Client.ClientID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: BusinessUnitID
+        type: fk
+        ref: BusinessUnit.BusinessUnitID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: ProjectName
+        type: string
+        generator:
+          type: faker
+          method: company.catchPhrase()
+      - name: ProjectType
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.5, Fixed-Price, 0.5, Time & Materials)
+      - name: Fixed_Price_Amount
+        type: decimal(12,2)
+        generator:
+          type: distribution
+          formula: UNIF(50000, 500000)
+      - name: PlannedStartDate
+        type: date
+      - name: PlannedEndDate
+        type: date
+      - name: PlannedExpense
+        type: decimal(12,2)
+      - name: ProjectStatus
+        type: string
+      - name: created_at
+        type: datetime
+
+  # Table 8: ProjectBillingRate
+  - name: ProjectBillingRate
+    type: bridge
+    rows: n/a
+    attributes:
+      - name: id
+        type: pk
+      - name: ProjectID
+        type: entity_id
+        ref: Project.ProjectID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: TitleID
+        type: fk
+        ref: Title.TitleID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: BillingRate
+        type: decimal(10,2)
+        generator:
+          type: distribution
+          formula: NORM(275, 50)
+      - name: event_type
+        type: event_type
+
+  # Table 9: Deliverable
+  - name: Deliverable
+    type: entity
+    rows: n/a
+    attributes:
+      - name: DeliverableID
+        type: pk
+      - name: ProjectID
+        type: entity_id
+        ref: Project.ProjectID
+        generator:
+          type: foreign_key
+          subtype: one_to_many
+      - name: DeliverableName
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.2, Project Plan Development, 0.2, Design, 0.2, Infrastructure Implementation, 0.2, Coding and Unit Test, 0.2, System Test)
+      - name: PlannedStartDate
+        type: date
+      - name: PlannedEndDate
+        type: date
+      - name: ActualStartDate
+        type: date
+      - name: ActualEndDate
+        type: date
+      - name: created_at
+        type: datetime
+
+  # Table 10: Deliverable_Title_Plan_Mapping
+  - name: Deliverable_Title_Plan_Mapping
+    type: bridge
+    rows: n/a
+    attributes:
+      - name: id
+        type: pk
+      - name: DeliverableID
+        type: entity_id
+        ref: Deliverable.DeliverableID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: TitleID
+        type: fk
+        ref: Title.TitleID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: PlannedHours
+        type: decimal(10,2)
+        generator:
+          type: distribution
+          formula: UNIF(30, 120)
+      - name: event_type
+        type: event_type
+
+  # Table 11: Consultant_Deliverable_Mapping
+  - name: Consultant_Deliverable_Mapping
+    type: bridge
+    rows: n/a
+    attributes:
+      - name: id
+        type: pk
+      - name: DeliverableID
+        type: entity_id
+        ref: Deliverable.DeliverableID
+      - name: ConsultantID
+        type: resource_id
+        ref: Consultant.ConsultantID
+      - name: Month
+        type: date
+      - name: Hours
+        type: decimal(10,2)
+        generator:
+          type: distribution
+          formula: UNIF(20, 160)
+      - name: event_type
+        type: event_type
+      - name: start_date
+        type: datetime
+      - name: end_date
+        type: datetime
+
+  # Table 12: ProjectExpense
+  - name: ProjectExpense
+    type: entity
+    rows: n/a
+    attributes:
+      - name: ExpenseID
+        type: pk
+      - name: ProjectID
+        type: entity_id
+        ref: Project.ProjectID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: Date
+        type: date
+      - name: Amount
+        type: decimal(10,2)
+        generator:
+          type: distribution
+          formula: NORM(5000, 2000)
+      - name: Description
+        type: string
+        generator:
+          type: faker
+          method: commerce.productName()
+      - name: Category
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.3, Travel, 0.25, Software, 0.2, Equipment, 0.15, Facilities, 0.1, Other)
+      - name: Billable
+        type: string
+        generator:
+          type: distribution
+          formula: DISC(0.7, Billable, 0.3, Non-Billable)
+      - name: created_at
+        type: datetime
+
+  # Table 13: Deliverable_Progress_Month
+  - name: Deliverable_Progress_Month
+    type: bridge
+    rows: n/a
+    attributes:
+      - name: id
+        type: pk
+      - name: DeliverableID
+        type: entity_id
+        ref: Deliverable.DeliverableID
+        generator:
+          type: foreign_key
+          subtype: many_to_one
+      - name: Report_Month
+        type: date
+      - name: PercentageComplete
+        type: decimal(5,2)
+        generator:
+          type: distribution
+          formula: UNIF(0, 100)
+      - name: event_type
+        type: event_type

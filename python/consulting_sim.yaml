@@ -1,86 +1,290 @@
+# Consulting Firm Simulation Configuration
+# Models the project lifecycle with 5-deliverable workflow
+# Simulates 5 years of consulting operations (Jan 2020 - Dec 2025)
+#
+# KEY DESIGN: Project and Deliverable have a parent-child relationship.
+# Each deliverable phase uses "create" to instantiate a Deliverable entity
+# (with FK back to the parent Project), then processes it as a sub event flow.
+
 simulation:
-  base_time_unit: hours
-  terminating_conditions: TIME(100)
-  start_date: 2024-01-01
-  random_seed: 55
+  base_time_unit: days
+  terminating_conditions: TIME(1825)
+  start_date: 2020-01-01
+  random_seed: 42
   resources:
-    - resource_table: Employee
+    - resource_table: Consultant
       capacities:
-        Tech Support: 2
-        Developer: 1
-        Manager: 1
-  queues: &a1
-    - name: FIFOQueue
-      type: FIFO
+        Junior: 1
+        Mid: 1
+        Senior: 1
+        Lead: 1
+        Principal: 1
+        Executive: 1
 
 event_simulation:
-  queues: *a1
+  resource_capacities:
+    Consultant:
+      capacity_rules:
+        - resource_type: Junior
+          capacity: 18
+        - resource_type: Mid
+          capacity: 18
+        - resource_type: Senior
+          capacity: 12
+        - resource_type: Lead
+          capacity: 6
+        - resource_type: Principal
+          capacity: 3
+        - resource_type: Executive
+          capacity: 3
+
+  queues:
+    - name: ProjectQueue
+      type: FIFO
+
   event_flows:
-    - flow_id: flow_consulting_project
+
+    # ==========================================================
+    # MAIN FLOW: Project Lifecycle (parent entity = Project)
+    # ==========================================================
+    - flow_id: flow_project_lifecycle
       event_flow: Project_Lifecycle
       steps:
+        # Step 1: Create Project entity (~1 arrival per month)
         - step_id: create_project
           step_type: create
           create_config:
             entity_table: Project
             interarrival_time:
-              formula: EXPO(2)
-              time_unit: hours
+              formula: EXPO(30)
+              time_unit: days
             max_entities: n/a
           next_steps:
-            - initial_consultation
+            - initialize_project
 
-        - step_id: initial_consultation
-          step_type: event
-          event_config:
-            duration:
-              formula: NORM(1, 0.1)
-              time_unit: hours
-            resource_requirements:
-              - resource_table: Employee
-                value: Manager
-                count: 1
-                queue: FIFOQueue
-          next_steps:
-            - development_phase
-
-        - step_id: development_phase
-          step_type: event
-          event_config:
-            duration:
-              formula: NORM(4, 1)
-              time_unit: hours
-            resource_requirements:
-              - resource_table: Employee
-                value: Developer
-                count: 1
-                queue: FIFOQueue
-          next_steps:
-            - qa_support_review
-
-        - step_id: qa_support_review
-          step_type: event
-          event_config:
-            duration:
-              formula: NORM(2, 0.5)
-              time_unit: hours
-            resource_requirements:
-              - resource_table: Employee
-                value: Tech Support
-                count: 1
-                queue: FIFOQueue
-          next_steps:
-            - mark_completed
-
-        - step_id: mark_completed
+        # Step 2: Initialize project status
+        - step_id: initialize_project
           step_type: assign
           assign_config:
             assignments:
               - assignment_type: attribute
-                attribute_name: status
-                value: Completed
+                attribute_name: ProjectStatus
+                value: Not Started
           next_steps:
-            - project_release
+            - trigger_billing_rates
 
-        - step_id: project_release
+        # Step 3: Generate billing rates (6 rows, one per title)
+        - step_id: trigger_billing_rates
+          step_type: trigger
+          trigger_config:
+            target_table: ProjectBillingRate
+            count: 6
+            fk_column: ProjectID
+          next_steps:
+            - start_project
+
+        # Step 4: Mark project as In Progress
+        - step_id: start_project
+          step_type: assign
+          assign_config:
+            assignments:
+              - assignment_type: attribute
+                attribute_name: ProjectStatus
+                value: In Progress
+          next_steps:
+            - create_deliverable_1
+
+        # Step 5: Create Deliverable 1 entity (child of Project)
+        - step_id: create_deliverable_1
+          step_type: create
+          create_config:
+            entity_table: Deliverable
+            parent_fk_column: ProjectID
+            attributes:
+              - attribute_name: DeliverableName
+                value: Project Plan Development
+          next_steps:
+            - process_deliverable_1
+
+        # Step 6: Process Deliverable 1 - Project Plan Development (~4 weeks)
+        - step_id: process_deliverable_1
+          step_type: event
+          event_config:
+            entity_table: Deliverable
+            duration:
+              formula: NORM(28, 7)
+              time_unit: days
+            resource_requirements:
+              - resource_table: Consultant
+                value: Lead
+                count: 1
+                queue: ProjectQueue
+              - resource_table: Consultant
+                value: Senior
+                count: 1
+                queue: ProjectQueue
+            bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - create_deliverable_2
+            - create_deliverable_3
+
+        # Step 7a: Create Deliverable 2 entity (parallel branch A)
+        - step_id: create_deliverable_2
+          step_type: create
+          create_config:
+            entity_table: Deliverable
+            parent_fk_column: ProjectID
+            attributes:
+              - attribute_name: DeliverableName
+                value: Design
+          next_steps:
+            - process_deliverable_2
+
+        # Step 7b: Create Deliverable 3 entity (parallel branch B)
+        - step_id: create_deliverable_3
+          step_type: create
+          create_config:
+            entity_table: Deliverable
+            parent_fk_column: ProjectID
+            attributes:
+              - attribute_name: DeliverableName
+                value: Infrastructure Implementation
+          next_steps:
+            - process_deliverable_3
+
+        # Step 8a: Process Deliverable 2 - Design (~4 weeks)
+        - step_id: process_deliverable_2
+          step_type: event
+          event_config:
+            entity_table: Deliverable
+            duration:
+              formula: NORM(28, 7)
+              time_unit: days
+            resource_requirements:
+              - resource_table: Consultant
+                value: Senior
+                count: 1
+                queue: ProjectQueue
+              - resource_table: Consultant
+                value: Mid
+                count: 1
+                queue: ProjectQueue
+            bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - create_deliverable_4
+
+        # Step 8b: Process Deliverable 3 - Infrastructure Implementation (~4 weeks)
+        - step_id: process_deliverable_3
+          step_type: event
+          event_config:
+            entity_table: Deliverable
+            duration:
+              formula: NORM(28, 7)
+              time_unit: days
+            resource_requirements:
+              - resource_table: Consultant
+                value: Mid
+                count: 1
+                queue: ProjectQueue
+              - resource_table: Consultant
+                value: Junior
+                count: 2
+                queue: ProjectQueue
+            bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - create_deliverable_4
+
+        # Step 9: Create Deliverable 4 entity (after BOTH Design + Infrastructure converge)
+        - step_id: create_deliverable_4
+          step_type: create
+          create_config:
+            entity_table: Deliverable
+            parent_fk_column: ProjectID
+            attributes:
+              - attribute_name: DeliverableName
+                value: Coding and Unit Test
+          next_steps:
+            - process_deliverable_4
+
+        # Step 10: Process Deliverable 4 - Coding and Unit Test (~4 weeks)
+        - step_id: process_deliverable_4
+          step_type: event
+          event_config:
+            entity_table: Deliverable
+            duration:
+              formula: NORM(28, 7)
+              time_unit: days
+            resource_requirements:
+              - resource_table: Consultant
+                value: Mid
+                count: 2
+                queue: ProjectQueue
+              - resource_table: Consultant
+                value: Junior
+                count: 3
+                queue: ProjectQueue
+            bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - trigger_expenses
+            - create_deliverable_5
+
+        # Step 11: Generate project expenses during coding phase
+        - step_id: trigger_expenses
+          step_type: trigger
+          trigger_config:
+            target_table: ProjectExpense
+            count: UNIF(2, 8)
+            fk_column: ProjectID
+          next_steps:
+            - release_expenses
+
+        - step_id: release_expenses
+          step_type: release
+
+        # Step 12: Create Deliverable 5 entity
+        - step_id: create_deliverable_5
+          step_type: create
+          create_config:
+            entity_table: Deliverable
+            parent_fk_column: ProjectID
+            attributes:
+              - attribute_name: DeliverableName
+                value: System Test
+          next_steps:
+            - process_deliverable_5
+
+        # Step 13: Process Deliverable 5 - System Test (~4 weeks)
+        - step_id: process_deliverable_5
+          step_type: event
+          event_config:
+            entity_table: Deliverable
+            duration:
+              formula: NORM(28, 7)
+              time_unit: days
+            resource_requirements:
+              - resource_table: Consultant
+                value: Senior
+                count: 1
+                queue: ProjectQueue
+              - resource_table: Consultant
+                value: Junior
+                count: 2
+                queue: ProjectQueue
+            bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - mark_complete
+
+        # Step 14: Mark project as complete
+        - step_id: mark_complete
+          step_type: assign
+          assign_config:
+            assignments:
+              - assignment_type: attribute
+                attribute_name: ProjectStatus
+                value: Complete
+          next_steps:
+            - release_project
+
+        # Step 15: Release all resources
+        - step_id: release_project
           step_type: release
