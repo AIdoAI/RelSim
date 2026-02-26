@@ -9,7 +9,7 @@ id,ConsultantID,TitleID,StartDate,EndDate,Salary,event_type
 8,3,4,2025-07-01,2025-12-01,157873.53,title_assignment
 9,4,1,2024-01-01,2025-05-01,107828.94,title_assignment
 10,4,2,2025-05-01,,125855.88,title_assignment
-11,5,1,2020-03-01,2021-11-01,80000.0,title_assignment
+11,5,1,2020-03-01,2021-11-01,80000,title_assignment
 12,5,2,2021-11-01,,113931.09,title_assignment
 13,6,4,2023-04-01,2024-09-01,132384.3,title_assignment
 14,6,5,2024-09-01,,165411.07,title_assignment
@@ -41,7 +41,7 @@ id,ConsultantID,TitleID,StartDate,EndDate,Salary,event_type
 40,19,4,2023-02-01,2024-05-01,165616.81,title_assignment
 41,20,1,2023-01-01,2023-09-01,97912.74,title_assignment
 42,21,2,2020-09-01,2021-07-01,101717.97,title_assignment
-43,21,3,2021-07-01,2023-04-01,145676.0,title_assignment
+43,21,3,2021-07-01,2023-04-01,145676,title_assignment
 44,21,4,2023-04-01,,156061.37,title_assignment
 45,22,6,2024-12-01,,198314.28,title_assignment
 46,23,6,2023-06-01,,186702.44,title_assignment
@@ -95,6 +95,6 @@ id,ConsultantID,TitleID,StartDate,EndDate,Salary,event_type
 94,56,4,2024-07-01,,194997.42,title_assignment
 95,57,5,2021-11-01,,184040.03,title_assignment
 96,58,1,2021-10-01,,93102.98,title_assignment
-97,59,3,2021-11-01,,120000.0,title_assignment
+97,59,3,2021-11-01,,120000,title_assignment
 98,60,5,2020-08-01,2021-10-01,213222.43,title_assignment
 99,60,6,2021-10-01,,215277.08,title_assignment
