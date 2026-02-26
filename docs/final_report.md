@@ -99,3 +99,119 @@ The simulation database is located at:
 | `export_to_csv.py` | Existing | CSV export script |
 | `docs/final_report.md` | **Modified** | This report |
 | `output/csv/*.csv` | **Modified** | 16 exported CSV files |
+
+## 8. Simulation Output Summary
+
+The simulation ran over a 5-year period (January 2020 – December 2025) and produced the following results.
+
+### 8.1 Project Generation
+
+| Metric | Value |
+|--------|-------|
+| Total projects created | **75** |
+| Project date range | Jan 15, 2020 – Dec 26, 2024 |
+| Average interarrival | ~24 days |
+| Projects still In Progress | 75 (all active at simulation end) |
+
+**Project Type Distribution:**
+
+| Type | Count | Percentage |
+|------|-------|------------|
+| Fixed-Price | 38 | 50.7% |
+| Time & Materials | 37 | 49.3% |
+
+**Top 5 Clients by Project Count:**
+
+| Client | Projects |
+|--------|----------|
+| Mosciski Group | 7 |
+| Brekke, Johnston and Beer | 6 |
+| West, Bins and Nienow | 5 |
+| Walter Group | 4 |
+| Stroman - Will | 4 |
+
+### 8.2 Deliverable Generation
+
+| Metric | Value |
+|--------|-------|
+| Total deliverables | **75** |
+| Deliverables per project | 1 (first phase reached per project) |
+
+**Deliverable Phase Distribution:**
+
+| Phase | Count |
+|-------|-------|
+| Project Plan Development | 21 |
+| Coding and Unit Test | 17 |
+| Infrastructure Implementation | 14 |
+| Design | 13 |
+| System Test | 10 |
+
+### 8.3 Billing Rates
+
+| Metric | Value |
+|--------|-------|
+| Total billing rate records | **450** (6 per project × 75 projects) |
+| Average rate | $277.46/hr |
+| Minimum rate | $112.94/hr |
+| Maximum rate | $467.64/hr |
+
+### 8.4 Resource Allocation
+
+| Metric | Value |
+|--------|-------|
+| Consultant-Deliverable mappings | **146** |
+| Total consultants | 60 |
+
+**Consultant Distribution by Resource Type:**
+
+| Resource Type | Count |
+|---------------|-------|
+| Junior | 19 |
+| Mid | 16 |
+| Senior | 15 |
+| Lead | 5 |
+| Executive | 4 |
+| Principal | 1 |
+
+### 8.5 Simulation Engine Metrics
+
+| Table | Records | Description |
+|-------|---------|-------------|
+| sim_event_processing | 73 | Simulation event log |
+| sim_resource_allocations | 146 | Resource assignment records |
+| sim_queue_activity | 300 | Queue wait/service tracking |
+
+## 9. Limitations & Future Work
+
+### 9.1 Consultant_Title_History (Not Yet Populated)
+The `Consultant_Title_History` table is currently empty (0 rows). This table requires complex **promotion-chain logic** that cannot be expressed in RelSim's declarative YAML:
+- Each consultant should have 1–3 title records depending on promotions (0–2 promotions per consultant)
+- Dates must be sequential, always on the 1st of the month
+- Salary follows a title-dependent normal distribution
+- A post-processing script (`python/generate_title_history.py`) has been written but needs to be run **after** database generation
+
+**Improvement**: Integrate the title history generation into the simulation flow itself using a custom `trigger` step, or enhance RelSim to support multi-row generator logic with conditional chaining.
+
+### 9.2 ProjectExpense (0 Records Generated)
+The `trigger_expenses` step was defined in the simulation flow but produced 0 records. This is likely because the trigger fires on a parallel branch (`trigger_expenses → release_expenses`) that exits the flow early, and the `ProjectExpense` entity generator requires a valid parent FK context.
+
+**Improvement**: Restructure the expense trigger to fire sequentially before the final deliverable phase, or use a post-simulation SQL script to populate expenses from the completed projects.
+
+### 9.3 Deliverable_Title_Plan_Mapping & Deliverable_Progress_Month (0 Records)
+These bridge tables are defined in the schema but not referenced by any simulation step. They were intended for:
+- **Deliverable_Title_Plan_Mapping**: Planned hours per title level for each deliverable
+- **Deliverable_Progress_Month**: Monthly progress tracking (percentage complete)
+
+**Improvement**: Add `trigger` steps to the simulation flow to populate these tables when each deliverable is created and as each deliverable progresses through phases.
+
+### 9.4 Project Status (All "In Progress")
+All 75 projects show status "In Progress" — none reached the "Complete" state. This indicates the simulation's 5-year time window (1825 days) was insufficient for all projects to complete the full 5-deliverable pipeline (each ~4 weeks × 5 phases = ~20 weeks minimum), or the resource pool was too constrained.
+
+**Improvement**: Either extend the simulation time window, increase resource capacity, or reduce deliverable durations to allow more projects to reach completion.
+
+### 9.5 Additional Enhancements
+- **BusinessUnit diversity**: Only 4 of 5 business units (Energy, Government, Healthcare, Media & Entertainment) were generated due to `DISC` distribution randomness. Consider using deterministic assignment for the 5-row table.
+- **Deliverable counts per project**: Currently each project only reaches 1 deliverable on average. The parent-child create pattern should be validated to ensure all 5 deliverables are spawned per project.
+- **Richer consultant allocation**: Add skill-based matching between consultant expertise and deliverable requirements.
+- **Financial modeling**: Add formula-based attributes for actual cost calculation using billing rates × hours from `Consultant_Deliverable_Mapping`.
