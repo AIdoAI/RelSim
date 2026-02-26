@@ -225,21 +225,8 @@ event_simulation:
                 queue: ProjectQueue
             bridge_table: Consultant_Deliverable_Mapping
           next_steps:
-            - trigger_expenses
             - create_deliverable_5
 
-        # Step 11: Generate project expenses during coding phase
-        - step_id: trigger_expenses
-          step_type: trigger
-          trigger_config:
-            target_table: ProjectExpense
-            count: UNIF(2, 8)
-            fk_column: ProjectID
-          next_steps:
-            - release_expenses
-
-        - step_id: release_expenses
-          step_type: release
 
         # Step 12: Create Deliverable 5 entity
         - step_id: create_deliverable_5
@@ -271,6 +258,16 @@ event_simulation:
                 count: 2
                 queue: ProjectQueue
             bridge_table: Consultant_Deliverable_Mapping
+          next_steps:
+            - trigger_expenses
+
+        # Step 12: Generate project expenses after all deliverables complete
+        - step_id: trigger_expenses
+          step_type: trigger
+          trigger_config:
+            target_table: ProjectExpense
+            count: UNIF(2, 8)
+            fk_column: ProjectID
           next_steps:
             - mark_complete
 

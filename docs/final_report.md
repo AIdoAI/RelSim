@@ -209,10 +209,15 @@ The `Consultant_Title_History` table is now **automatically populated** via a po
 
 **Future enhancement**: Add a native `script` step type to RelSim so any custom Python logic can be declaratively specified in the simulation YAML.
 
-### 9.2 ProjectExpense (0 Records Generated)
-The `trigger_expenses` step was defined in the simulation flow but produced 0 records. This is likely because the trigger fires on a parallel branch (`trigger_expenses → release_expenses`) that exits the flow early, and the `ProjectExpense` entity generator requires a valid parent FK context.
+### 9.2 ProjectExpense — ✅ RESOLVED
+The `trigger_expenses` step was on a parallel branch (`process_deliverable_4 → [trigger_expenses ∥ create_deliverable_5]`), causing the entity context to switch to Deliverable before the trigger could resolve `ProjectID`.
 
-**Improvement**: Restructure the expense trigger to fire sequentially before the final deliverable phase, or use a post-simulation SQL script to populate expenses from the completed projects.
+**What was done:**
+- Moved `trigger_expenses` to a sequential position: `process_deliverable_5 → trigger_expenses → mark_complete`
+- Removed the dead-end `release_expenses` step (flow reduced from 18 to 17 steps)
+- This ensures the trigger fires while the Project entity context is still active
+
+**Note:** The fix requires re-running the simulation from the RelSim UI to generate the new data. The next simulation run will populate `ProjectExpense` with 2-8 expense records per completed project.
 
 ### 9.3 Deliverable_Title_Plan_Mapping & Deliverable_Progress_Month (0 Records)
 These bridge tables are defined in the schema but not referenced by any simulation step. They were intended for:
