@@ -24,7 +24,7 @@ This project implements a **13-table relational database simulation** for a Cons
 | **Deliverable** | 75 | Child entities of Project — one per project phase |
 | **Consultant_Deliverable_Mapping** | 146 | Resource allocation records linking consultants to deliverables |
 | **ProjectExpense** | 0 | Expense records (Travel, Software, Equipment, etc.) |
-| **Consultant_Title_History** | 0 | Promotion chain records (populated via post-processing script) |
+| **Consultant_Title_History** | 99 | Promotion chain records (auto-populated via post-simulation hook) |
 | **Deliverable_Title_Plan_Mapping** | 0 | Planned hours per title per deliverable |
 | **Deliverable_Progress_Month** | 0 | Monthly progress tracking records |
 
@@ -182,16 +182,32 @@ The simulation ran over a 5-year period (January 2020 – December 2025) and pro
 | sim_resource_allocations | 146 | Resource assignment records |
 | sim_queue_activity | 300 | Queue wait/service tracking |
 
+### 8.6 Consultant Title History
+
+The `Consultant_Title_History` table was populated via the post-simulation hook with **99 records** across 60 consultants:
+
+| Rows per Consultant | Count | Description |
+|---------------------|-------|-------------|
+| 1 row (no promotion) | 30 | 50.0% of consultants |
+| 2 rows (1 promotion) | 21 | 35.0% of consultants |
+| 3 rows (2 promotions) | 9 | 15.0% of consultants |
+
+- **Average records per consultant**: 1.6
+- **Salary range**: ~$80K (Consultant) to ~$240K (Partner)
+- All dates are on the 1st of the month, with sequential promotion chains
+- 75% of final-title records have NULL `EndDate` (still active)
+
 ## 9. Limitations & Future Work
 
-### 9.1 Consultant_Title_History (Not Yet Populated)
-The `Consultant_Title_History` table is currently empty (0 rows). This table requires complex **promotion-chain logic** that cannot be expressed in RelSim's declarative YAML:
-- Each consultant should have 1–3 title records depending on promotions (0–2 promotions per consultant)
-- Dates must be sequential, always on the 1st of the month
-- Salary follows a title-dependent normal distribution
-- A post-processing script (`python/generate_title_history.py`) has been written but needs to be run **after** database generation
+### 9.1 Consultant_Title_History — ✅ RESOLVED
+The `Consultant_Title_History` table is now **automatically populated** via a post-simulation hook (`_run_post_simulation_hooks` in `runner.py`). The hook detects the presence of the `Consultant_Title_History` table in the database config and calls `populate_title_history()` from `generate_title_history.py`.
 
-**Improvement**: Integrate the title history generation into the simulation flow itself using a custom `trigger` step, or enhance RelSim to support multi-row generator logic with conditional chaining.
+**What was done:**
+- Fixed 3 bugs in `generate_title_history.py` (global variable SyntaxError, datetime/string AttributeError, missing return)
+- Refactored to expose a clean `populate_title_history(db_path)` API
+- Integrated into `python/src/simulation/core/runner.py` as a post-simulation hook
+
+**Future enhancement**: Add a native `script` step type to RelSim so any custom Python logic can be declaratively specified in the simulation YAML.
 
 ### 9.2 ProjectExpense (0 Records Generated)
 The `trigger_expenses` step was defined in the simulation flow but produced 0 records. This is likely because the trigger fires on a parallel branch (`trigger_expenses → release_expenses`) that exits the flow early, and the `ProjectExpense` entity generator requires a valid parent FK context.

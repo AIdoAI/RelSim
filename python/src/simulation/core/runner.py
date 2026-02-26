@@ -76,8 +76,54 @@ def run_simulation(sim_config_path_or_content: Union[str, Path],
     simulator = EventSimulator(config=sim_config, db_config=db_config, db_path=db_path)
     results = simulator.run()
     
+    # Post-simulation hooks: run any post-processing that cannot be
+    # expressed in the declarative YAML (e.g., multi-row conditional chaining)
+    _run_post_simulation_hooks(db_path, db_config)
+    
     logger.info(f"Simulation completed: {results}")
     return results
+
+
+def _run_post_simulation_hooks(db_path, db_config=None):
+    """
+    Run post-simulation processing hooks.
+    
+    Currently handles:
+    - Consultant_Title_History: complex promotion-chain logic (1-3 rows
+      per consultant with sequential dates and title-dependent salaries)
+    """
+    # Check if the database has a Consultant_Title_History table
+    if db_config:
+        entity_names = [e.name for e in db_config.entities]
+        if 'Consultant_Title_History' in entity_names:
+            try:
+                # Import lazily to avoid circular dependencies
+                import sys
+                from pathlib import Path
+                
+                # Add the python directory to path if needed
+                python_dir = str(Path(__file__).resolve().parent.parent.parent)
+                if python_dir not in sys.path:
+                    sys.path.insert(0, python_dir)
+                
+                from generate_title_history import populate_title_history
+                
+                logger.info("Running post-simulation hook: Consultant_Title_History")
+                count = populate_title_history(str(db_path))
+                if count > 0:
+                    logger.info(f"Post-simulation hook: generated {count} title history records")
+                elif count == 0:
+                    logger.warning("Post-simulation hook: no title history records generated")
+                else:
+                    logger.error("Post-simulation hook: title history generation failed")
+            except ImportError:
+                logger.warning(
+                    "Post-simulation hook: generate_title_history module not found. "
+                    "Consultant_Title_History will remain empty. "
+                    "Run 'python generate_title_history.py' manually."
+                )
+            except Exception as e:
+                logger.error(f"Post-simulation hook error: {e}")
 
 def run_simulation_from_config_dir(sim_config_dir: Union[str, Path],
                                    db_config_path_or_content: Union[str, Path],
