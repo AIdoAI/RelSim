@@ -1,304 +1,266 @@
 DeliverableID,ProjectID,DeliverableName,PlannedStartDate,PlannedEndDate,ActualStartDate,ActualEndDate,created_at,ProjectStatus
 1,1,Project Plan Development,,,,,2020-01-15 01:52:22.889220,
-2,2,Infrastructure Implementation,,,,,2020-02-11 11:11:29.988607,
-3,3,Infrastructure Implementation,,,,,2020-03-10 20:34:43.293756,
-4,4,System Test,,,,,2020-04-07 22:01:06.483279,
-5,5,Project Plan Development,,,,,2020-04-14 01:10:41.733204,
-6,6,Coding and Unit Test,,,,,2020-04-18 14:32:41.732355,
-7,7,Infrastructure Implementation,,,,,2020-04-29 18:44:11.536619,
-8,8,System Test,,,,,2020-06-12 23:56:14.330360,
-9,9,Project Plan Development,,,,,2020-08-31 15:30:04.952963,
-10,10,Project Plan Development,,,,,2020-09-17 08:34:58.492567,
-11,11,Coding and Unit Test,,,,,2020-10-23 18:43:31.936642,
-12,12,Design,,,,,2020-10-28 11:25:39.928317,
-13,13,Coding and Unit Test,,,,,2020-10-31 07:33:38.707957,
-14,14,Project Plan Development,,,,,2020-12-05 12:59:37.579412,
-15,15,Design,,,,,2020-12-17 23:06:26.132843,
-16,16,Coding and Unit Test,,,,,2020-12-18 02:45:39.073681,
-17,17,System Test,,,,,2021-01-19 06:27:59.116617,
-18,18,System Test,,,,,2021-01-25 18:51:40.125300,
-19,19,Coding and Unit Test,,,,,2021-02-19 04:45:06.408720,
-20,20,Project Plan Development,,,,,2021-03-01 14:59:47.331141,
-21,21,Project Plan Development,,,,,2021-03-04 14:03:27.464714,
-22,22,Project Plan Development,,,,,2021-03-17 23:35:55.847461,
-23,23,Infrastructure Implementation,,,,,2021-07-07 16:33:35.614011,
-24,24,Project Plan Development,,,,,2021-07-16 07:55:27.137827,
-25,25,Coding and Unit Test,,,,,2021-07-20 00:45:29.114513,
-26,26,Design,,,,,2021-08-17 17:35:53.660624,
-27,27,System Test,,,,,2021-09-05 02:55:35.545365,
-28,28,System Test,,,,,2021-10-25 15:47:18.617399,
-29,29,Infrastructure Implementation,,,,,2021-11-08 14:45:50.837203,
-30,30,Project Plan Development,,,,,2021-11-20 04:29:37.061822,
-31,31,Coding and Unit Test,,,,,2022-01-06 05:35:39.580667,
-32,32,Design,,,,,2022-02-11 10:47:03.939192,
-33,33,Coding and Unit Test,,,,,2022-02-11 19:00:20.923001,
-34,34,Design,,,,,2022-02-19 09:13:29.642562,
-35,35,Infrastructure Implementation,,,,,2022-02-20 18:42:47.351401,
-36,36,System Test,,,,,2022-06-10 17:29:03.988980,
-37,37,Design,,,,,2022-08-04 09:27:40.589430,
-38,38,Infrastructure Implementation,,,,,2022-10-30 06:42:17.591440,
-39,39,Infrastructure Implementation,,,,,2022-11-21 07:37:27.810930,
-40,40,Design,,,,,2023-01-02 12:42:20.728232,
-41,41,Coding and Unit Test,,,,,2023-03-03 00:34:01.276661,
-42,42,Project Plan Development,,,,,2023-03-07 03:54:33.046156,
-43,43,Design,,,,,2023-03-16 23:01:25.769648,
-44,44,Infrastructure Implementation,,,,,2023-03-19 12:26:11.525183,
-45,45,Infrastructure Implementation,,,,,2023-04-29 19:19:16.938674,
-46,46,Project Plan Development,,,,,2023-05-06 22:21:44.515810,
-47,47,Project Plan Development,,,,,2023-05-11 00:37:52.771973,
-48,48,Coding and Unit Test,,,,,2023-05-16 06:45:00.127854,
-49,49,Project Plan Development,,,,,2023-05-25 05:30:29.144373,
-50,50,Infrastructure Implementation,,,,,2023-06-10 20:29:31.818154,
-51,51,Coding and Unit Test,,,,,2023-06-22 12:39:56.836524,
-52,52,Design,,,,,2023-06-26 12:13:49.216964,
-53,53,System Test,,,,,2023-07-29 08:03:50.969293,
-54,54,Project Plan Development,,,,,2023-08-06 06:19:07.609637,
-55,55,Coding and Unit Test,,,,,2023-08-29 03:15:24.329700,
-56,56,Coding and Unit Test,,,,,2023-10-19 18:57:30.571199,
-57,57,Coding and Unit Test,,,,,2023-10-25 19:14:50.674746,
-58,58,Project Plan Development,,,,,2024-01-14 12:02:20.961849,
-59,59,Project Plan Development,,,,,2024-05-19 04:14:39.941650,
-60,60,Infrastructure Implementation,,,,,2024-08-02 21:28:14.775839,
-61,61,Infrastructure Implementation,,,,,2024-08-28 23:04:49.754610,
-62,62,Project Plan Development,,,,,2024-09-05 00:42:52.311355,
-63,63,Coding and Unit Test,,,,,2024-12-01 15:46:15.461769,
-64,64,System Test,,,,,2024-12-04 22:55:29.725664,
-65,65,Design,,,,,2024-12-11 20:05:17.445236,
-66,66,System Test,,,,,2024-12-26 03:55:00.627854,
-67,67,Design,,,,,2024-12-26 20:16:45.355780,
-68,68,Project Plan Development,,,,,2020-01-15 01:52:22.889220,
-69,36,Infrastructure Implementation,,,,,2020-02-08 01:52:52.164972,
-70,69,Infrastructure Implementation,,,,,2020-02-11 11:11:29.988607,
-71,70,Project Plan Development,,,,,2020-02-15 23:21:37.887069,
-72,70,Design,,,,,2020-02-29 14:38:06.864702,
-73,12,Infrastructure Implementation,,,,,2020-03-07 13:39:54.317236,
-74,55,System Test,,,,,2020-03-11 07:43:28.139734,
-75,5,Project Plan Development,,,,,2020-03-19 18:05:42.824602,Complete
-76,4,Project Plan Development,,,,,2020-04-09 20:27:20.593283,
-77,12,System Test,,,,,2020-04-12 05:07:11.238720,
-78,28,System Test,,,,,2020-04-29 03:07:34.898372,Complete
-79,30,Design,,,,,2020-04-30 18:55:45.777919,Complete
-80,71,Coding and Unit Test,,,,,2020-05-15 04:24:56.647839,
-81,72,Project Plan Development,,,,,2020-06-14 15:08:09.866175,
-82,26,Infrastructure Implementation,,,,,2020-07-05 18:57:41.422032,
-83,70,System Test,,,,,2020-07-14 10:59:36.094789,
-84,54,Infrastructure Implementation,,,,,2020-07-31 00:30:53.072116,
-85,29,System Test,,,,,2020-08-09 10:25:06.123996,
-86,58,Infrastructure Implementation,,,,,2020-08-21 10:04:52.314355,Complete
-87,73,Design,,,,,2020-08-21 13:23:26.813125,
-88,74,Infrastructure Implementation,,,,,2020-09-11 12:19:29.701419,
-89,55,System Test,,,,,2020-09-16 06:17:00.369137,Complete
-90,44,Design,,,,,2020-09-23 19:42:55.911294,
-91,75,Coding and Unit Test,,,,,2020-09-26 04:22:30.654362,
-92,28,Coding and Unit Test,,,,,2020-10-07 05:48:37.570124,
-93,44,Coding and Unit Test,,,,,2020-10-27 11:58:44.804930,
-94,14,System Test,,,,,2020-10-29 23:36:44.254087,
-95,12,System Test,,,,,2020-10-30 22:00:51.104561,
-96,76,Infrastructure Implementation,,,,,2020-11-10 14:08:23.855847,
-97,46,Project Plan Development,,,,,2020-11-24 06:10:41.268923,
-98,77,System Test,,,,,2020-11-25 04:16:12.543847,
-99,34,Coding and Unit Test,,,,,2020-11-26 02:45:28.985292,Complete
-100,6,Coding and Unit Test,,,,,2020-12-03 02:23:29.231256,Complete
-101,59,Design,,,,,2020-12-10 04:56:24.667484,
-102,69,Infrastructure Implementation,,,,,2020-12-16 14:16:36.237011,Complete
-103,16,Design,,,,,2020-12-23 08:17:26.505236,
-104,78,Project Plan Development,,,,,2021-01-04 16:17:41.315580,
-105,71,Coding and Unit Test,,,,,2021-01-08 10:32:18.889141,
-106,79,System Test,,,,,2021-01-14 03:42:28.313990,
-107,47,Project Plan Development,,,,,2021-01-16 14:28:02.478965,
-108,74,Project Plan Development,,,,,2021-01-25 03:41:03.813762,Complete
-109,25,System Test,,,,,2021-02-03 21:40:46.816798,
-110,80,Design,,,,,2021-02-09 14:16:40.717267,
-111,30,System Test,,,,,2021-02-12 20:14:22.955962,Complete
-112,38,Design,,,,,2021-02-14 05:30:53.368325,
-113,81,Design,,,,,2021-02-19 12:39:29.063315,
-114,13,Project Plan Development,,,,,2021-03-05 08:33:22.245223,
-115,49,System Test,,,,,2021-03-09 13:05:19.558321,
-116,36,Coding and Unit Test,,,,,2021-03-13 10:58:11.261196,
-117,59,Infrastructure Implementation,,,,,2021-03-23 19:47:00.306639,
-118,47,Project Plan Development,,,,,2021-04-01 21:29:54.800610,Complete
-119,82,Design,,,,,2021-04-07 07:00:59.097867,
-120,46,Project Plan Development,,,,,2021-04-11 20:40:48.545866,Complete
-121,27,System Test,,,,,2021-04-18 16:59:34.605031,
-122,35,Infrastructure Implementation,,,,,2021-04-19 23:28:06.615503,
-123,10,System Test,,,,,2021-05-05 18:43:05.029368,
-124,83,Infrastructure Implementation,,,,,2021-05-08 17:15:56.355434,
-125,69,System Test,,,,,2021-05-20 19:42:52.514621,Complete
-126,32,System Test,,,,,2021-06-01 15:19:15.037800,Complete
-127,21,Design,,,,,2021-06-07 23:22:04.261765,
-128,60,Project Plan Development,,,,,2021-06-14 09:13:07.660915,
-129,84,System Test,,,,,2021-07-08 00:44:53.404515,
-130,82,Coding and Unit Test,,,,,2021-07-13 09:31:22.494939,Complete
-131,85,Project Plan Development,,,,,2021-07-19 23:45:06.159720,
-132,42,Coding and Unit Test,,,,,2021-07-23 04:10:08.839851,
-133,8,Project Plan Development,,,,,2021-07-28 14:48:01.066477,
-134,86,Infrastructure Implementation,,,,,2021-07-29 18:51:58.883212,
-135,41,Infrastructure Implementation,,,,,2021-08-17 05:40:33.555952,
-136,87,Project Plan Development,,,,,2021-08-18 15:59:00.250833,
-137,9,Project Plan Development,,,,,2021-08-19 23:31:30.865548,
-138,28,Project Plan Development,,,,,2021-08-21 06:34:45.087087,
-139,73,System Test,,,,,2021-08-26 03:11:47.899082,Complete
-140,41,Project Plan Development,,,,,2021-08-30 11:03:41.906847,
-141,88,Infrastructure Implementation,,,,,2021-09-01 04:47:09.878463,
-142,51,Design,,,,,2021-09-11 03:40:16.398746,
-143,83,Project Plan Development,,,,,2021-09-12 06:08:46.818732,
-144,59,Design,,,,,2021-09-23 01:35:56.690588,Complete
-145,89,Project Plan Development,,,,,2021-09-25 14:36:51.772040,
-146,18,Project Plan Development,,,,,2021-09-25 23:44:16.939768,
-147,32,Coding and Unit Test,,,,,2021-09-29 09:01:21.520265,Complete
-148,72,Design,,,,,2021-10-07 00:08:34.320436,Complete
-149,69,Coding and Unit Test,,,,,2021-10-19 10:44:08.463352,
-150,34,Coding and Unit Test,,,,,2021-10-28 02:34:38.027733,
-151,75,Project Plan Development,,,,,2021-10-29 17:49:15.404458,
-152,55,System Test,,,,,2021-11-13 08:02:11.668125,
-153,75,System Test,,,,,2021-11-13 16:21:52.533294,Complete
-154,52,Project Plan Development,,,,,2021-11-28 17:01:22.625749,Complete
-155,47,Project Plan Development,,,,,2021-12-10 16:52:41.976904,Complete
-156,90,Coding and Unit Test,,,,,2021-12-14 04:27:17.049028,
-157,91,Project Plan Development,,,,,2021-12-14 07:47:51.145328,
-158,92,Infrastructure Implementation,,,,,2021-12-20 03:31:00.417644,
-159,15,Project Plan Development,,,,,2021-12-31 15:59:24.766365,
-160,93,Project Plan Development,,,,,2022-01-08 07:26:33.193865,
-161,94,Design,,,,,2022-01-17 18:46:08.893741,
-162,9,Project Plan Development,,,,,2022-01-19 05:03:37.675199,
-163,50,Infrastructure Implementation,,,,,2022-01-24 18:53:23.761686,
-164,95,Coding and Unit Test,,,,,2022-01-27 07:38:24.708462,
-165,60,Infrastructure Implementation,,,,,2022-01-28 09:45:42.682633,
-166,68,Coding and Unit Test,,,,,2022-01-30 16:41:01.367734,
-167,33,Project Plan Development,,,,,2022-02-14 20:33:25.858986,
-168,71,Infrastructure Implementation,,,,,2022-02-24 11:20:13.480955,
-169,2,Design,,,,,2022-02-25 13:31:07.327177,Complete
-170,88,Coding and Unit Test,,,,,2022-02-26 03:01:07.521377,
-171,93,Coding and Unit Test,,,,,2022-02-27 04:54:12.830605,
-172,96,Project Plan Development,,,,,2022-03-08 12:06:30.030841,
-173,35,System Test,,,,,2022-03-11 23:25:21.787045,
-174,83,Coding and Unit Test,,,,,2022-03-13 20:06:53.427245,Complete
-175,44,Design,,,,,2022-03-16 07:10:03.268874,Complete
-176,15,System Test,,,,,2022-03-19 02:37:42.298533,
-177,38,Project Plan Development,,,,,2022-03-27 19:45:43.874788,
-178,56,Coding and Unit Test,,,,,2022-04-09 20:22:52.515440,
-179,97,Design,,,,,2022-04-13 02:21:05.371527,
-180,1,Project Plan Development,,,,,2022-04-14 16:37:41.050558,Complete
-181,93,System Test,,,,,2022-04-15 16:54:01.410575,Complete
-182,93,Coding and Unit Test,,,,,2022-04-27 17:04:26.450678,Complete
-183,34,System Test,,,,,2022-05-04 01:19:26.479390,
-184,65,Coding and Unit Test,,,,,2022-05-08 04:16:48.525937,
-185,98,Project Plan Development,,,,,2022-05-12 17:22:30.668099,
-186,99,Coding and Unit Test,,,,,2022-05-16 20:42:33.116090,
-187,82,Infrastructure Implementation,,,,,2022-05-27 02:50:55.026058,
-188,65,Coding and Unit Test,,,,,2022-05-29 12:33:54.968895,Complete
-189,78,System Test,,,,,2022-06-17 15:05:49.036271,
-190,26,Design,,,,,2022-06-18 16:09:18.354604,
-191,20,Coding and Unit Test,,,,,2022-06-20 10:30:47.927811,Complete
-192,48,System Test,,,,,2022-07-15 05:27:06.531137,
-193,98,System Test,,,,,2022-07-21 21:56:32.024513,
-194,21,Coding and Unit Test,,,,,2022-08-09 19:49:54.750180,Complete
-195,70,Coding and Unit Test,,,,,2022-08-23 20:50:18.383861,Complete
-196,100,Design,,,,,2022-09-13 01:23:12.825079,
-197,101,Project Plan Development,,,,,2022-09-16 09:12:05.228778,
-198,63,Coding and Unit Test,,,,,2022-10-04 22:09:55.294689,
-199,3,Infrastructure Implementation,,,,,2022-10-07 03:53:47.914671,
-200,15,System Test,,,,,2022-10-28 15:07:00.445727,
-201,47,Project Plan Development,,,,,2022-10-29 05:14:35.720621,
-202,40,Design,,,,,2022-11-22 16:51:51.463467,Complete
-203,102,Infrastructure Implementation,,,,,2022-11-22 22:40:39.655069,
-204,31,System Test,,,,,2022-11-30 21:40:31.865603,Complete
-205,73,Design,,,,,2022-12-20 04:58:18.618565,
-206,103,Design,,,,,2022-12-31 21:53:16.176165,
-207,104,Project Plan Development,,,,,2023-01-09 20:52:10.778224,
-208,98,Project Plan Development,,,,,2023-01-22 19:27:19.955185,
-209,105,System Test,,,,,2023-01-31 20:59:18.489578,
-210,17,Infrastructure Implementation,,,,,2023-02-01 06:01:50.468470,
-211,106,Project Plan Development,,,,,2023-02-03 19:59:06.262104,
-212,22,System Test,,,,,2023-02-12 19:10:44.163463,
-213,34,Infrastructure Implementation,,,,,2023-02-13 05:47:34.563092,Complete
-214,68,System Test,,,,,2023-02-23 19:23:56.568407,
-215,78,System Test,,,,,2023-03-04 08:15:46.895423,
-216,55,Coding and Unit Test,,,,,2023-03-07 23:48:32.020478,
-217,28,Design,,,,,2023-03-12 00:21:18.361619,
-218,70,Project Plan Development,,,,,2023-03-19 20:02:34.391782,
-219,97,Design,,,,,2023-03-25 19:23:51.676966,
-220,94,Coding and Unit Test,,,,,2023-04-09 10:17:27.517170,Complete
-221,89,System Test,,,,,2023-04-14 00:29:16.768839,Complete
-222,26,System Test,,,,,2023-04-24 17:13:49.969116,Complete
-223,107,Project Plan Development,,,,,2023-04-25 00:28:37.337024,
-224,86,Infrastructure Implementation,,,,,2023-05-02 22:13:20.337226,Complete
-225,108,Design,,,,,2023-05-23 07:03:05.997418,
-226,67,Design,,,,,2023-06-04 22:42:37.044726,
-227,58,System Test,,,,,2023-06-16 04:30:32.042098,
-228,16,Infrastructure Implementation,,,,,2023-07-03 16:56:43.655188,
-229,32,Infrastructure Implementation,,,,,2023-07-19 01:16:06.772488,
-230,29,Project Plan Development,,,,,2023-08-09 02:49:56.015840,Complete
-231,9,Coding and Unit Test,,,,,2023-08-14 07:57:52.763317,Complete
-232,109,Design,,,,,2023-10-12 11:24:36.603402,
-233,110,Project Plan Development,,,,,2023-10-17 05:21:31.995232,
-234,111,Design,,,,,2023-10-20 13:45:52.300783,
-235,112,Coding and Unit Test,,,,,2023-10-23 18:27:40.444388,
-236,113,Project Plan Development,,,,,2023-11-09 10:15:23.294521,
-237,30,Infrastructure Implementation,,,,,2023-11-10 06:39:57.063444,
-238,9,Coding and Unit Test,,,,,2023-11-12 21:08:32.797589,
-239,114,Design,,,,,2023-11-18 10:52:13.503346,
-240,10,Coding and Unit Test,,,,,2023-11-20 13:26:22.685772,
-241,66,Coding and Unit Test,,,,,2023-11-25 21:47:35.167774,
-242,31,Project Plan Development,,,,,2023-11-29 22:13:54.402715,
-243,115,Coding and Unit Test,,,,,2023-12-03 12:04:00.215437,
-244,28,Coding and Unit Test,,,,,2023-12-10 14:24:27.265134,
-245,70,Design,,,,,2023-12-12 07:59:12.562403,
-246,17,Design,,,,,2023-12-15 20:01:43.863177,
-247,93,Coding and Unit Test,,,,,2023-12-19 10:11:24.738425,
-248,113,Project Plan Development,,,,,2023-12-25 00:13:34.925659,
-249,74,Coding and Unit Test,,,,,2023-12-28 08:13:47.654520,
-250,74,System Test,,,,,2023-12-29 02:31:19.815124,Complete
-251,61,Project Plan Development,,,,,2024-01-04 13:09:02.115803,Complete
-252,116,Design,,,,,2024-01-06 16:58:19.546009,
-253,104,System Test,,,,,2024-01-13 13:59:05.452157,
-254,53,System Test,,,,,2024-01-20 21:59:37.300416,Complete
-255,25,Coding and Unit Test,,,,,2024-01-22 00:18:12.757622,
-256,117,Coding and Unit Test,,,,,2024-01-23 16:19:33.381664,
-257,85,Infrastructure Implementation,,,,,2024-01-30 13:57:49.388013,Complete
-258,56,Coding and Unit Test,,,,,2024-02-04 12:46:25.838281,
-259,46,Infrastructure Implementation,,,,,2024-02-09 10:00:57.412153,
-260,55,Infrastructure Implementation,,,,,2024-02-11 17:47:05.412046,Complete
-261,53,Design,,,,,2024-02-16 10:41:43.375148,Complete
-262,60,Design,,,,,2024-02-20 19:53:58.431274,
-263,111,Project Plan Development,,,,,2024-03-04 01:56:59.938808,Complete
-264,94,Infrastructure Implementation,,,,,2024-03-23 22:00:36.733543,
-265,7,Design,,,,,2024-03-27 01:26:15.026512,
-266,118,Project Plan Development,,,,,2024-04-15 19:18:05.395380,
-267,52,System Test,,,,,2024-04-20 19:39:17.716805,Complete
-268,94,Design,,,,,2024-04-25 18:56:47.424610,Complete
-269,119,System Test,,,,,2024-05-05 16:39:38.332711,
-270,120,Project Plan Development,,,,,2024-05-17 17:14:08.331054,
-271,25,Infrastructure Implementation,,,,,2024-05-28 04:57:38.655461,
-272,69,Project Plan Development,,,,,2024-06-02 06:24:19.268987,
-273,121,Infrastructure Implementation,,,,,2024-06-09 13:30:24.805738,
-274,55,Design,,,,,2024-06-16 19:17:47.987615,
-275,24,Coding and Unit Test,,,,,2024-06-29 02:58:05.808990,
-276,36,Infrastructure Implementation,,,,,2024-07-01 20:01:47.421176,
-277,60,Coding and Unit Test,,,,,2024-07-06 22:11:25.722231,
-278,32,Infrastructure Implementation,,,,,2024-07-07 18:10:18.238698,
-279,112,Coding and Unit Test,,,,,2024-07-23 04:00:01.576224,Complete
-280,119,Coding and Unit Test,,,,,2024-07-24 07:05:27.800921,
-281,10,Project Plan Development,,,,,2024-07-26 23:01:50.824150,Complete
-282,122,System Test,,,,,2024-08-07 03:47:36.615596,
-283,13,Coding and Unit Test,,,,,2024-08-13 11:08:20.492326,Complete
-284,7,Coding and Unit Test,,,,,2024-08-15 18:21:35.687479,Complete
-285,84,System Test,,,,,2024-09-05 09:57:47.677313,
-286,123,Infrastructure Implementation,,,,,2024-09-07 01:10:09.901605,
-287,12,Infrastructure Implementation,,,,,2024-09-22 09:05:02.304105,
-288,119,Coding and Unit Test,,,,,2024-09-28 20:52:32.099864,
-289,97,Design,,,,,2024-10-12 09:28:33.561315,Complete
-290,109,Design,,,,,2024-10-18 20:05:28.593691,
-291,124,Project Plan Development,,,,,2024-10-30 10:49:09.149619,
-292,125,Project Plan Development,,,,,2024-11-11 20:44:54.497325,
-293,126,Coding and Unit Test,,,,,2024-11-13 10:32:26.367632,
-294,111,Coding and Unit Test,,,,,2024-11-15 21:14:42.514278,Complete
-295,52,System Test,,,,,2024-11-21 05:56:03.085804,
-296,127,Project Plan Development,,,,,2024-11-26 14:00:32.304837,
-297,128,Infrastructure Implementation,,,,,2024-12-01 04:23:34.443295,
-298,100,System Test,,,,,2024-12-10 20:49:53.096098,
-299,68,Design,,,,,2024-12-11 13:42:26.619590,
-300,117,System Test,,,,,2024-12-20 12:20:36.308814,
-301,74,Infrastructure Implementation,,,,,2024-12-23 16:52:56.543662,
-302,109,Infrastructure Implementation,,,,,2024-12-24 11:43:43.340846,
-303,125,Project Plan Development,,,,,2024-12-26 03:11:15.660841,
+2,1,Infrastructure Implementation,,,,,2020-02-09 01:57:40.629606,
+3,2,Project Plan Development,,,,,2020-02-11 11:11:29.988607,
+4,1,Project Plan Development,,,,,2020-03-02 21:14:12.974517,
+5,1,Design,,,,,2020-03-11 23:55:22.442157,
+6,1,Coding and Unit Test,,,,,2020-04-06 01:22:22.050873,Complete
+7,2,Design,,,,,2020-04-13 01:43:10.308399,
+8,3,System Test,,,,,2020-05-10 16:14:48.749377,
+9,4,Project Plan Development,,,,,2020-05-16 20:55:25.024099,
+10,2,Coding and Unit Test,,,,,2020-05-17 21:10:38.653615,Complete
+11,1,Design,,,,,2020-06-10 20:20:24.639665,
+12,5,System Test,,,,,2020-06-22 07:03:58.468174,
+13,6,Coding and Unit Test,,,,,2020-06-30 14:25:03.769949,
+14,2,System Test,,,,,2020-07-01 02:44:53.853730,
+15,4,Coding and Unit Test,,,,,2020-07-02 10:40:19.564438,
+16,7,System Test,,,,,2020-07-08 05:15:41.826011,
+17,7,Coding and Unit Test,,,,,2020-07-21 12:26:17.473826,
+18,7,Infrastructure Implementation,,,,,2020-07-22 08:57:42.003085,
+19,1,Infrastructure Implementation,,,,,2020-07-31 11:45:53.674560,
+20,7,System Test,,,,,2020-08-06 06:50:18.028930,Complete
+21,7,Coding and Unit Test,,,,,2020-08-11 07:19:50.466305,Complete
+22,2,Project Plan Development,,,,,2020-08-12 14:54:31.564171,
+23,6,Coding and Unit Test,,,,,2020-08-17 23:38:08.950349,
+24,4,Design,,,,,2020-08-18 21:04:00.521640,
+25,3,Infrastructure Implementation,,,,,2020-09-03 16:46:53.874969,Complete
+26,3,Design,,,,,2020-09-11 20:17:37.065389,
+27,2,System Test,,,,,2020-09-14 05:11:05.863502,Complete
+28,2,Project Plan Development,,,,,2020-10-08 10:16:50.753766,Complete
+29,8,Coding and Unit Test,,,,,2020-10-18 05:52:04.331800,
+30,2,System Test,,,,,2020-11-14 11:13:52.697131,
+31,7,Project Plan Development,,,,,2020-12-15 00:07:38.459417,
+32,2,System Test,,,,,2021-01-14 09:24:08.205105,Complete
+33,9,Design,,,,,2021-01-25 07:56:03.647205,
+34,10,Infrastructure Implementation,,,,,2021-02-18 15:36:12.575331,
+35,1,System Test,,,,,2021-02-23 03:13:51.863181,
+36,11,Project Plan Development,,,,,2021-03-03 11:50:14.551921,
+37,12,Project Plan Development,,,,,2021-03-06 06:42:54.825095,
+38,2,Infrastructure Implementation,,,,,2021-03-10 22:35:35.423280,
+39,13,Infrastructure Implementation,,,,,2021-03-13 07:50:33.113918,
+40,11,Coding and Unit Test,,,,,2021-03-26 13:09:36.659854,
+41,10,Project Plan Development,,,,,2021-04-01 12:52:37.828372,
+42,6,System Test,,,,,2021-04-02 12:41:28.961150,
+43,10,Design,,,,,2021-04-06 10:51:53.611152,
+44,4,Project Plan Development,,,,,2021-04-14 02:22:45.908338,
+45,14,System Test,,,,,2021-04-16 10:13:05.740777,
+46,11,Design,,,,,2021-04-17 17:57:29.195142,Complete
+47,4,Infrastructure Implementation,,,,,2021-04-25 17:17:19.496616,
+48,13,Design,,,,,2021-04-29 02:53:36.334119,
+49,5,Coding and Unit Test,,,,,2021-05-07 01:26:14.703657,Complete
+50,2,Project Plan Development,,,,,2021-05-07 21:14:55.251342,
+51,14,Design,,,,,2021-05-10 04:44:55.499851,
+52,15,Infrastructure Implementation,,,,,2021-05-13 14:08:23.312863,
+53,7,Design,,,,,2021-05-20 23:55:33.233647,Complete
+54,5,Project Plan Development,,,,,2021-05-30 08:29:18.220513,Complete
+55,8,Infrastructure Implementation,,,,,2021-06-04 02:02:58.704624,
+56,11,Project Plan Development,,,,,2021-06-12 02:34:20.868030,
+57,14,System Test,,,,,2021-06-13 21:27:37.709478,Complete
+58,6,Project Plan Development,,,,,2021-07-15 19:18:05.759663,
+59,3,Design,,,,,2021-07-20 01:47:50.457269,Complete
+60,16,Project Plan Development,,,,,2021-07-24 07:34:14.265990,
+61,7,Design,,,,,2021-08-25 07:59:49.482915,
+62,9,Project Plan Development,,,,,2021-08-26 20:14:16.942466,Complete
+63,3,Design,,,,,2021-09-19 12:43:58.836276,
+64,17,System Test,,,,,2021-10-06 01:28:53.447509,
+65,18,Design,,,,,2021-10-06 19:16:04.695934,
+66,19,Design,,,,,2021-10-16 23:03:59.499769,
+67,13,System Test,,,,,2021-10-21 23:04:01.936394,Complete
+68,20,Project Plan Development,,,,,2021-10-24 20:48:50.423495,
+69,8,Coding and Unit Test,,,,,2021-10-31 12:31:28.686155,
+70,11,Design,,,,,2021-11-10 05:51:32.541384,
+71,21,Coding and Unit Test,,,,,2021-11-19 21:33:43.975107,
+72,2,Design,,,,,2021-11-19 23:18:05.018404,
+73,11,Coding and Unit Test,,,,,2021-11-30 07:42:50.138622,
+74,13,Infrastructure Implementation,,,,,2021-12-05 22:31:42.128541,
+75,9,Coding and Unit Test,,,,,2021-12-07 18:56:08.167486,
+76,22,System Test,,,,,2021-12-13 04:38:24.216675,
+77,19,Project Plan Development,,,,,2021-12-15 08:35:07.412787,
+78,11,Design,,,,,2021-12-16 09:56:49.238409,Complete
+79,7,Project Plan Development,,,,,2021-12-19 04:38:26.848517,
+80,21,Infrastructure Implementation,,,,,2021-12-27 04:45:21.451985,Complete
+81,23,Infrastructure Implementation,,,,,2021-12-28 23:43:24.077266,
+82,24,Infrastructure Implementation,,,,,2021-12-29 06:47:34.654103,
+83,9,System Test,,,,,2021-12-31 02:14:15.236715,
+84,5,Coding and Unit Test,,,,,2022-01-14 23:34:54.069895,
+85,8,System Test,,,,,2022-01-18 00:20:44.735619,
+86,24,Project Plan Development,,,,,2022-01-18 19:09:31.913850,Complete
+87,18,System Test,,,,,2022-01-21 11:00:33.861722,
+88,18,Coding and Unit Test,,,,,2022-01-21 13:27:27.767771,Complete
+89,9,Infrastructure Implementation,,,,,2022-01-30 08:57:43.623308,
+90,24,System Test,,,,,2022-02-07 16:08:09.656343,
+91,19,System Test,,,,,2022-02-07 23:21:23.726728,Complete
+92,25,Infrastructure Implementation,,,,,2022-02-15 19:50:10.995874,
+93,13,System Test,,,,,2022-02-16 15:27:19.194050,
+94,12,System Test,,,,,2022-03-02 12:59:16.725881,Complete
+95,8,Project Plan Development,,,,,2022-03-07 10:56:48.814349,
+96,26,Project Plan Development,,,,,2022-03-19 10:14:57.139575,
+97,16,Project Plan Development,,,,,2022-03-20 21:02:33.798259,
+98,3,Coding and Unit Test,,,,,2022-03-21 02:12:07.258653,Complete
+99,25,Design,,,,,2022-04-07 04:49:01.537912,Complete
+100,27,Project Plan Development,,,,,2022-04-11 16:02:18.041629,
+101,28,Project Plan Development,,,,,2022-04-13 12:41:51.619938,
+102,26,Infrastructure Implementation,,,,,2022-04-17 08:25:06.606172,
+103,29,Coding and Unit Test,,,,,2022-04-18 11:45:38.595014,
+104,3,Design,,,,,2022-04-26 05:00:53.551986,
+105,13,Infrastructure Implementation,,,,,2022-04-29 18:32:03.513901,
+106,13,Coding and Unit Test,,,,,2022-05-06 14:22:38.414024,
+107,20,Infrastructure Implementation,,,,,2022-05-11 14:12:36.644733,
+108,15,Infrastructure Implementation,,,,,2022-05-13 16:17:11.529862,Complete
+109,17,Infrastructure Implementation,,,,,2022-05-16 20:15:02.656285,
+110,9,Design,,,,,2022-05-23 05:55:02.459484,
+111,18,Design,,,,,2022-05-30 15:41:03.482236,
+112,28,Project Plan Development,,,,,2022-06-13 15:03:10.750805,
+113,30,System Test,,,,,2022-06-14 16:33:34.568760,
+114,31,System Test,,,,,2022-06-18 13:44:05.519596,
+115,25,System Test,,,,,2022-06-19 19:23:10.115570,Complete
+116,21,Project Plan Development,,,,,2022-06-24 14:42:31.559942,Complete
+117,32,Project Plan Development,,,,,2022-06-26 04:54:00.956958,
+118,19,System Test,,,,,2022-06-28 05:49:41.499189,Complete
+119,28,Infrastructure Implementation,,,,,2022-07-15 21:03:03.640559,Complete
+120,33,Coding and Unit Test,,,,,2022-07-17 12:06:25.969935,
+121,1,Infrastructure Implementation,,,,,2022-07-19 04:26:12.278224,
+122,17,System Test,,,,,2022-07-22 10:26:43.442588,
+123,33,Design,,,,,2022-07-28 21:59:41.038206,
+124,12,System Test,,,,,2022-08-13 17:42:06.827661,
+125,33,System Test,,,,,2022-08-19 16:03:43.746563,
+126,7,Project Plan Development,,,,,2022-08-21 04:35:54.560079,
+127,20,System Test,,,,,2022-08-21 06:24:17.208474,
+128,34,System Test,,,,,2022-09-07 19:14:54.347334,
+129,13,Infrastructure Implementation,,,,,2022-09-12 11:12:39.225758,Complete
+130,10,Design,,,,,2022-09-14 11:22:35.407932,Complete
+131,24,System Test,,,,,2022-09-15 04:54:11.855788,
+132,35,System Test,,,,,2022-09-16 18:42:12.438554,
+133,34,Project Plan Development,,,,,2022-09-17 06:44:01.570390,Complete
+134,36,Infrastructure Implementation,,,,,2022-09-23 13:10:59.530441,
+135,21,Project Plan Development,,,,,2022-10-04 00:51:10.949248,
+136,32,Project Plan Development,,,,,2022-10-11 08:17:29.128155,Complete
+137,37,Coding and Unit Test,,,,,2022-10-16 21:31:38.652945,
+138,24,Project Plan Development,,,,,2022-10-17 07:04:08.792647,
+139,20,Design,,,,,2022-10-24 15:57:23.430469,
+140,38,Project Plan Development,,,,,2022-10-25 04:55:05.968975,
+141,16,Project Plan Development,,,,,2022-10-31 07:32:42.517043,
+142,37,Infrastructure Implementation,,,,,2022-11-06 10:08:11.445974,
+143,6,Infrastructure Implementation,,,,,2022-11-09 03:47:33.826101,
+144,6,Infrastructure Implementation,,,,,2022-11-13 20:57:48.112981,
+145,39,Infrastructure Implementation,,,,,2022-11-15 09:03:51.972089,
+146,35,Coding and Unit Test,,,,,2022-11-15 22:40:13.598531,
+147,40,Design,,,,,2022-11-17 10:34:02.759449,
+148,31,Design,,,,,2022-11-22 00:32:23.641290,Complete
+149,36,System Test,,,,,2022-11-23 15:05:03.231208,Complete
+150,41,Coding and Unit Test,,,,,2022-12-04 08:32:19.032303,
+151,34,Infrastructure Implementation,,,,,2022-12-05 03:31:54.941023,
+152,39,Project Plan Development,,,,,2022-12-10 16:41:15.293081,Complete
+153,28,Infrastructure Implementation,,,,,2022-12-15 18:53:47.848638,
+154,14,Design,,,,,2022-12-16 16:11:19.771131,
+155,42,Infrastructure Implementation,,,,,2022-12-19 02:03:34.564240,
+156,20,Project Plan Development,,,,,2022-12-19 20:43:53.394481,
+157,26,System Test,,,,,2022-12-25 16:52:49.407449,Complete
+158,42,Design,,,,,2022-12-30 00:27:25.004899,
+159,43,System Test,,,,,2023-01-08 10:09:29.584340,
+160,34,Design,,,,,2023-01-20 14:27:20.950623,
+161,29,Project Plan Development,,,,,2023-01-21 13:35:06.036603,
+162,8,Coding and Unit Test,,,,,2023-01-23 14:09:24.848047,
+163,16,Design,,,,,2023-01-23 18:37:39.940515,
+164,44,Coding and Unit Test,,,,,2023-01-26 07:45:00.412001,
+165,22,Design,,,,,2023-01-26 12:17:33.930041,
+166,2,Project Plan Development,,,,,2023-01-30 13:31:05.484280,Complete
+167,38,System Test,,,,,2023-02-11 04:16:47.968665,Complete
+168,36,Project Plan Development,,,,,2023-02-12 20:02:20.944268,Complete
+169,15,Coding and Unit Test,,,,,2023-02-12 22:57:02.866625,
+170,38,Project Plan Development,,,,,2023-02-17 00:12:19.631925,
+171,15,System Test,,,,,2023-02-17 23:59:18.666255,Complete
+172,1,Infrastructure Implementation,,,,,2023-02-25 01:00:12.329112,Complete
+173,5,Project Plan Development,,,,,2023-02-27 23:58:56.299974,
+174,41,Infrastructure Implementation,,,,,2023-03-10 10:54:32.267046,
+175,45,Design,,,,,2023-03-30 23:16:51.249872,
+176,5,Design,,,,,2023-03-31 03:13:23.085014,Complete
+177,46,Coding and Unit Test,,,,,2023-04-01 02:51:12.086094,
+178,5,Infrastructure Implementation,,,,,2023-04-13 06:29:31.752770,Complete
+179,47,Design,,,,,2023-04-16 02:31:40.820608,
+180,18,Coding and Unit Test,,,,,2023-04-26 04:59:24.533403,
+181,43,Infrastructure Implementation,,,,,2023-04-27 08:47:38.044725,
+182,32,Project Plan Development,,,,,2023-05-05 21:52:46.008273,
+183,48,Infrastructure Implementation,,,,,2023-05-21 16:31:58.451971,
+184,9,Coding and Unit Test,,,,,2023-05-23 16:24:39.565976,
+185,47,Coding and Unit Test,,,,,2023-06-03 04:35:19.541309,
+186,37,Infrastructure Implementation,,,,,2023-06-07 02:25:24.225985,
+187,37,Design,,,,,2023-06-11 16:22:14.118833,Complete
+188,31,Design,,,,,2023-06-20 03:59:31.958196,Complete
+189,16,Project Plan Development,,,,,2023-06-25 07:52:18.804367,
+190,31,Design,,,,,2023-07-11 14:00:06.752085,Complete
+191,27,Infrastructure Implementation,,,,,2023-07-23 10:31:39.207046,
+192,13,Design,,,,,2023-08-13 07:37:01.707610,Complete
+193,49,Design,,,,,2023-09-16 14:35:16.941431,
+194,50,Project Plan Development,,,,,2023-09-25 05:40:40.084247,
+195,28,Design,,,,,2023-10-22 01:29:14.393354,
+196,27,Infrastructure Implementation,,,,,2023-10-23 23:26:37.369415,
+197,51,Design,,,,,2023-10-30 18:09:42.220244,
+198,52,System Test,,,,,2023-11-03 10:26:36.818653,
+199,26,Design,,,,,2023-11-08 08:54:51.784243,
+200,47,System Test,,,,,2023-11-28 02:00:07.319254,
+201,53,Infrastructure Implementation,,,,,2023-11-28 02:39:37.266510,
+202,54,Project Plan Development,,,,,2023-11-30 05:54:57.874743,
+203,13,Coding and Unit Test,,,,,2023-11-30 19:18:09.375302,
+204,35,Design,,,,,2023-12-02 07:33:09.419299,
+205,29,Coding and Unit Test,,,,,2023-12-13 12:50:35.384012,Complete
+206,9,Project Plan Development,,,,,2023-12-18 03:31:44.973037,
+207,28,Project Plan Development,,,,,2023-12-18 12:55:10.447733,Complete
+208,12,Design,,,,,2023-12-30 23:28:54.968668,
+209,18,System Test,,,,,2024-01-02 17:38:58.241698,
+210,30,Coding and Unit Test,,,,,2024-01-07 09:44:28.718219,
+211,55,Design,,,,,2024-01-11 01:05:49.258214,
+212,29,Infrastructure Implementation,,,,,2024-01-20 03:15:02.680068,
+213,52,System Test,,,,,2024-01-24 08:17:33.226387,
+214,56,System Test,,,,,2024-01-28 13:31:17.643977,
+215,4,System Test,,,,,2024-01-28 16:32:59.537700,
+216,42,Design,,,,,2024-02-01 16:09:59.092779,Complete
+217,35,Design,,,,,2024-02-12 21:49:37.978228,Complete
+218,54,System Test,,,,,2024-02-19 07:04:05.318601,
+219,57,Design,,,,,2024-02-24 12:28:37.931733,
+220,49,Design,,,,,2024-02-24 22:13:32.741537,Complete
+221,58,System Test,,,,,2024-02-26 10:59:41.060490,
+222,27,Project Plan Development,,,,,2024-03-01 15:52:41.697073,
+223,32,System Test,,,,,2024-03-03 15:52:45.574898,Complete
+224,31,Design,,,,,2024-03-10 18:45:11.597995,
+225,14,Coding and Unit Test,,,,,2024-03-15 14:58:19.519218,
+226,56,Coding and Unit Test,,,,,2024-03-17 13:56:28.293774,
+227,26,Coding and Unit Test,,,,,2024-04-02 19:36:13.002701,Complete
+228,58,System Test,,,,,2024-04-04 16:59:42.992572,Complete
+229,4,Project Plan Development,,,,,2024-04-10 02:25:21.242987,
+230,11,System Test,,,,,2024-04-21 08:32:15.263786,
+231,59,Project Plan Development,,,,,2024-04-25 09:32:26.919903,
+232,25,System Test,,,,,2024-05-13 20:58:49.442162,Complete
+233,17,Design,,,,,2024-05-25 01:37:36.205925,Complete
+234,51,Design,,,,,2024-05-27 14:41:48.080076,
+235,60,Coding and Unit Test,,,,,2024-06-16 22:53:19.399670,
+236,28,Coding and Unit Test,,,,,2024-07-03 05:58:40.742044,
+237,45,Project Plan Development,,,,,2024-07-13 12:10:40.897710,
+238,61,Coding and Unit Test,,,,,2024-07-19 00:04:06.060538,
+239,10,Coding and Unit Test,,,,,2024-07-29 10:58:53.938346,Complete
+240,62,Project Plan Development,,,,,2024-07-30 01:38:15.565911,
+241,63,Project Plan Development,,,,,2024-08-04 07:21:55.779045,
+242,64,System Test,,,,,2024-08-08 16:09:59.962719,
+243,8,Design,,,,,2024-08-15 02:09:49.315963,
+244,41,Coding and Unit Test,,,,,2024-08-21 18:39:52.866616,
+245,8,Coding and Unit Test,,,,,2024-08-24 23:01:06.451205,
+246,7,Project Plan Development,,,,,2024-08-29 13:33:34.616067,Complete
+247,62,Infrastructure Implementation,,,,,2024-09-01 10:53:34.030100,
+248,21,System Test,,,,,2024-09-03 17:13:19.353716,
+249,8,System Test,,,,,2024-09-13 22:30:25.774384,
+250,65,Coding and Unit Test,,,,,2024-09-14 18:02:39.750285,
+251,24,Coding and Unit Test,,,,,2024-09-24 02:33:50.471366,
+252,9,Design,,,,,2024-10-01 00:28:57.013779,
+253,9,Design,,,,,2024-10-06 08:40:52.540307,
+254,31,Design,,,,,2024-10-06 20:50:01.471795,Complete
+255,66,Infrastructure Implementation,,,,,2024-10-12 11:27:58.908590,
+256,32,Project Plan Development,,,,,2024-10-20 06:17:21.652447,
+257,6,Design,,,,,2024-10-24 09:14:14.683951,Complete
+258,11,Project Plan Development,,,,,2024-10-30 13:17:35.104680,Complete
+259,54,Coding and Unit Test,,,,,2024-11-07 11:56:29.020020,
+260,41,Infrastructure Implementation,,,,,2024-11-11 12:24:23.957314,Complete
+261,34,Project Plan Development,,,,,2024-11-12 22:17:06.461401,
+262,27,Project Plan Development,,,,,2024-11-25 03:14:06.500865,Complete
+263,67,Design,,,,,2024-11-26 21:03:08.538143,
+264,34,Infrastructure Implementation,,,,,2024-11-29 21:10:45.923075,
+265,68,Infrastructure Implementation,,,,,2024-12-22 16:29:48.862781,

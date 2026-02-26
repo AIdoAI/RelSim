@@ -219,12 +219,19 @@ The `trigger_expenses` step was on a parallel branch (`process_deliverable_4 →
 
 **Note:** The fix requires re-running the simulation from the RelSim UI to generate the new data. The next simulation run will populate `ProjectExpense` with 2-8 expense records per completed project.
 
-### 9.3 Deliverable_Title_Plan_Mapping & Deliverable_Progress_Month (0 Records)
-These bridge tables are defined in the schema but not referenced by any simulation step. They were intended for:
-- **Deliverable_Title_Plan_Mapping**: Planned hours per title level for each deliverable
-- **Deliverable_Progress_Month**: Monthly progress tracking (percentage complete)
+### 9.3 Deliverable_Title_Plan_Mapping & Deliverable_Progress_Month — ✅ RESOLVED
+These bridge tables are now fully populated.
 
-**Improvement**: Add `trigger` steps to the simulation flow to populate these tables when each deliverable is created and as each deliverable progresses through phases.
+**Deliverable_Title_Plan_Mapping (1590 rows):**
+- Added 5 `trigger_title_plan` steps to `consulting_sim.yaml` (one after each `create_deliverable_N`)
+- Each trigger generates 6 rows (one per title level) with planned hours (UNIF(30,120))
+- FK resolution uses the Deliverable entity context from the preceding Create step
+
+**Deliverable_Progress_Month (382 rows):**
+- Created `python/generate_progress_months.py` post-processing script
+- Reads each deliverable's actual date range from `Consultant_Deliverable_Mapping`
+- Generates one row per month with linearly interpolated progress (0% → 100%)
+- Integrated as a post-simulation hook in `runner.py` (runs automatically after simulation)
 
 ### 9.4 Project Status (All "In Progress")
 All 75 projects show status "In Progress" — none reached the "Complete" state. This indicates the simulation's 5-year time window (1825 days) was insufficient for all projects to complete the full 5-deliverable pipeline (each ~4 weeks × 5 phases = ~20 weeks minimum), or the resource pool was too constrained.

@@ -104,6 +104,16 @@ event_simulation:
               - attribute_name: DeliverableName
                 value: Project Plan Development
           next_steps:
+            - trigger_title_plan_1
+
+        # Step 5b: Generate title plan mapping for Deliverable 1
+        - step_id: trigger_title_plan_1
+          step_type: trigger
+          trigger_config:
+            target_table: Deliverable_Title_Plan_Mapping
+            count: 6
+            fk_column: DeliverableID
+          next_steps:
             - process_deliverable_1
 
         # Step 6: Process Deliverable 1 - Project Plan Development (~4 weeks)
@@ -138,6 +148,15 @@ event_simulation:
               - attribute_name: DeliverableName
                 value: Design
           next_steps:
+            - trigger_title_plan_2
+
+        - step_id: trigger_title_plan_2
+          step_type: trigger
+          trigger_config:
+            target_table: Deliverable_Title_Plan_Mapping
+            count: 6
+            fk_column: DeliverableID
+          next_steps:
             - process_deliverable_2
 
         # Step 7b: Create Deliverable 3 entity (parallel branch B)
@@ -149,6 +168,15 @@ event_simulation:
             attributes:
               - attribute_name: DeliverableName
                 value: Infrastructure Implementation
+          next_steps:
+            - trigger_title_plan_3
+
+        - step_id: trigger_title_plan_3
+          step_type: trigger
+          trigger_config:
+            target_table: Deliverable_Title_Plan_Mapping
+            count: 6
+            fk_column: DeliverableID
           next_steps:
             - process_deliverable_3
 
@@ -204,6 +232,15 @@ event_simulation:
               - attribute_name: DeliverableName
                 value: Coding and Unit Test
           next_steps:
+            - trigger_title_plan_4
+
+        - step_id: trigger_title_plan_4
+          step_type: trigger
+          trigger_config:
+            target_table: Deliverable_Title_Plan_Mapping
+            count: 6
+            fk_column: DeliverableID
+          next_steps:
             - process_deliverable_4
 
         # Step 10: Process Deliverable 4 - Coding and Unit Test (~4 weeks)
@@ -237,6 +274,15 @@ event_simulation:
             attributes:
               - attribute_name: DeliverableName
                 value: System Test
+          next_steps:
+            - trigger_title_plan_5
+
+        - step_id: trigger_title_plan_5
+          step_type: trigger
+          trigger_config:
+            target_table: Deliverable_Title_Plan_Mapping
+            count: 6
+            fk_column: DeliverableID
           next_steps:
             - process_deliverable_5
 
