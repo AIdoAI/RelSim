@@ -56,6 +56,7 @@ contextBridge.exposeInMainWorld(
   // Simulation
   runSimulation: (data) => ipcRenderer.invoke('api:runSimulation', data),
   generateAndSimulate: (data) => ipcRenderer.invoke('api:generateAndSimulate', data),
+  simulateWithFormulas: (data) => ipcRenderer.invoke('api:simulateWithFormulas', data),
 
   // Results Management
   getSimulationResults: (databasePath) => ipcRenderer.invoke('api:getSimulationResults', databasePath),

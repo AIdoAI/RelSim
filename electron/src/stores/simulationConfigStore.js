@@ -265,6 +265,7 @@ export const useConfigActions = (projectId) => {
     loadConfig: state.loadConfig,
     saveConfig: state.saveConfig,
     runSimulation: state.runSimulation,
+    runSimulationOnly: state.runSimulationOnly,
     initializeConfig: state.initializeConfig,
     clearConfig: state.clearConfig,
     hasContent: state.hasContent,

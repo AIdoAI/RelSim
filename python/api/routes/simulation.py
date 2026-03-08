@@ -14,6 +14,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from flask import Blueprint, request
 from config_storage.config_db import ConfigManager
 from src.generator import generate_database
+from src.generator.database_generator import DatabaseGenerator
+from src.config_parser import parse_db_config_from_string, parse_sim_config_from_string
 from src.simulation.core.runner import run_simulation
 from src.utils.file_operations import safe_delete_sqlite_file
 from src.utils.path_resolver import resolve_output_dir
@@ -65,6 +67,89 @@ def run_sim():
         
     except Exception as e:
         return handle_exception(e, "running simulation", logger)
+
+@simulation_bp.route('/simulate-with-formulas', methods=['POST'])
+def simulate_with_formulas():
+    """Run simulation (Phase 2) + formula resolution (Phase 3) on an existing database.
+    
+    This is the second half of the split workflow:
+      Phase 1: POST /api/database/generate-database  (user runs from DB canvas)
+      Phase 2+3: POST /api/simulation/simulate-with-formulas  (user runs from Sim canvas)
+    """
+    try:
+        log_api_request(logger, "Simulate with formulas")
+        
+        # Validate request data
+        data, validation_error = require_json_fields(request, ['sim_config_id', 'db_config_id', 'database_path'])
+        if validation_error:
+            return validation_error
+        
+        sim_config = config_manager.get_config(data['sim_config_id'])
+        db_config = config_manager.get_config(data['db_config_id'])
+        
+        if not sim_config:
+            return not_found_response("Simulation configuration")
+        if not db_config:
+            return not_found_response("Database configuration")
+        
+        db_path = data['database_path']
+        project_id = data.get('project_id')
+        db_name = os.path.splitext(os.path.basename(db_path))[0]
+        
+        # Resolve to absolute path if relative
+        # The frontend sends paths like "output/<project_id>/<file>.db"
+        if not os.path.isabs(db_path):
+            # resolve_output_dir() returns the base output directory
+            # (honors DB_SIMULATOR_OUTPUT_DIR env var for packaged mode)
+            base_output_dir = resolve_output_dir()
+            # Strip leading "output/" prefix since base_output_dir already points to the output folder
+            relative_part = db_path
+            if relative_part.startswith('output/') or relative_part.startswith('output\\'):
+                relative_part = relative_part[len('output/'):]
+            db_path = os.path.join(base_output_dir, relative_part)
+            logger.info(f"Resolved relative path '{data['database_path']}' -> '{db_path}'")
+        
+        if not os.path.exists(db_path):
+            logger.error(f"Database file not found at resolved path: {db_path}")
+            return error_response(f"Database file not found at: {db_path}", status_code=404)
+        
+        with run_log_context(project_id=project_id, db_name=db_name):
+            # Phase 2: Run simulation on the existing database
+            logger.info(f"Running simulation on existing database: {db_path}")
+            results = run_simulation(
+                sim_config['content'],
+                db_config['content'],
+                db_path
+            )
+            
+            # Phase 3: Resolve formula-based attributes
+            try:
+                parsed_db_config = parse_db_config_from_string(db_config['content'])
+                parsed_sim_config = parse_sim_config_from_string(sim_config['content'])
+                generator = DatabaseGenerator(parsed_db_config, os.path.dirname(db_path), None, parsed_sim_config)
+                
+                if generator.has_pending_formulas():
+                    logger.info("Resolving formula-based attributes after simulation completion")
+                    formula_success = generator.resolve_formulas(db_path)
+                    if formula_success:
+                        logger.info("Formula resolution completed successfully")
+                    else:
+                        logger.warning("Formula resolution failed, but continuing with simulation results")
+                else:
+                    logger.info("No pending formulas to resolve")
+            except Exception as formula_err:
+                logger.warning(f"Formula resolution error (non-fatal): {formula_err}")
+        
+        # Prepare response path
+        db_path_for_response = _prepare_response_path(db_path, resolve_output_dir(), project_id)
+        
+        return success_response({
+            "database_path": db_path_for_response,
+            "results": results
+        }, message="Simulation with formula resolution completed successfully")
+        
+    except Exception as e:
+        return handle_exception(e, "simulate-with-formulas", logger)
 
 @simulation_bp.route('/generate-and-simulate', methods=['POST'])
 def generate_and_simulate():

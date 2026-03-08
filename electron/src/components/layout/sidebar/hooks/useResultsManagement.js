@@ -9,14 +9,14 @@ export const useResultsManagement = (currentProjectId) => {
   const navigate = useNavigate();
   const safeNavigate = createSafeNavigate(navigate);
   const location = useLocation();
-  
+
   const [expandedResults, setExpandedResults] = useState({});
   const [projectResults, setProjectResults] = useState({});
   const [resultTables, setResultTables] = useState({});
   const [resultsRefreshTrigger, setResultsRefreshTrigger] = useState(0);
 
   // Get currently selected result ID and table from the URL
-  const currentResultId = location.pathname.includes('/results/') 
+  const currentResultId = location.pathname.includes('/results/')
     ? location.pathname.split('/results/')[1].split('/')[0]
     : null;
   const currentTable = new URLSearchParams(location.search).get('table');
@@ -25,12 +25,12 @@ export const useResultsManagement = (currentProjectId) => {
   useEffect(() => {
     const handler = (event) => {
       const { projectId } = event.detail;
-      
+
       if (projectId === currentProjectId) {
         setResultsRefreshTrigger(prev => prev + 1);
       }
     };
-    
+
     window.addEventListener('refreshProjectResults', handler);
     return () => {
       window.removeEventListener('refreshProjectResults', handler);
@@ -40,7 +40,7 @@ export const useResultsManagement = (currentProjectId) => {
   // Handle location state changes for project expansion
   useEffect(() => {
     if (!location.state) return;
-    
+
     if (location.state.expandProject) {
       const projectId = location.state.expandProject;
       setResultsRefreshTrigger(prev => prev + 1);
@@ -50,35 +50,55 @@ export const useResultsManagement = (currentProjectId) => {
   // Refresh results when triggered
   useEffect(() => {
     if (resultsRefreshTrigger === 0) return;
-    
+
     const refreshResults = async () => {
       if (!currentProjectId) return;
-      
+
       try {
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         const results = await window.api.scanProjectResults(currentProjectId);
-        
+
         if (results.success) {
           setProjectResults(prev => ({
             ...prev,
             [currentProjectId]: results.results || []
           }));
+
+          // Re-fetch table lists for any currently expanded results
+          // (simulation may have added new tables to the same .db file)
+          for (const result of (results.results || [])) {
+            const resultKey = `${currentProjectId}-${result.id}`;
+            if (expandedResults[resultKey]) {
+              try {
+                const dbPath = `output/${currentProjectId}/${result.id}.db`;
+                const tablesResult = await window.api.getDatabaseTables(dbPath);
+                if (tablesResult.success && tablesResult.tables) {
+                  setResultTables(prev => ({
+                    ...prev,
+                    [resultKey]: tablesResult.tables || []
+                  }));
+                }
+              } catch {
+                // Silent - table fetch failed
+              }
+            }
+          }
         }
       } catch (error) {
         // Silent error handling
       }
     };
-    
+
     refreshResults();
-  }, [resultsRefreshTrigger, currentProjectId]);
+  }, [resultsRefreshTrigger, currentProjectId, expandedResults]);
 
   const loadProjectResults = async (projectId) => {
     if (projectResults[projectId]) return;
-    
+
     try {
       const results = await window.api.scanProjectResults(projectId);
-      
+
       if (results.success) {
         setProjectResults(prev => ({
           ...prev,
@@ -93,11 +113,11 @@ export const useResultsManagement = (currentProjectId) => {
   const loadResultTables = async (projectId, resultId) => {
     const resultKey = `${projectId}-${resultId}`;
     if (resultTables[resultKey]) return;
-    
+
     try {
       const dbPath = `output/${projectId}/${resultId}.db`;
       const tablesResult = await window.api.getDatabaseTables(dbPath);
-      
+
       if (tablesResult.success && tablesResult.tables) {
         setResultTables(prev => ({
           ...prev,
@@ -112,11 +132,11 @@ export const useResultsManagement = (currentProjectId) => {
   const toggleResultExpansion = async (projectId, resultId) => {
     const resultKey = `${projectId}-${resultId}`;
     const newExpandedState = { ...expandedResults };
-    
+
     if (!expandedResults[resultKey]) {
       await loadResultTables(projectId, resultId);
     }
-    
+
     newExpandedState[resultKey] = !expandedResults[resultKey];
     setExpandedResults(newExpandedState);
   };
@@ -133,18 +153,18 @@ export const useResultsManagement = (currentProjectId) => {
     try {
       const dbPath = `output/${projectId}/${result.id}.db`;
       const deleteResponse = await window.api.deleteResult(dbPath);
-      
+
       if (deleteResponse.success) {
         const updatedResults = (projectResults[projectId] || []).filter(r => r.id !== result.id);
         setProjectResults(prev => ({
           ...prev,
           [projectId]: updatedResults
         }));
-        
+
         if (currentResultId === result.id) {
           safeNavigate(`/project/${projectId}`);
         }
-        
+
         return { success: true };
       } else {
         showError('Failed to delete result: ' + (deleteResponse.error || 'Unknown error'));

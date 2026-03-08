@@ -10,7 +10,7 @@ export const createConfigActions = (set, get) => ({
    * @param {Object} config - Configuration object
    */
   updateConfig: (config) => {
-    
+
     set((state) => {
       state.config = config;
       state.name = config?.name || '';
@@ -23,7 +23,7 @@ export const createConfigActions = (set, get) => ({
    * @param {string} name - New name
    */
   updateName: (name) => {
-    
+
     set((state) => {
       state.name = name;
     });
@@ -34,7 +34,7 @@ export const createConfigActions = (set, get) => ({
    * @param {string} description - New description
    */
   updateDescription: (description) => {
-    
+
     set((state) => {
       state.description = description;
     });
@@ -46,16 +46,16 @@ export const createConfigActions = (set, get) => ({
    * @param {string} projectId - Optional project ID
    */
   loadConfig: async (configId, projectId = null) => {
-    
+
     try {
       get().beginSave(); // Use save workflow for loading
-      
+
       let result;
-      
+
       if (projectId) {
         // Load project simulation config
         result = await window.api.getProjectSimConfig(projectId);
-        
+
         if (result.success && result.config) {
           set((state) => {
             state.config = result.config;
@@ -64,10 +64,10 @@ export const createConfigActions = (set, get) => ({
             state.projectId = projectId;
             state.isProjectTab = true;
           });
-          
+
           // Load positions for this project
           positionService.loadProject(projectId, 'simulation');
-          
+
           // Load YAML content
           if (result.config.content) {
             await get().importYaml(result.config.content);
@@ -80,14 +80,14 @@ export const createConfigActions = (set, get) => ({
             state.projectId = projectId;
             state.isProjectTab = true;
           });
-          
+
           // Load positions for this project (even if no config yet)
           positionService.loadProject(projectId, 'simulation');
         }
       } else {
         // Load standalone config
         result = await window.api.getConfig(configId);
-        
+
         if (result.success) {
           set((state) => {
             state.config = result.config;
@@ -96,10 +96,10 @@ export const createConfigActions = (set, get) => ({
             state.projectId = null;
             state.isProjectTab = false;
           });
-          
+
           // Load positions for standalone config (using config ID as project ID)
           positionService.loadProject(`config_${configId}`, 'simulation');
-          
+
           // Load YAML content
           if (result.config.content) {
             await get().importYaml(result.config.content);
@@ -107,10 +107,10 @@ export const createConfigActions = (set, get) => ({
           }
         }
       }
-      
+
       get().completeSave(result?.success || false, result?.error || 'Config loaded successfully');
       return result;
-      
+
     } catch (error) {
       console.error('[ConfigActions] Load config failed:', error);
       get().completeSave(false, error.message);
@@ -124,24 +124,24 @@ export const createConfigActions = (set, get) => ({
    */
   saveConfig: async (saveAsNew = false) => {
     const { config, projectId, isProjectTab, name, description, yamlContent } = get();
-    
-    
+
+
     try {
       get().beginSave();
-      
+
       const configData = {
         name: name || 'Project Simulation',
         config_type: 'simulation',
         content: yamlContent,
         description
       };
-      
+
       let result;
-      
+
       if (projectId && isProjectTab) {
         // Save as project simulation config
         result = await window.api.saveProjectSimConfig(projectId, configData);
-        
+
         if (result.success) {
           set((state) => {
             state.config = result.config;
@@ -150,21 +150,21 @@ export const createConfigActions = (set, get) => ({
       } else if (config && !saveAsNew) {
         // Update existing standalone configuration
         result = await window.api.updateConfig(config.id, configData);
-        
+
       } else {
         // Save as new standalone configuration
         result = await window.api.saveConfig(configData);
-        
+
         if (result.success) {
           set((state) => {
             state.config = { id: result.config_id, ...configData };
           });
         }
       }
-      
+
       get().completeSave(result?.success || false, result?.error || 'Config saved successfully');
       return result;
-      
+
     } catch (error) {
       console.error('[ConfigActions] Save config failed:', error);
       get().completeSave(false, error.message);
@@ -178,25 +178,25 @@ export const createConfigActions = (set, get) => ({
    */
   runSimulation: async (selectedDbConfig) => {
     const { config, projectId } = get();
-    
-    
+
+
     try {
       get().beginSave();
-      
+
       let simConfigId = config?.id;
-      
+
       // Save configuration first if needed
       if (!simConfigId || projectId) {
         const saveResult = await get().saveConfig();
-        
+
         if (!saveResult?.success) {
           get().completeSave(false, 'Failed to save configuration before running simulation');
           return saveResult;
         }
-        
+
         simConfigId = saveResult.config_id || config?.id;
       }
-      
+
       // Generate timestamped name for the database  
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const dbName = `simulation_${timestamp}`;
@@ -209,13 +209,58 @@ export const createConfigActions = (set, get) => ({
         output_dir: 'output',   // Specify output directory
         name: dbName           // Add timestamped name
       });
-      
+
       get().completeSave(result?.success || false, result?.error || 'Simulation completed');
-      
+
       return result;
-      
+
     } catch (error) {
       console.error('[ConfigActions] Run simulation failed:', error);
+      get().completeSave(false, error.message);
+      return { success: false, error: error.message };
+    }
+  },
+
+  /**
+   * Run simulation on an existing database (Phase 2 + Phase 3 only).
+   * Used by the split workflow where generation happens separately from DB canvas.
+   * @param {string} selectedDbConfig - Database configuration ID
+   * @param {string} databasePath - Path to the already-generated database file
+   */
+  runSimulationOnly: async (selectedDbConfig, databasePath) => {
+    const { config, projectId } = get();
+
+    try {
+      get().beginSave();
+
+      let simConfigId = config?.id;
+
+      // Save configuration first if needed
+      if (!simConfigId || projectId) {
+        const saveResult = await get().saveConfig();
+
+        if (!saveResult?.success) {
+          get().completeSave(false, 'Failed to save configuration before running simulation');
+          return saveResult;
+        }
+
+        simConfigId = saveResult.config_id || config?.id;
+      }
+
+      // Run simulation on existing database
+      const result = await window.api.simulateWithFormulas({
+        db_config_id: selectedDbConfig,
+        sim_config_id: simConfigId,
+        database_path: databasePath,
+        project_id: projectId
+      });
+
+      get().completeSave(result?.success || false, result?.error || 'Simulation completed');
+
+      return result;
+
+    } catch (error) {
+      console.error('[ConfigActions] Run simulation only failed:', error);
       get().completeSave(false, error.message);
       return { success: false, error: error.message };
     }
@@ -232,14 +277,14 @@ export const createConfigActions = (set, get) => ({
       theme = 'light',
       dbConfigContent = null
     } = options;
-    
-    
+
+
     set((state) => {
       state.projectId = projectId;
       state.isProjectTab = isProjectTab;
       state.theme = theme;
       state.dbConfigContent = dbConfigContent;
-      
+
       // Generate default YAML with simulation settings if YAML is empty
       if (!state.yamlContent) {
         console.log('[ConfigActions] Initializing with default YAML content');
@@ -257,15 +302,15 @@ export const createConfigActions = (set, get) => ({
    */
   cleanupObsoletePositions: () => {
     const { canonicalSteps, projectId } = get();
-    
+
     if (!projectId) return; // No cleanup needed for standalone configs
-    
+
     // Get current node IDs from canonical steps
     const currentNodeIds = new Set(canonicalSteps.map(step => step.step_id));
-    
+
     // Get all stored positions for this project
     const allPositions = positionService.getAllPositions(projectId, 'simulation');
-    
+
     // Remove positions for nodes that no longer exist
     let cleanedCount = 0;
     for (const nodeId of allPositions.keys()) {
@@ -274,7 +319,7 @@ export const createConfigActions = (set, get) => ({
         cleanedCount++;
       }
     }
-    
+
     if (cleanedCount > 0) {
       console.log(`[ConfigActions] Cleaned up ${cleanedCount} obsolete node positions for project: ${projectId}`);
     }
@@ -284,36 +329,36 @@ export const createConfigActions = (set, get) => ({
    * Clear all configuration state
    */
   clearConfig: () => {
-    
+
     set((state) => {
       // Reset core data
       state.yamlContent = '';
       state.parsedSchema = null;
       state.canonicalSteps = [];
       state.flowSchema = null;
-      
+
       // Reset visual state
       state.nodes = [];
       state.edges = [];
-      
+
       // Reset UI state
       state.selectedNode = null;
       state.showEditModal = false;
-      
+
       // Reset workflow state
       state.currentState = 'idle';
       state.isLoading = false;
       state.error = null;
-      
+
       // Reset config metadata
       state.config = null;
       state.name = '';
       state.description = '';
-      
+
       // Clear positions
       state.positions.clear();
     });
-    
+
     // Clean up obsolete positions from PositionService
     get().cleanupObsoletePositions();
   },
@@ -324,21 +369,21 @@ export const createConfigActions = (set, get) => ({
    */
   cleanupOrphanedPositions: () => {
     const { canonicalSteps, projectId } = get();
-    
+
     if (!projectId) return; // No cleanup needed for standalone configs
-    
+
     // Get current step IDs from canonical steps (saved state)
     const validStepIds = new Set(canonicalSteps.map(step => step.step_id));
-    
+
     // Get all stored positions for this project
     const allPositions = positionService.getAllPositions(projectId, 'simulation');
-    
+
     // Remove positions for steps that no longer exist in saved config
     let cleanedCount = 0;
     for (const nodeId of allPositions.keys()) {
       const isStepPattern = nodeId.includes('_') || nodeId.includes('-');
       const isValidStep = validStepIds.has(nodeId);
-      
+
       // Only clean up nodes that look like simulation steps (contain underscores or other patterns)
       // Skip nodes that look like simple entity names
       if (isStepPattern && !isValidStep) {
@@ -346,7 +391,7 @@ export const createConfigActions = (set, get) => ({
         cleanedCount++;
       }
     }
-    
+
     if (cleanedCount > 0) {
       console.log(`[ConfigActions] Cleaned up ${cleanedCount} orphaned simulation step positions for project: ${projectId}`);
     }
