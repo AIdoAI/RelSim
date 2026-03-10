@@ -21,16 +21,16 @@ def calculate_financials(db_path: str) -> None:
 
     # 1. PlannedEndDate = MAX of all deliverable PlannedEndDates per project
     cur.execute("""
-        UPDATE Project
+        UPDATE Project_Plan
         SET PlannedEndDate = (
             SELECT MAX(d.PlannedEndDate)
             FROM Deliverable d
-            WHERE d.ProjectID = Project.ProjectID
+            WHERE d.ProjectID = Project_Plan.ProjectID
               AND d.PlannedEndDate IS NOT NULL
         )
         WHERE EXISTS (
             SELECT 1 FROM Deliverable d
-            WHERE d.ProjectID = Project.ProjectID
+            WHERE d.ProjectID = Project_Plan.ProjectID
               AND d.PlannedEndDate IS NOT NULL
         )
     """)
@@ -40,19 +40,19 @@ def calculate_financials(db_path: str) -> None:
     # 2. PlannedHours = SUM of PlannedHours from Deliverable_Title_Plan_Mapping
     #    via the deliverables belonging to each project
     cur.execute("""
-        UPDATE Project
+        UPDATE Project_Plan
         SET PlannedHours = (
             SELECT COALESCE(SUM(dtpm.PlannedHours), 0)
             FROM Deliverable d
             JOIN Deliverable_Title_Plan_Mapping dtpm
                 ON d.DeliverableID = dtpm.DeliverableID
-            WHERE d.ProjectID = Project.ProjectID
+            WHERE d.ProjectID = Project_Plan.ProjectID
         )
         WHERE EXISTS (
             SELECT 1 FROM Deliverable d
             JOIN Deliverable_Title_Plan_Mapping dtpm
                 ON d.DeliverableID = dtpm.DeliverableID
-            WHERE d.ProjectID = Project.ProjectID
+            WHERE d.ProjectID = Project_Plan.ProjectID
         )
     """)
     planned_hours_count = cur.rowcount
@@ -62,7 +62,7 @@ def calculate_financials(db_path: str) -> None:
     #    For each project: sum across all deliverables and their title plan mappings,
     #    multiplied by the corresponding project billing rate for each title.
     cur.execute("""
-        UPDATE Project
+        UPDATE Project_Plan
         SET EstimatedBudget = (
             SELECT COALESCE(labor.total_labor, 0) + COALESCE(expense.total_expense, 0)
             FROM (
@@ -71,23 +71,23 @@ def calculate_financials(db_path: str) -> None:
                 FROM Deliverable d
                 JOIN Deliverable_Title_Plan_Mapping dtpm
                     ON d.DeliverableID = dtpm.DeliverableID
-                LEFT JOIN ProjectBillingRate pbr
+                LEFT JOIN Project_Billing_Rate pbr
                     ON pbr.ProjectID = d.ProjectID
                     AND pbr.TitleID = dtpm.TitleID
-                WHERE d.ProjectID = Project.ProjectID
+                WHERE d.ProjectID = Project_Plan.ProjectID
                 GROUP BY d.ProjectID
             ) labor
             LEFT JOIN (
                 SELECT d2.ProjectID,
                        SUM(COALESCE(d2.PlannedExpense, 0)) as total_expense
                 FROM Deliverable d2
-                WHERE d2.ProjectID = Project.ProjectID
+                WHERE d2.ProjectID = Project_Plan.ProjectID
                 GROUP BY d2.ProjectID
             ) expense ON labor.ProjectID = expense.ProjectID
         )
         WHERE EXISTS (
             SELECT 1 FROM Deliverable d
-            WHERE d.ProjectID = Project.ProjectID
+            WHERE d.ProjectID = Project_Plan.ProjectID
         )
     """)
     budget_count = cur.rowcount
@@ -103,7 +103,7 @@ def calculate_financials(db_path: str) -> None:
                SUM(CASE WHEN EstimatedBudget IS NOT NULL AND EstimatedBudget > 0 THEN 1 ELSE 0 END) as has_budget,
                ROUND(AVG(PlannedHours), 2) as avg_hours,
                ROUND(AVG(EstimatedBudget), 2) as avg_budget
-        FROM Project
+        FROM Project_Plan
     """)
     row = cur.fetchone()
     if row:

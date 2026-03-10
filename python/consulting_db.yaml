@@ -58,7 +58,7 @@ entities:
           method: internet.email()
 
   # Table 3: BusinessUnit (deterministic, 5 fixed rows)
-  - name: BusinessUnit
+  - name: Business_Unit
     type: entity
     rows: 5
     attributes:
@@ -90,7 +90,7 @@ entities:
           type: template
           template: "{id}"
           id_offset: 100
-      - name: TitleName
+      - name: Title
         type: string
         generator:
           type: ordered_list
@@ -109,29 +109,14 @@ entities:
     attributes:
       - name: ConsultantID
         type: pk
-      - name: FirstName
+      - name: ConsultantName
         type: string
         generator:
           type: faker
-          method: person.firstName()
-      - name: LastName
-        type: string
-        generator:
-          type: faker
-          method: person.lastName()
-      - name: Email
-        type: string
-        generator:
-          type: faker
-          method: internet.email()
-      - name: Phone
-        type: string
-        generator:
-          type: faker
-          method: phone.number()
+          method: person.fullName()
       - name: BusinessUnitID
         type: fk
-        ref: BusinessUnit.BusinessUnitID
+        ref: Business_Unit.BusinessUnitID
         generator:
           type: foreign_key
           subtype: many_to_one
@@ -167,8 +152,8 @@ entities:
   # PHASE 2: PROJECT TABLES (Dynamic — populated by simulation)
   # ============================================================
 
-  # Table 7: Project
-  - name: Project
+  # Table 7: Project_Plan (per Slide 8 "Project Plan")
+  - name: Project_Plan
     type: entity
     rows: n/a
     attributes:
@@ -182,7 +167,7 @@ entities:
           subtype: many_to_one
       - name: BusinessUnitID
         type: fk
-        ref: BusinessUnit.BusinessUnitID
+        ref: Business_Unit.BusinessUnitID
         generator:
           type: foreign_key
           subtype: many_to_one
@@ -217,7 +202,7 @@ entities:
         type: datetime
 
   # Table 8: ProjectBillingRate (rate fix via post-proc fix_billing_rates.py)
-  - name: ProjectBillingRate
+  - name: Project_Billing_Rate
     type: bridge
     rows: n/a
     attributes:
@@ -225,7 +210,7 @@ entities:
         type: pk
       - name: ProjectID
         type: entity_id
-        ref: Project.ProjectID
+        ref: Project_Plan.ProjectID
         generator:
           type: foreign_key
           subtype: many_to_one
@@ -250,7 +235,7 @@ entities:
         type: pk
       - name: ProjectID
         type: entity_id
-        ref: Project.ProjectID
+        ref: Project_Plan.ProjectID
         generator:
           type: foreign_key
           subtype: one_to_many
@@ -316,8 +301,8 @@ entities:
           type: distribution
           formula: UNIF(20, 160)
 
-  # Table 12: ProjectExpense (FK changed to DeliverableID per Slide 7/10)
-  - name: ProjectExpense
+  # Table 12: Actual_Project_Expense (per Slide 8: "Actual Project Expense")
+  - name: Actual_Project_Expense
     type: entity
     rows: n/a
     attributes:

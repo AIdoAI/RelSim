@@ -41,7 +41,7 @@ def fix_billing_rates(db_path: str) -> None:
     num_titles = len(title_ids)
 
     # === Step 1: Fix TitleIDs in ProjectBillingRate ===
-    cur.execute("SELECT id, ProjectID FROM ProjectBillingRate ORDER BY ProjectID, id")
+    cur.execute("SELECT id, ProjectID FROM Project_Billing_Rate ORDER BY ProjectID, id")
     rows = cur.fetchall()
 
     if not rows:
@@ -58,7 +58,7 @@ def fix_billing_rates(db_path: str) -> None:
         mean, std = TITLE_RATES.get(tid, (275, 50))
         rate = round(max(50.0, random.gauss(mean, std)), 2)
         cur.execute(
-            "UPDATE ProjectBillingRate SET TitleID = ?, BillingRate = ? WHERE id = ?",
+            "UPDATE Project_Billing_Rate SET TitleID = ?, BillingRate = ? WHERE id = ?",
             (tid, rate, row_id)
         )
         project_counter[project_id] = idx + 1
@@ -93,7 +93,7 @@ def fix_billing_rates(db_path: str) -> None:
     cur.execute("""
         SELECT TitleID, COUNT(*), ROUND(AVG(BillingRate), 2),
                ROUND(MIN(BillingRate), 2), ROUND(MAX(BillingRate), 2)
-        FROM ProjectBillingRate
+        FROM Project_Billing_Rate
         GROUP BY TitleID
         ORDER BY TitleID
     """)

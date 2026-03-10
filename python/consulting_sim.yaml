@@ -54,7 +54,7 @@ event_simulation:
         - step_id: create_project
           step_type: create
           create_config:
-            entity_table: Project
+            entity_table: Project_Plan
             interarrival_time:
               formula: EXPO(30)
               time_unit: days
@@ -77,7 +77,7 @@ event_simulation:
         - step_id: trigger_billing_rates
           step_type: trigger
           trigger_config:
-            target_table: ProjectBillingRate
+            target_table: Project_Billing_Rate
             count: 6
             fk_column: ProjectID
           next_steps:
@@ -311,7 +311,7 @@ event_simulation:
         - step_id: trigger_expenses
           step_type: trigger
           trigger_config:
-            target_table: ProjectExpense
+            target_table: Actual_Project_Expense
             count: UNIF(2, 8)
             fk_column: DeliverableID
           next_steps:
