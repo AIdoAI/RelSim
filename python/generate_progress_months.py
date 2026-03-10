@@ -52,16 +52,13 @@ def populate_progress_months(db_path):
     # Clear existing data
     cur.execute("DELETE FROM Deliverable_Progress_Month")
 
-    # Get each deliverable's actual date range from consultant mapping
+    # Get each deliverable's actual date range from the Deliverable table
     try:
         cur.execute("""
-            SELECT DISTINCT d.DeliverableID,
-                   MIN(cdm.start_date) as actual_start,
-                   MAX(cdm.end_date) as actual_end
-            FROM Deliverable d
-            JOIN Consultant_Deliverable_Mapping cdm
-                ON d.DeliverableID = cdm.DeliverableID
-            GROUP BY d.DeliverableID
+            SELECT DeliverableID, ActualStartDate, ActualEndDate
+            FROM Deliverable
+            WHERE ActualStartDate IS NOT NULL
+              AND ActualEndDate IS NOT NULL
         """)
         deliverables = cur.fetchall()
     except sqlite3.OperationalError as e:

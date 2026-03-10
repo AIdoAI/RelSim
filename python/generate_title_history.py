@@ -183,7 +183,7 @@ def populate_title_history(db_path, seed=RANDOM_SEED):
     # Get all title IDs (sorted ascending)
     try:
         cursor.execute("SELECT TitleID FROM Title ORDER BY TitleID")
-        title_ids = sorted([row[0] for row in cursor.fetchall()])
+        title_ids = sorted([int(row[0]) for row in cursor.fetchall()])
     except sqlite3.OperationalError:
         title_ids = list(range(1, 7))
 

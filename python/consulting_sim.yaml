@@ -313,7 +313,7 @@ event_simulation:
           trigger_config:
             target_table: ProjectExpense
             count: UNIF(2, 8)
-            fk_column: ProjectID
+            fk_column: DeliverableID
           next_steps:
             - mark_complete
 

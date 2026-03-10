@@ -6,12 +6,12 @@ entities:
   # PHASE 1: STATIC TABLES (generated at DB creation time)
   # ============================================================
 
-  # Table 1: Location
-  - name: Location
+  # Table 1: Region (renamed from Location per PPTX v2 Slide 7/8)
+  - name: Region
     type: entity
     rows: 30
     attributes:
-      - name: LocationID
+      - name: RegionID
         type: pk
       - name: State
         type: string
@@ -31,14 +31,18 @@ entities:
     attributes:
       - name: ClientID
         type: pk
+        generator:
+          type: template
+          template: "{id}"
+          id_offset: 999
       - name: ClientName
         type: string
         generator:
           type: faker
           method: company.name()
-      - name: LocationID
+      - name: RegionID
         type: fk
-        ref: Location.LocationID
+        ref: Region.RegionID
         generator:
           type: foreign_key
           subtype: many_to_one
@@ -60,11 +64,20 @@ entities:
     attributes:
       - name: BusinessUnitID
         type: pk
+        generator:
+          type: template
+          template: "{id}"
+          id_offset: 1000
       - name: BusinessUnitName
         type: string
         generator:
-          type: distribution
-          formula: DISC(0.2, Retail, 0.2, Healthcare, 0.2, Media & Entertainment, 0.2, Energy, 0.2, Government)
+          type: ordered_list
+          values:
+            - Retail
+            - Healthcare
+            - Media & Entertainment
+            - Energy
+            - Government
 
   # Table 4: Title (deterministic, 6 fixed rows)
   - name: Title
@@ -73,11 +86,21 @@ entities:
     attributes:
       - name: TitleID
         type: pk
+        generator:
+          type: template
+          template: "{id}"
+          id_offset: 100
       - name: TitleName
         type: string
         generator:
-          type: distribution
-          formula: DISC(0.167, Consultant, 0.167, Senior Consultant, 0.167, Manager, 0.167, Senior Manager, 0.166, Associate Partner, 0.166, Partner)
+          type: ordered_list
+          values:
+            - Consultant
+            - Senior Consultant
+            - Manager
+            - Senior Manager
+            - Associate Partner
+            - Partner
 
   # Table 5: Consultant (resource table for simulation)
   - name: Consultant
@@ -119,13 +142,11 @@ entities:
           formula: DISC(0.30, Junior, 0.30, Mid, 0.20, Senior, 0.10, Lead, 0.05, Principal, 0.05, Executive)
 
   # Table 6: Consultant_Title_History (bridge - populated by post-processing script)
-  # Complex promotion-chain logic: 1-3 rows per consultant
+  # Complex promotion-chain logic: 1-3 rows per consultant (PPTX v2 Slide 12-13)
   - name: Consultant_Title_History
     type: bridge
     rows: n/a
     attributes:
-      - name: id
-        type: pk
       - name: ConsultantID
         type: resource_id
         ref: Consultant.ConsultantID
@@ -141,8 +162,6 @@ entities:
         type: date
       - name: Salary
         type: decimal(12,2)
-      - name: event_type
-        type: event_type
 
   # ============================================================
   # PHASE 2: PROJECT TABLES (Dynamic — populated by simulation)
@@ -188,12 +207,16 @@ entities:
         type: date
       - name: PlannedExpense
         type: decimal(12,2)
+      - name: EstimatedBudget
+        type: decimal(12,2)
+      - name: PlannedHours
+        type: decimal(10,2)
       - name: ProjectStatus
         type: string
       - name: created_at
         type: datetime
 
-  # Table 8: ProjectBillingRate
+  # Table 8: ProjectBillingRate (rate fix via post-proc fix_billing_rates.py)
   - name: ProjectBillingRate
     type: bridge
     rows: n/a
@@ -217,8 +240,6 @@ entities:
         generator:
           type: distribution
           formula: NORM(275, 50)
-      - name: event_type
-        type: event_type
 
   # Table 9: Deliverable
   - name: Deliverable
@@ -246,6 +267,10 @@ entities:
         type: date
       - name: ActualEndDate
         type: date
+      - name: DeliverableFixedPrice
+        type: decimal(12,2)
+      - name: PlannedExpense
+        type: decimal(12,2)
       - name: created_at
         type: datetime
 
@@ -254,8 +279,6 @@ entities:
     type: bridge
     rows: n/a
     attributes:
-      - name: id
-        type: pk
       - name: DeliverableID
         type: entity_id
         ref: Deliverable.DeliverableID
@@ -273,16 +296,12 @@ entities:
         generator:
           type: distribution
           formula: UNIF(30, 120)
-      - name: event_type
-        type: event_type
 
   # Table 11: Consultant_Deliverable_Mapping
   - name: Consultant_Deliverable_Mapping
     type: bridge
     rows: n/a
     attributes:
-      - name: id
-        type: pk
       - name: DeliverableID
         type: entity_id
         ref: Deliverable.DeliverableID
@@ -291,28 +310,22 @@ entities:
         ref: Consultant.ConsultantID
       - name: Month
         type: date
-      - name: Hours
+      - name: ActualHours
         type: decimal(10,2)
         generator:
           type: distribution
           formula: UNIF(20, 160)
-      - name: event_type
-        type: event_type
-      - name: start_date
-        type: datetime
-      - name: end_date
-        type: datetime
 
-  # Table 12: ProjectExpense
+  # Table 12: ProjectExpense (FK changed to DeliverableID per Slide 7/10)
   - name: ProjectExpense
     type: entity
     rows: n/a
     attributes:
       - name: ExpenseID
         type: pk
-      - name: ProjectID
+      - name: DeliverableID
         type: entity_id
-        ref: Project.ProjectID
+        ref: Deliverable.DeliverableID
         generator:
           type: foreign_key
           subtype: many_to_one
@@ -341,13 +354,11 @@ entities:
       - name: created_at
         type: datetime
 
-  # Table 13: Deliverable_Progress_Month
+  # Table 13: Deliverable_Progress_Month (populated by post-processing script)
   - name: Deliverable_Progress_Month
     type: bridge
     rows: n/a
     attributes:
-      - name: id
-        type: pk
       - name: DeliverableID
         type: entity_id
         ref: Deliverable.DeliverableID
@@ -361,5 +372,3 @@ entities:
         generator:
           type: distribution
           formula: UNIF(0, 100)
-      - name: event_type
-        type: event_type
