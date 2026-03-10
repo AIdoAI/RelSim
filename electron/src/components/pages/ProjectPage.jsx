@@ -37,7 +37,7 @@ const ProjectPage = ({ theme }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSavedDbConfig, setLastSavedDbConfig] = useState('');
   const [lastSavedSimConfig, setLastSavedSimConfig] = useState('');
-  
+
   // Store hooks for cleanup functions
   const { cleanupOrphanedPositions: cleanupOrphanedDbPositions } = useDatabaseConfigStore(projectId)(state => ({
     cleanupOrphanedPositions: state.cleanupOrphanedPositions
@@ -45,7 +45,7 @@ const ProjectPage = ({ theme }) => {
   const { cleanupOrphanedPositions: cleanupOrphanedSimPositions } = useSimulationConfigStore(projectId)(state => ({
     cleanupOrphanedPositions: state.cleanupOrphanedPositions
   }));
-  
+
   // Set default active tab based on URL or parameter
   const determineActiveTab = useCallback(() => {
     if (location.pathname.includes('/results/')) {
@@ -57,7 +57,7 @@ const ProjectPage = ({ theme }) => {
       return 'database';
     }
   }, [location.pathname, activeTab]);
-  
+
   const [currentTab, setCurrentTab] = useState(determineActiveTab());
 
   // Memoize the loadProject function
@@ -118,16 +118,16 @@ const ProjectPage = ({ theme }) => {
   // Load existing simulation results for this project
   const loadExistingResults = useCallback(async () => {
     if (!projectId) return;
-    
+
     try {
       console.log(`Scanning for existing simulation results for project: ${projectId}`);
-      
+
       const results = await window.api.scanProjectResults(projectId);
-      
+
       if (results.success && results.results) {
         console.log(`Found ${results.results.length} existing results:`, results.results);
         setExistingResults(results.results);
-        
+
         // If we have a resultId in the URL, set it as the current result
         if (resultId && !simulationResult) {
           const matchingResult = results.results.find(r => r.id === resultId);
@@ -150,7 +150,7 @@ const ProjectPage = ({ theme }) => {
   // Load database configuration content
   const loadDbConfigContent = useCallback(async () => {
     if (!projectId) return;
-    
+
     try {
       const result = await getProjectDbConfig(projectId);
       if (result.success && result.config) {
@@ -173,7 +173,7 @@ const ProjectPage = ({ theme }) => {
   // Load simulation configuration content
   const loadSimConfigContent = useCallback(async () => {
     if (!projectId) return;
-    
+
     try {
       const result = await getProjectSimConfig(projectId);
       if (result.success && result.config) {
@@ -274,7 +274,7 @@ const ProjectPage = ({ theme }) => {
       if (hasUnsavedChanges) {
         // Prevent the default browser behavior
         e.preventDefault();
-        
+
         // Show our custom modal for reload
         setShowUnsavedModal(true);
         setPendingNavigation({
@@ -298,7 +298,7 @@ const ProjectPage = ({ theme }) => {
             setPendingNavigation(null);
           }
         });
-        
+
         // Return empty string to prevent browser dialog
         e.returnValue = '';
         return '';
@@ -365,7 +365,7 @@ const ProjectPage = ({ theme }) => {
     try {
       await handleSaveAll();
       setShowUnsavedModal(false);
-      
+
       // Check if this is a reload/close action or navigation
       if (pendingNavigation?.targetPath === 'reload' || pendingNavigation?.targetPath === 'close') {
         // For reload/close, use our custom proceed function
@@ -377,7 +377,7 @@ const ProjectPage = ({ theme }) => {
           cleanupStore(projectId);
           cleanupDatabaseStore(projectId);
         }
-        
+
         // For navigation, use the blocker's proceed function
         blocker.proceed();
       }
@@ -392,13 +392,13 @@ const ProjectPage = ({ theme }) => {
       // For reload/close, discard changes by reverting to last saved state
       setDbConfigContent(lastSavedDbConfig);
       setSimConfigContent(lastSavedSimConfig);
-      
+
       // Clean up orphaned positions after reverting to saved state
       if (projectId) {
         cleanupOrphanedDbPositions();
         cleanupOrphanedSimPositions();
       }
-      
+
       setShowUnsavedModal(false);
       // Use our custom proceed function to reload or close
       pendingNavigation.proceed();
@@ -407,40 +407,40 @@ const ProjectPage = ({ theme }) => {
       if (projectId) {
         cleanupStore(projectId);
         cleanupDatabaseStore(projectId);
-        
+
         // Force reload the stores with saved configs to get correct canonical state
         // Since we just cleaned up the stores, we need to restore the saved state before cleanup
         try {
           // Recreate stores and load the saved state
           const dbStore = useDatabaseConfigStore(projectId);
           const simStore = useSimulationConfigStore(projectId);
-          
+
           // Load saved DB config if it exists
           if (lastSavedDbConfig && lastSavedDbConfig.trim()) {
             await dbStore.getState().importEntityYaml(lastSavedDbConfig);
           } else {
             dbStore.getState().clearEntities();
           }
-          
+
           // Load saved Sim config if it exists  
           if (lastSavedSimConfig && lastSavedSimConfig.trim()) {
             await simStore.getState().importYaml(lastSavedSimConfig);
           } else {
             simStore.getState().clearConfig();
           }
-          
+
           // Small delay to ensure stores are updated
           await new Promise(resolve => setTimeout(resolve, 50));
-          
+
         } catch (error) {
           console.warn('[ProjectPage] Failed to reload stores for cleanup:', error);
         }
-        
+
         // Now clean up orphaned positions against the correct saved state
         cleanupOrphanedDbPositions();
         cleanupOrphanedSimPositions();
       }
-      
+
       setShowUnsavedModal(false);
       if (blocker.state === 'blocked') {
         blocker.proceed();
@@ -466,7 +466,7 @@ const ProjectPage = ({ theme }) => {
     // Only run when projectId changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
-  
+
   // Separate effect for loading existing results that only runs when project changes
   useEffect(() => {
     if (projectId) {
@@ -476,25 +476,25 @@ const ProjectPage = ({ theme }) => {
 
   const handleTabChange = (tabKey) => {
     setCurrentTab(tabKey);
-    
+
     // Update URL to reflect the active tab
     navigate(`/project/${projectId}/${tabKey}`);
   };
 
   const handleBack = () => {
-    navigate('/', { state: { refreshProjects: true }});
+    navigate('/', { state: { refreshProjects: true } });
   };
-  
+
   const handleEditProjectName = () => {
     if (!project) return;
     setEditingProjectName(project.name);
     setShowEditModal(true);
   };
-  
+
   const handleCloseEditModal = () => {
     setShowEditModal(false);
   };
-  
+
   // Auto-update project name with debouncing
   useEffect(() => {
     if (!editingProjectName.trim() || editingProjectName === project?.name || !showEditModal) {
@@ -508,18 +508,18 @@ const ProjectPage = ({ theme }) => {
         const result = await updateProject(projectId, {
           name: editingProjectName
         });
-        
+
         if (result.success) {
           const updatedProject = {
             ...project,
             name: editingProjectName,
             updated_at: new Date().toISOString()
           };
-          
+
           setProject(updatedProject);
           // Update the cache
           projectCache[projectId] = updatedProject;
-          
+
           // Trigger sidebar refresh by dispatching a custom event
           window.dispatchEvent(new Event('refreshProjects'));
         } else {
@@ -539,60 +539,74 @@ const ProjectPage = ({ theme }) => {
   // Add a function to run the simulation
   const handleRunSimulation = async () => {
     if (!projectId) return;
-    
+
     try {
       setRunningSimulation(true);
-      
+
       // First, ensure we have both database and simulation configurations
       const dbConfigResult = await getProjectDbConfig(projectId);
       const simConfigResult = await getProjectSimConfig(projectId);
-      
+
       if (!dbConfigResult.success || !dbConfigResult.config) {
         showError('Database configuration not found. Please create and save a database configuration first.');
         setRunningSimulation(false);
         return;
       }
-      
+
       if (!simConfigResult.success || !simConfigResult.config) {
         showError('Simulation configuration not found. Please create and save a simulation configuration first.');
         setRunningSimulation(false);
         return;
       }
-      
-      // Create a timestamp for the database name
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const dbName = `${project.name.replace(/\s+/g, '_')}_${timestamp}`;
-      
-      console.log("Running simulation with project ID:", projectId);
-      
-      // Call the generate-simulate API endpoint
-      const result = await window.api.generateAndSimulate({
-        db_config_id: dbConfigResult.config.id,
-        sim_config_id: simConfigResult.config.id,
-        project_id: projectId, // Pass the project_id to ensure proper directory structure
-        output_dir: 'output',
-        name: dbName
-      });
-      
+
+      // Check for existing generated databases
+      const existingDbResults = await window.api.scanProjectResults(projectId);
+      let result;
+
+      if (existingDbResults.success && existingDbResults.results && existingDbResults.results.length > 0) {
+        // Split workflow: use the most recent existing database
+        const latestDb = existingDbResults.results[0];
+        console.log("Running simulation on existing database:", latestDb.path);
+
+        result = await window.api.simulateWithFormulas({
+          db_config_id: dbConfigResult.config.id,
+          sim_config_id: simConfigResult.config.id,
+          database_path: latestDb.path,
+          project_id: projectId
+        });
+      } else {
+        // Legacy fallback: generate + simulate
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const dbName = `${project.name.replace(/\s+/g, '_')}_${timestamp}`;
+
+        console.log("No existing database found, running generate-and-simulate");
+
+        result = await window.api.generateAndSimulate({
+          db_config_id: dbConfigResult.config.id,
+          sim_config_id: simConfigResult.config.id,
+          project_id: projectId,
+          output_dir: 'output',
+          name: dbName
+        });
+      }
+
       if (result.success) {
         setSimulationResult(result);
         console.log("Simulation completed with result:", result);
         showSuccess('Simulation completed successfully!');
-        
+
         // Refresh the existing results list
         await loadExistingResults();
-        
+
         // Navigate to the results page
         if (result.database_path) {
-          // Extract the database file name for the result ID
           const dbPath = result.database_path;
           const resultId = dbPath.split(/[\/\\]/).pop().replace('.db', '');
           console.log("Navigating to results with ID:", resultId);
-          
-          // Add navigation state to signal that we should refresh results and expand the project
-          navigate(`/project/${projectId}/results/${resultId}`, { 
-            state: { 
-              refreshProjects: true, 
+
+          navigate(`/project/${projectId}/results/${resultId}`, {
+            state: {
+              refreshProjects: true,
               expandProject: projectId,
               newResult: resultId
             }
@@ -635,8 +649,6 @@ const ProjectPage = ({ theme }) => {
               theme={theme}
               currentTab={currentTab}
               onTabChange={handleTabChange}
-              onRunSimulation={handleRunSimulation}
-              runningSimulation={runningSimulation}
               onConfigChange={handleDbConfigChange}
               onSaveSuccess={handleDbConfigSaveSuccess}
               onSaveAll={handleSaveAll}
@@ -648,8 +660,6 @@ const ProjectPage = ({ theme }) => {
               theme={theme}
               currentTab={currentTab}
               onTabChange={handleTabChange}
-              onRunSimulation={handleRunSimulation}
-              runningSimulation={runningSimulation}
               dbConfigContent={dbConfigContent}
               onConfigChange={handleSimConfigChange}
               onSaveSuccess={handleSimConfigSaveSuccess}
@@ -692,11 +702,11 @@ const ProjectPage = ({ theme }) => {
         onCancel={handleCancelNavigation}
         title="Unsaved Changes"
         message={
-          pendingNavigation?.targetPath === 'reload' 
+          pendingNavigation?.targetPath === 'reload'
             ? "You have unsaved changes in your project configuration. What would you like to do before reloading?"
             : pendingNavigation?.targetPath === 'close'
-            ? "You have unsaved changes in your project configuration. What would you like to do before closing?"
-            : "You have unsaved changes in your project configuration. What would you like to do?"
+              ? "You have unsaved changes in your project configuration. What would you like to do before closing?"
+              : "You have unsaved changes in your project configuration. What would you like to do?"
         }
       />
     </Container>

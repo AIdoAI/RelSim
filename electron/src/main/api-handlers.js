@@ -172,6 +172,10 @@ function registerDatabaseHandlers() {
   ipcMain.handle('api:generateAndSimulate', async (_, data) => {
     return await makeApiRequest('POST', 'generate-and-simulate', data);
   });
+
+  ipcMain.handle('api:simulateWithFormulas', async (_, data) => {
+    return await makeApiRequest('POST', 'simulate-with-formulas', data);
+  });
 }
 
 /**

@@ -4,16 +4,22 @@ import { useConfigActions } from '../../stores/simulationConfigStore';
 import { useToastContext } from '../../contexts/ToastContext';
 
 /**
- * Custom hook for managing run simulation functionality
- * Handles database config loading, simulation execution, and state management
+ * Custom hook for managing run simulation functionality.
+ * Supports both:
+ *   - Legacy: generate + simulate in one shot
+ *   - Split: simulate on a pre-existing database (Phase 2+3 only)
  */
 const useRunSimulation = (projectId, refreshTrigger = null) => {
   const { showError } = useToastContext();
-  const { runSimulation } = useConfigActions(projectId);
+  const { runSimulation, runSimulationOnly } = useConfigActions(projectId);
 
   // State for project database config
   const [projectDbConfig, setProjectDbConfig] = useState(null);
-  
+
+  // Available databases for simulation
+  const [availableDatabases, setAvailableDatabases] = useState([]);
+  const [selectedDatabase, setSelectedDatabase] = useState(null);
+
   // Run simulation state
   const [isRunning, setIsRunning] = useState(false);
   const [runResult, setRunResult] = useState(null);
@@ -25,7 +31,6 @@ const useRunSimulation = (projectId, refreshTrigger = null) => {
 
     try {
       const result = await getProjectDbConfig(projectId);
-      console.log('Project DB config result:', result);
 
       if (result.success && result.config) {
         setProjectDbConfig(result.config);
@@ -38,15 +43,49 @@ const useRunSimulation = (projectId, refreshTrigger = null) => {
     }
   }, [projectId]);
 
-  // Load project database config when component mounts, projectId changes, or refresh is triggered
+  // Scan for available generated databases
+  const scanAvailableDatabases = useCallback(async () => {
+    if (!projectId) return;
+
+    try {
+      const results = await window.api.scanProjectResults(projectId);
+      if (results.success && results.results) {
+        setAvailableDatabases(results.results);
+        // Auto-select the most recent database if none selected
+        if (!selectedDatabase && results.results.length > 0) {
+          setSelectedDatabase(results.results[0]);
+        }
+      } else {
+        setAvailableDatabases([]);
+      }
+    } catch (error) {
+      console.error('Failed to scan available databases:', error);
+      setAvailableDatabases([]);
+    }
+  }, [projectId]);
+
+  // Load project database config and scan databases on mount
   useEffect(() => {
     loadProjectDbConfig();
-  }, [loadProjectDbConfig, refreshTrigger]);
+    scanAvailableDatabases();
+  }, [loadProjectDbConfig, scanAvailableDatabases, refreshTrigger]);
+
+  // Listen for databaseGenerated events to refresh the list
+  useEffect(() => {
+    const handleDatabaseGenerated = (event) => {
+      if (event.detail?.projectId === projectId) {
+        scanAvailableDatabases();
+      }
+    };
+
+    window.addEventListener('databaseGenerated', handleDatabaseGenerated);
+    return () => window.removeEventListener('databaseGenerated', handleDatabaseGenerated);
+  }, [projectId, scanAvailableDatabases]);
 
   // Get database config ID for simulation
   const dbConfigId = projectDbConfig?.id;
 
-  // Handle running simulation
+  // Handle running simulation on existing database (split workflow)
   const handleRunSimulation = useCallback(async () => {
     if (!dbConfigId) {
       showError('No database configuration available. Please ensure a database is configured for this project.');
@@ -58,16 +97,25 @@ const useRunSimulation = (projectId, refreshTrigger = null) => {
     setRunResult(null);
 
     try {
-      const result = await runSimulation(dbConfigId);
-      
+      let result;
+
+      if (selectedDatabase) {
+        // Split workflow: run simulation on existing database
+        console.log('[useRunSimulation] Running simulation on existing database:', selectedDatabase.path);
+        result = await runSimulationOnly(dbConfigId, selectedDatabase.path);
+      } else {
+        // Fallback: generate + simulate (legacy flow)
+        console.log('[useRunSimulation] No existing database selected, running generate + simulate');
+        result = await runSimulation(dbConfigId);
+      }
+
       if (result?.success) {
         setRunResult(result);
-        // Note: showSuccess doesn't exist in this context, using console.log for now
         console.log('Simulation completed successfully!');
-        
-        // Trigger sidebar refresh to show new simulation results for this specific project
-        window.dispatchEvent(new CustomEvent('refreshProjectResults', { 
-          detail: { projectId } 
+
+        // Trigger sidebar refresh
+        window.dispatchEvent(new CustomEvent('refreshProjectResults', {
+          detail: { projectId }
         }));
       } else {
         setRunError(result?.error || 'Simulation failed');
@@ -80,7 +128,7 @@ const useRunSimulation = (projectId, refreshTrigger = null) => {
     } finally {
       setIsRunning(false);
     }
-  }, [dbConfigId, runSimulation, showError]);
+  }, [dbConfigId, selectedDatabase, runSimulation, runSimulationOnly, showError, projectId]);
 
   // Reset run modal state when closing
   const handleCloseModal = useCallback(() => {
@@ -96,11 +144,15 @@ const useRunSimulation = (projectId, refreshTrigger = null) => {
     isRunning,
     runResult,
     runError,
+    availableDatabases,
+    selectedDatabase,
 
     // Actions
     handleRunSimulation,
     handleCloseModal,
-    refreshDbConfig: loadProjectDbConfig
+    setSelectedDatabase,
+    refreshDbConfig: loadProjectDbConfig,
+    refreshDatabases: scanAvailableDatabases
   };
 };
 

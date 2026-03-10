@@ -17,6 +17,7 @@ from ..utils.response_helpers import (
     success_response, error_response, not_found_response, validation_error_response,
     handle_exception, require_json_fields, log_api_request
 )
+from ..utils.run_logger import run_log_context
 
 # Create Blueprint
 database_bp = Blueprint('database', __name__)
@@ -44,14 +45,26 @@ def generate_db():
         
         output_dir = data.get('output_dir', 'output')
         db_name = data.get('name')
+        project_id = data.get('project_id')
         
         # Pass configuration content directly to generate_database
-        logger.info(f"Generating database directly from config content")
-        db_path = generate_database(config['content'], output_dir, db_name)
+        logger.info(f"Generating database directly from config content (project_id={project_id})")
+        with run_log_context(project_id=project_id, db_name=db_name):
+            db_path = generate_database(config['content'], output_dir, db_name, project_id)
+        
+        # Build a relative path for the frontend (matches scanProjectResults format)
+        db_filename = os.path.basename(db_path)
+        if project_id:
+            db_path_for_response = f"output/{project_id}/{db_filename}"
+        else:
+            db_path_for_response = f"output/{db_filename}"
+        db_path_for_response = db_path_for_response.replace('\\', '/')
+        
+        logger.info(f"Database generated. Absolute: {db_path}, Response: {db_path_for_response}")
         
         return success_response({
-            "database_path": str(db_path)
-        }, message=f"Database generated at: {db_path}")
+            "database_path": db_path_for_response
+        }, message=f"Database generated at: {db_path_for_response}")
         
     except Exception as e:
         return handle_exception(e, "generating database", logger)

@@ -6,6 +6,7 @@ import ERDiagram from '../database/ERDiagram';
 import FloatingToolbar from '../shared/FloatingToolbar';
 import EditorHeader from '../shared/EditorHeader';
 import EditorLayout from '../shared/EditorLayout';
+import GenerateDatabaseModal from '../modals/GenerateDatabaseModal';
 import { useToastContext } from '../../contexts/ToastContext';
 import useResizableGrid from '../../hooks/shared/useResizableGrid';
 import useYamlOperations from '../../hooks/shared/useYamlOperations';
@@ -77,6 +78,7 @@ const DbConfigEditor = ({
 
   // Local modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [saveAsNew, setSaveAsNew] = useState(false);
 
   // Refs
@@ -199,6 +201,7 @@ const DbConfigEditor = ({
   // Get toolbar configuration
   const toolbarItems = getDbToolbarItems({
     handleAddTable,
+    handleGenerate: () => setShowGenerateModal(true),
     toggleSelectionMode,
     selectionMode,
     undo,
@@ -259,6 +262,12 @@ const DbConfigEditor = ({
               </div>
             </div>
           )}
+          {/* Generate Database Modal */}
+          <GenerateDatabaseModal
+            show={showGenerateModal}
+            onHide={() => setShowGenerateModal(false)}
+            projectId={projectId}
+          />
         </div>
       }
       onResize={handleMouseDown}
