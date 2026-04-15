@@ -97,6 +97,16 @@ def main():
     gen_sim_parser.add_argument('--output-dir', '-o', default='output', help='Output directory')
     gen_sim_parser.add_argument('--name', '-n', help='Database name (without extension)')
     
+    # 4-step pipeline command: generate → plan → simulate → snapshots
+    pipeline_parser = subparsers.add_parser('generate-plan-simulate',
+                                           help='Full 4-step pipeline: generate static tables, generate plans, run simulation, generate snapshots')
+    pipeline_parser.add_argument('db_config', help='Path to database configuration file')
+    pipeline_parser.add_argument('plan_config', help='Path to plan generation configuration file')
+    pipeline_parser.add_argument('sim_config', help='Path to simulation configuration file')
+    pipeline_parser.add_argument('--output-dir', '-o', default='output', help='Output directory')
+    pipeline_parser.add_argument('--name', '-n', help='Database name (without extension)')
+    pipeline_parser.add_argument('--skip-snapshots', action='store_true', help='Skip Step 4 snapshot generation')
+
     # Parse arguments
     args = parser.parse_args()
     
@@ -177,6 +187,44 @@ def main():
                 logger.info("No formula attributes found, skipping formula resolution")
         except Exception as e:
             logger.error(f"Error in generate-simulate: {e}")
+            sys.exit(1)
+    elif args.command == 'generate-plan-simulate':
+        try:
+            # Step 1: Generate static tables
+            db_path, generator = generate_database_with_formula_support(
+                args.db_config,
+                args.output_dir,
+                args.name,
+                sim_config_path_or_content=args.sim_config
+            )
+            logger.info(f"Step 1 complete: Static tables generated at {db_path}")
+
+            # Step 2: Run plan generator
+            from src.plan_generator import parse_plan_config, PlanGenerator
+            plan_config = parse_plan_config(args.plan_config)
+            plan_gen = PlanGenerator(plan_config, db_path)
+            stats = plan_gen.generate()
+            logger.info(f"Step 2 complete: Plan generation stats: {stats}")
+
+            # Step 3: Run DES execution
+            results = run_simulation(args.sim_config, args.db_config, db_path)
+            logger.info(f"Step 3 complete: Simulation results: {results}")
+
+            # Resolve formulas after simulation if any are pending
+            if generator.has_pending_formulas():
+                logger.info("Resolving formula-based attributes after simulation")
+                generator.resolve_formulas(db_path)
+
+            # Step 4: Generate monthly snapshots (Now handled natively in Step 3)
+            if not args.skip_snapshots:
+                logger.info("Step 4: Monthly snapshots and progress metrics were captured natively during Step 3 execution.")
+
+            logger.info("4-step pipeline complete!")
+
+        except Exception as e:
+            logger.error(f"Error in generate-plan-simulate: {e}")
+            import traceback
+            traceback.print_exc()
             sys.exit(1)
     else:
         parser.print_help()

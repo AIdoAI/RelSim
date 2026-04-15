@@ -403,7 +403,8 @@ class TriggerStepProcessor(StepProcessor):
                 raise ValueError(
                     f"Trigger step {step_id} requires simulation start_date to populate timestamp_column '{timestamp_column}'"
                 )
-            event_timestamp = self.config.start_date + timedelta(minutes=self.env.now)
+            # Date only — time-of-day is a continuous-time artifact with no business meaning
+            event_timestamp = (self.config.start_date + timedelta(minutes=self.env.now)).date()
 
         sim_minutes = self.env.now if sim_time_column else None
         return timestamp_column, sim_time_column, event_timestamp, sim_minutes, timestamp_missing_attr

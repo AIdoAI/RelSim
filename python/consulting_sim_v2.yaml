@@ -127,7 +127,7 @@ event_simulation:
           event_config:
             entity_table: Deliverable
             duration:
-              formula: NORM(21, 5)
+              formula: NORM(28, 7)
               time_unit: days
             resource_requirements:
               - resource_table: Consultant
@@ -191,7 +191,7 @@ event_simulation:
           event_config:
             entity_table: Deliverable
             duration:
-              formula: NORM(21, 5)
+              formula: NORM(28, 7)
               time_unit: days
             resource_requirements:
               - resource_table: Consultant
@@ -212,7 +212,7 @@ event_simulation:
           event_config:
             entity_table: Deliverable
             duration:
-              formula: NORM(21, 5)
+              formula: NORM(28, 7)
               time_unit: days
             resource_requirements:
               - resource_table: Consultant
@@ -254,7 +254,7 @@ event_simulation:
           event_config:
             entity_table: Deliverable
             duration:
-              formula: NORM(21, 5)
+              formula: NORM(28, 7)
               time_unit: days
             resource_requirements:
               - resource_table: Consultant
@@ -297,7 +297,7 @@ event_simulation:
           event_config:
             entity_table: Deliverable
             duration:
-              formula: NORM(21, 5)
+              formula: NORM(28, 7)
               time_unit: days
             resource_requirements:
               - resource_table: Consultant

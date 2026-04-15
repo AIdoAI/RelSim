@@ -1,44 +1,106 @@
-# RelSim Walkthrough & Verification
+# RelSim — Walkthrough
 
-## Installation Verified
-- [x] Python dependencies installed (`python/requirements.txt`)
-- [x] UI dependencies installed (`electron/package.json`)
-- [x] Backend API verifies running (Port 5000)
+## What this project does
 
-## Consulting Firm Simulation
-I have implemented a consulting firm simulation with the following components:
-1.  **Database Configuration** (`python/consulting_db.yaml`): Defines `Employee` (Resource), `Company` (Client), `Project` (Entity), and supporting tables.
-2.  **Simulation Configuration** (`python/consulting_sim.yaml`): Defines resource capacities and the project lifecycle flow.
+RelSim generates a realistic synthetic relational database for a consulting firm. It simulates 10 years of operations — projects arriving, consultants being assigned, deliverables being completed — and produces a fully populated SQLite database with 13 tables ready for analysis or teaching.
 
-### Execution
-```bash
-cd python
-python3 main.py generate-simulate consulting_db.yaml consulting_sim.yaml -o output -n consulting
+---
+
+## The 4-step pipeline
+
+```
+Step 1  Generate static tables     Region, Client, Business_Unit, Title, Consultant
+Step 2  Generate project plans      Project_Plan, Deliverable, billing rates, staffing plans
+Step 3  Run the simulation (DES)    Consultant_Deliverable_Mapping, Expenses, Progress
+Step 4  Post-processing             Dates, financials, title history, snapshots
 ```
 
-### Registering Project for UI
-To make the manually generated simulation visible in the Electron UI, run the registration script:
+Steps 1–3 run in one command. Step 4 runs automatically as hooks at the end of Step 3.
+
+---
+
+## Running a simulation
+
+### From the UI
+Open the Electron app, configure the database and simulation canvases, and click Run. All 4 steps happen automatically.
+
+### From the CLI (from the `python/` folder)
 
 ```bash
-python3 register_project.py
+# Standard run (Steps 1 + 3 + 4)
+python main.py generate-simulate consulting_db.yaml consulting_sim.yaml
+
+# Full 4-step pipeline with rule-based plan generation
+python main.py generate-plan-simulate consulting_db.yaml consulting_plan.yaml consulting_sim.yaml
 ```
-This script registers the project in the internal database and organizes the output files so the UI can detect them.
 
+---
 
-### Verification Results
-- **Output Database**: `output/consulting.db`
-- **Entities Created**: ~50 Project entities (over 100 hours simulation time).
-- **Data Integrity**: Verified `Project` names and statuses are populated correctly.
+## Output structure
 
-### Interactive UI
-The Electron application has been launched and is connected to the backend.
-- **To Launch Manually**:
-  1. Ensure the Python backend is running: `cd python && python3 main.py api`
-  2. In a separate terminal, launch the UI: `cd electron && npm start`
+Every run creates a new folder under `output/`:
 
-### Data Export
-To export all database tables to CSV format:
+```
+output/{run-id}/
+  generated_{timestamp}.db        — the SQLite database (all 13 tables)
+  generated_{timestamp}/          — CSV export of every table
+  snapshots/                      — point-in-time CSV snapshots
+    2020-12-31/
+      projects.csv
+      deliverables.csv
+    2021-12-31/
+      ...
+  logs/                           — detailed run logs
+```
+
+To export CSVs from the most recent run at any time:
 ```bash
-python3 export_to_csv.py
+python export_to_csv.py
 ```
-This will create a `output/csv/` directory containing CSV files for every table (e.g., `Employee.csv`, `Project.csv`).
+
+---
+
+## Snapshot settings
+
+Controlled in `consulting_sim.yaml`:
+
+```yaml
+simulation:
+  snapshot_enabled: true          # false = skip snapshots entirely
+  snapshot_interval_days: 365     # 30=monthly  90=quarterly  180=biannual  365=annual
+```
+
+Each snapshot folder contains `projects.csv` (all projects with their status at that date) and `deliverables.csv` (% complete per deliverable at that date).
+
+---
+
+## The 13 tables
+
+| Table | Populated by |
+|---|---|
+| Region | Step 1 — static generator |
+| Client | Step 1 — static generator |
+| Business_Unit | Step 1 — static generator |
+| Title | Step 1 — static generator |
+| Consultant | Step 1 — static generator |
+| Consultant_Title_History | Step 4 — `generate_title_history.py` |
+| Project_Plan | Step 3 — DES (dates + financials filled by Step 4) |
+| Project_Billing_Rate | Step 3 — DES (TitleIDs + rates filled by Step 4) |
+| Deliverable | Step 3 — DES (dates + expenses filled by Step 4) |
+| Deliverable_Title_Plan_Mapping | Step 3 — DES (TitleIDs filled by Step 4) |
+| Consultant_Deliverable_Mapping | Step 3 — DES |
+| Actual_Project_Expense | Step 3 — DES (Date filled by Step 4) |
+| Deliverable_Progress_Month | Step 4 — SnapshotManager |
+
+---
+
+## Adjusting the simulation
+
+| What to change | Where |
+|---|---|
+| Number of consultants, clients, regions | `consulting_db.yaml` — row counts |
+| Project arrival rate | `consulting_sim.yaml` — `EXPO(30)` interarrival |
+| Simulation duration | `consulting_sim.yaml` — `TIME(3650)` |
+| Deliverable workflow | `consulting_sim.yaml` — event_flows steps |
+| Billing rate distributions | `fix_billing_rates.py` — `TITLE_RATES` dict |
+| Snapshot interval | `consulting_sim.yaml` — `snapshot_interval_days` |

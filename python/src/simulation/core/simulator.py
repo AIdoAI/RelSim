@@ -102,6 +102,19 @@ class EventSimulator:
             # Start entity generation processes using flow manager
             self.flow_manager.start_create_modules()
             
+            # Start native periodic snapshots process
+            try:
+                from .lifecycle.snapshot_manager import SnapshotManager
+                self.snapshot_manager = SnapshotManager(
+                    self.initializer.env, 
+                    self.initializer.engine, 
+                    self.config
+                )
+                self.initializer.env.process(self.snapshot_manager.run_periodic_snapshots())
+                logger.debug("Native SnapshotManager process started")
+            except Exception as e:
+                logger.warning(f"Failed to start SnapshotManager: {e}")
+            
             # Log simulation start
             self.termination_monitor.log_simulation_start()
             
@@ -115,6 +128,10 @@ class EventSimulator:
             
             # Clean up any remaining allocated resources
             self._cleanup_remaining_resources()
+            
+            # Flush simulated snapshots to DB before finishing
+            if hasattr(self, 'snapshot_manager') and self.snapshot_manager:
+                self.snapshot_manager.flush_to_database()
             
             logger.debug(f"Simulation completed. Processed {self.initializer.processed_events} events for {self.initializer.entity_manager.entity_count} entities")
             

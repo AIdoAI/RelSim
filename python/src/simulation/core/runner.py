@@ -87,18 +87,22 @@ def run_simulation(sim_config_path_or_content: Union[str, Path],
 def _run_post_simulation_hooks(db_path, db_config=None):
     """
     Run post-simulation processing hooks.
-    
+
     Currently handles:
     - Consultant_Title_History: complex promotion-chain logic (1-3 rows
       per consultant with sequential dates and title-dependent salaries)
     - Deliverable_Progress_Month: monthly progress records derived from
       Consultant_Deliverable_Mapping date ranges
+    - Project_Billing_Rate / Deliverable_Title_Plan_Mapping: assign TitleIDs
+      and title-specific billing rates (fix_billing_rates)
+    - Project_Plan financials: PlannedEndDate, PlannedHours, EstimatedBudget
+      (calculate_financials — must run after fix_billing_rates)
     """
     if not db_config:
         return
-    
+
     entity_names = [e.name for e in db_config.entities]
-    
+
     # Lazy import setup (only done once)
     import sys
     from pathlib import Path
@@ -106,12 +110,12 @@ def _run_post_simulation_hooks(db_path, db_config=None):
     python_dir = str(Path(__file__).resolve().parent.parent.parent.parent)
     if python_dir not in sys.path:
         sys.path.insert(0, python_dir)
-    
+
     # Hook 1: Consultant_Title_History
     if 'Consultant_Title_History' in entity_names:
         try:
             from generate_title_history import populate_title_history
-            
+
             logger.info("Running post-simulation hook: Consultant_Title_History")
             count = populate_title_history(str(db_path))
             if count > 0:
@@ -127,12 +131,12 @@ def _run_post_simulation_hooks(db_path, db_config=None):
             )
         except Exception as e:
             logger.error(f"Post-simulation hook (title history) error: {e}")
-    
+
     # Hook 2: Deliverable_Progress_Month
     if 'Deliverable_Progress_Month' in entity_names:
         try:
             from generate_progress_months import populate_progress_months
-            
+
             logger.info("Running post-simulation hook: Deliverable_Progress_Month")
             count = populate_progress_months(str(db_path))
             if count > 0:
@@ -148,6 +152,41 @@ def _run_post_simulation_hooks(db_path, db_config=None):
             )
         except Exception as e:
             logger.error(f"Post-simulation hook (progress months) error: {e}")
+
+    # Hook 3: Project_Billing_Rate & Deliverable_Title_Plan_Mapping — assign TitleIDs
+    # and title-specific billing rates. Must run before Hook 4 (financials depend on
+    # TitleIDs being set so that EstimatedBudget = PlannedHours * BillingRate works).
+    if 'Project_Billing_Rate' in entity_names:
+        try:
+            from fix_billing_rates import fix_billing_rates
+
+            logger.info("Running post-simulation hook: fix_billing_rates")
+            fix_billing_rates(str(db_path))
+            logger.info("Post-simulation hook: billing rates and TitleIDs fixed")
+        except ImportError:
+            logger.warning(
+                "Post-simulation hook: fix_billing_rates module not found. "
+                "Run 'python fix_billing_rates.py <db_path>' manually."
+            )
+        except Exception as e:
+            logger.error(f"Post-simulation hook (fix_billing_rates) error: {e}")
+
+    # Hook 4: Project_Plan financials — PlannedEndDate, PlannedHours, EstimatedBudget.
+    # Depends on Hook 3 having assigned TitleIDs so billing rate joins succeed.
+    if 'Project_Plan' in entity_names:
+        try:
+            from calculate_financials import calculate_financials
+
+            logger.info("Running post-simulation hook: calculate_financials")
+            calculate_financials(str(db_path))
+            logger.info("Post-simulation hook: project financials calculated")
+        except ImportError:
+            logger.warning(
+                "Post-simulation hook: calculate_financials module not found. "
+                "Run 'python calculate_financials.py <db_path>' manually."
+            )
+        except Exception as e:
+            logger.error(f"Post-simulation hook (calculate_financials) error: {e}")
 
 
 def run_simulation_from_config_dir(sim_config_dir: Union[str, Path],

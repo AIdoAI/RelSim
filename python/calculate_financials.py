@@ -1,10 +1,23 @@
 """
-Post-processing: Calculate derived Project financial fields.
+Post-processing: Calculate derived financial and date fields.
 
-Populates the following Project columns from deliverable and billing data:
-- PlannedEndDate: MAX(Deliverable.PlannedEndDate) for each project
-- PlannedHours:   SUM(Deliverable_Title_Plan_Mapping.PlannedHours) for each project
-- EstimatedBudget: SUM(PlannedHours * BillingRate) + SUM(PlannedExpense)
+Project_Plan:
+- PlannedStartDate: MIN actual start date across deliverables (from Consultant_Deliverable_Mapping)
+- PlannedEndDate:   MAX actual end date across deliverables (from sim_event_processing fallback)
+- PlannedHours:     SUM(Deliverable_Title_Plan_Mapping.PlannedHours) per project
+- EstimatedBudget:  SUM(PlannedHours * BillingRate) + SUM(PlannedExpense)
+
+Deliverable:
+- ActualStartDate:    MIN(Consultant_Deliverable_Mapping.start_date) per deliverable
+- ActualEndDate:      MAX(Consultant_Deliverable_Mapping.end_date) per deliverable
+- PlannedStartDate:   same as ActualStartDate (best available; set by plan generator when used)
+- PlannedEndDate:     same as ActualEndDate
+- PlannedExpense:     UNIF(2000, 15000) — planned cost for this deliverable phase
+- DeliverableFixedPrice: for Fixed-Price projects only — project Fixed_Price_Amount split
+                         proportionally across deliverables using random weights
+
+Actual_Project_Expense:
+- Date: copied from created_at (the DES stamps created_at at trigger time)
 
 Usage:
   python calculate_financials.py <path_to_db>
@@ -12,33 +25,124 @@ Usage:
 
 import sys
 import sqlite3
+import random
 
 
 def calculate_financials(db_path: str) -> None:
-    """Calculate derived financial fields on the Project table."""
+    """Calculate derived financial and date fields."""
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
-    # 1. PlannedEndDate = MAX of all deliverable PlannedEndDates per project
+    # -------------------------------------------------------------------------
+    # DELIVERABLE DATES
+    # ActualStartDate / ActualEndDate — derived from Consultant_Deliverable_Mapping
+    # PlannedStartDate / PlannedEndDate — use same values when not already set
+    #   (plan generator sets them when using generate-plan-simulate; otherwise
+    #    actual dates are the best available proxy)
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE Deliverable
+        SET ActualStartDate = (
+            SELECT DATE(MIN(cdm.start_date))
+            FROM Consultant_Deliverable_Mapping cdm
+            WHERE cdm.DeliverableID = Deliverable.DeliverableID
+              AND cdm.start_date IS NOT NULL
+        )
+        WHERE EXISTS (
+            SELECT 1 FROM Consultant_Deliverable_Mapping cdm
+            WHERE cdm.DeliverableID = Deliverable.DeliverableID
+              AND cdm.start_date IS NOT NULL
+        )
+    """)
+    print(f"Updated Deliverable.ActualStartDate for {cur.rowcount} deliverables.")
+
+    cur.execute("""
+        UPDATE Deliverable
+        SET ActualEndDate = (
+            SELECT DATE(MAX(cdm.end_date))
+            FROM Consultant_Deliverable_Mapping cdm
+            WHERE cdm.DeliverableID = Deliverable.DeliverableID
+              AND cdm.end_date IS NOT NULL
+        )
+        WHERE EXISTS (
+            SELECT 1 FROM Consultant_Deliverable_Mapping cdm
+            WHERE cdm.DeliverableID = Deliverable.DeliverableID
+              AND cdm.end_date IS NOT NULL
+        )
+    """)
+    print(f"Updated Deliverable.ActualEndDate for {cur.rowcount} deliverables.")
+
+    # Only fill Planned dates when they aren't already set (plan generator sets them)
+    cur.execute("""
+        UPDATE Deliverable
+        SET PlannedStartDate = ActualStartDate
+        WHERE PlannedStartDate IS NULL AND ActualStartDate IS NOT NULL
+    """)
+    print(f"Updated Deliverable.PlannedStartDate for {cur.rowcount} deliverables.")
+
+    cur.execute("""
+        UPDATE Deliverable
+        SET PlannedEndDate = ActualEndDate
+        WHERE PlannedEndDate IS NULL AND ActualEndDate IS NOT NULL
+    """)
+    print(f"Updated Deliverable.PlannedEndDate for {cur.rowcount} deliverables.")
+
+    # -------------------------------------------------------------------------
+    # PROJECT_PLAN DATES
+    # -------------------------------------------------------------------------
+
+    # PlannedStartDate = earliest deliverable start across the project
+    cur.execute("""
+        UPDATE Project_Plan
+        SET PlannedStartDate = (
+            SELECT DATE(MIN(cdm.start_date))
+            FROM Deliverable d
+            JOIN Consultant_Deliverable_Mapping cdm
+                ON cdm.DeliverableID = d.DeliverableID
+            WHERE d.ProjectID = Project_Plan.ProjectID
+              AND cdm.start_date IS NOT NULL
+        )
+        WHERE EXISTS (
+            SELECT 1
+            FROM Deliverable d
+            JOIN Consultant_Deliverable_Mapping cdm
+                ON cdm.DeliverableID = d.DeliverableID
+            WHERE d.ProjectID = Project_Plan.ProjectID
+              AND cdm.start_date IS NOT NULL
+        )
+    """)
+    print(f"Updated Project_Plan.PlannedStartDate for {cur.rowcount} projects.")
+
+    # PlannedEndDate = latest deliverable end; prefer Deliverable.PlannedEndDate,
+    # fall back to sim_event_processing when Deliverable dates are still unset.
     cur.execute("""
         UPDATE Project_Plan
         SET PlannedEndDate = (
-            SELECT MAX(d.PlannedEndDate)
+            SELECT DATE(MAX(COALESCE(d.PlannedEndDate, sep.end_datetime)))
             FROM Deliverable d
+            LEFT JOIN sim_event_processing sep
+                ON sep.entity_id = d.DeliverableID
+               AND sep.entity_table = 'Deliverable'
             WHERE d.ProjectID = Project_Plan.ProjectID
-              AND d.PlannedEndDate IS NOT NULL
+              AND (d.PlannedEndDate IS NOT NULL OR sep.end_datetime IS NOT NULL)
         )
         WHERE EXISTS (
-            SELECT 1 FROM Deliverable d
+            SELECT 1
+            FROM Deliverable d
+            LEFT JOIN sim_event_processing sep
+                ON sep.entity_id = d.DeliverableID
+               AND sep.entity_table = 'Deliverable'
             WHERE d.ProjectID = Project_Plan.ProjectID
-              AND d.PlannedEndDate IS NOT NULL
+              AND (d.PlannedEndDate IS NOT NULL OR sep.end_datetime IS NOT NULL)
         )
     """)
-    planned_end_count = cur.rowcount
-    print(f"Updated PlannedEndDate for {planned_end_count} projects.")
+    print(f"Updated Project_Plan.PlannedEndDate for {cur.rowcount} projects.")
 
-    # 2. PlannedHours = SUM of PlannedHours from Deliverable_Title_Plan_Mapping
-    #    via the deliverables belonging to each project
+    # -------------------------------------------------------------------------
+    # PROJECT_PLAN FINANCIALS
+    # -------------------------------------------------------------------------
+
     cur.execute("""
         UPDATE Project_Plan
         SET PlannedHours = (
@@ -55,31 +159,79 @@ def calculate_financials(db_path: str) -> None:
             WHERE d.ProjectID = Project_Plan.ProjectID
         )
     """)
-    planned_hours_count = cur.rowcount
-    print(f"Updated PlannedHours for {planned_hours_count} projects.")
+    print(f"Updated Project_Plan.PlannedHours for {cur.rowcount} projects.")
 
-    # 3. EstimatedBudget = SUM(PlannedHours * BillingRate) + SUM(PlannedExpense)
-    #    For each project: sum across all deliverables and their title plan mappings,
-    #    multiplied by the corresponding project billing rate for each title.
+    # -------------------------------------------------------------------------
+    # DELIVERABLE.PlannedExpense — UNIF(2000, 15000) per deliverable
+    # Represents the anticipated non-labour cost for each project phase
+    # (travel, software, equipment, facilities, etc.).
+    # Only fills rows where PlannedExpense is still NULL.
+    # -------------------------------------------------------------------------
+
+    cur.execute("SELECT DeliverableID FROM Deliverable WHERE PlannedExpense IS NULL")
+    deliverable_ids = [row[0] for row in cur.fetchall()]
+    for did in deliverable_ids:
+        planned_expense = round(random.uniform(2000, 15000), 2)
+        cur.execute("UPDATE Deliverable SET PlannedExpense = ? WHERE DeliverableID = ?",
+                    (planned_expense, did))
+    print(f"Updated Deliverable.PlannedExpense for {len(deliverable_ids)} deliverables.")
+
+    # -------------------------------------------------------------------------
+    # DELIVERABLE.DeliverableFixedPrice — Fixed-Price projects only
+    # Splits the project's Fixed_Price_Amount across its deliverables using
+    # random weights so the shares sum exactly to Fixed_Price_Amount.
+    # Time & Materials projects leave this column NULL.
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        SELECT p.ProjectID, p.Fixed_Price_Amount
+        FROM Project_Plan p
+        WHERE p.ProjectType = 'Fixed-Price'
+          AND p.Fixed_Price_Amount IS NOT NULL
+    """)
+    fixed_price_projects = cur.fetchall()
+    deliverable_fixed_price_count = 0
+    for project_id, fixed_price_amount in fixed_price_projects:
+        cur.execute("""
+            SELECT DeliverableID FROM Deliverable
+            WHERE ProjectID = ? AND DeliverableFixedPrice IS NULL
+            ORDER BY DeliverableID
+        """, (project_id,))
+        delivs = [row[0] for row in cur.fetchall()]
+        if not delivs:
+            continue
+        # Random weights — each deliverable gets a different share
+        weights = [random.uniform(0.8, 1.2) for _ in delivs]
+        total_weight = sum(weights)
+        shares = [round(fixed_price_amount * w / total_weight, 2) for w in weights]
+        # Correct rounding drift on the last deliverable
+        shares[-1] = round(fixed_price_amount - sum(shares[:-1]), 2)
+        for did, share in zip(delivs, shares):
+            cur.execute("UPDATE Deliverable SET DeliverableFixedPrice = ? WHERE DeliverableID = ?",
+                        (share, did))
+        deliverable_fixed_price_count += len(delivs)
+    print(f"Updated Deliverable.DeliverableFixedPrice for {deliverable_fixed_price_count} deliverables"
+          f" ({len(fixed_price_projects)} Fixed-Price projects).")
+
     cur.execute("""
         UPDATE Project_Plan
         SET EstimatedBudget = (
             SELECT COALESCE(labor.total_labor, 0) + COALESCE(expense.total_expense, 0)
             FROM (
                 SELECT d.ProjectID,
-                       SUM(dtpm.PlannedHours * COALESCE(pbr.BillingRate, 0)) as total_labor
+                       SUM(dtpm.PlannedHours * COALESCE(pbr.BillingRate, 0)) AS total_labor
                 FROM Deliverable d
                 JOIN Deliverable_Title_Plan_Mapping dtpm
                     ON d.DeliverableID = dtpm.DeliverableID
                 LEFT JOIN Project_Billing_Rate pbr
                     ON pbr.ProjectID = d.ProjectID
-                    AND pbr.TitleID = dtpm.TitleID
+                   AND pbr.TitleID = dtpm.TitleID
                 WHERE d.ProjectID = Project_Plan.ProjectID
                 GROUP BY d.ProjectID
             ) labor
             LEFT JOIN (
                 SELECT d2.ProjectID,
-                       SUM(COALESCE(d2.PlannedExpense, 0)) as total_expense
+                       SUM(COALESCE(d2.PlannedExpense, 0)) AS total_expense
                 FROM Deliverable d2
                 WHERE d2.ProjectID = Project_Plan.ProjectID
                 GROUP BY d2.ProjectID
@@ -90,30 +242,71 @@ def calculate_financials(db_path: str) -> None:
             WHERE d.ProjectID = Project_Plan.ProjectID
         )
     """)
-    budget_count = cur.rowcount
-    print(f"Updated EstimatedBudget for {budget_count} projects.")
+    print(f"Updated Project_Plan.EstimatedBudget for {cur.rowcount} projects.")
+
+    # -------------------------------------------------------------------------
+    # ACTUAL_PROJECT_EXPENSE DATE
+    # The DES trigger stamps created_at at the moment the expense is generated.
+    # Copy it to the Date column when Date is not already set.
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE Actual_Project_Expense
+        SET Date = DATE(created_at)
+        WHERE Date IS NULL AND created_at IS NOT NULL
+    """)
+    print(f"Updated Actual_Project_Expense.Date for {cur.rowcount} expenses.")
 
     conn.commit()
 
-    # Print summary
+    # -------------------------------------------------------------------------
+    # SUMMARY
+    # -------------------------------------------------------------------------
+
     cur.execute("""
-        SELECT COUNT(*) as total,
-               SUM(CASE WHEN PlannedEndDate IS NOT NULL THEN 1 ELSE 0 END) as has_end_date,
-               SUM(CASE WHEN PlannedHours IS NOT NULL AND PlannedHours > 0 THEN 1 ELSE 0 END) as has_hours,
-               SUM(CASE WHEN EstimatedBudget IS NOT NULL AND EstimatedBudget > 0 THEN 1 ELSE 0 END) as has_budget,
-               ROUND(AVG(PlannedHours), 2) as avg_hours,
-               ROUND(AVG(EstimatedBudget), 2) as avg_budget
+        SELECT COUNT(*),
+               SUM(CASE WHEN PlannedStartDate IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN PlannedEndDate   IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN PlannedHours     > 0         THEN 1 ELSE 0 END),
+               SUM(CASE WHEN EstimatedBudget  > 0         THEN 1 ELSE 0 END),
+               ROUND(AVG(PlannedHours), 2),
+               ROUND(AVG(EstimatedBudget), 2)
         FROM Project_Plan
     """)
-    row = cur.fetchone()
-    if row:
-        print(f"\nProject Financial Summary:")
-        print(f"  Total projects: {row[0]}")
-        print(f"  With PlannedEndDate: {row[1]}")
-        print(f"  With PlannedHours: {row[2]}")
-        print(f"  With EstimatedBudget: {row[3]}")
-        print(f"  Avg PlannedHours: {row[4]}")
-        print(f"  Avg EstimatedBudget: {row[5]}")
+    r = cur.fetchone()
+    print(f"\nProject_Plan Summary ({r[0]} projects):")
+    print(f"  PlannedStartDate : {r[1]}/{r[0]}")
+    print(f"  PlannedEndDate   : {r[2]}/{r[0]}")
+    print(f"  PlannedHours     : {r[3]}/{r[0]}  (avg {r[5]})")
+    print(f"  EstimatedBudget  : {r[4]}/{r[0]}  (avg {r[6]})")
+
+    cur.execute("""
+        SELECT COUNT(*),
+               SUM(CASE WHEN PlannedStartDate    IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN PlannedEndDate      IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN ActualStartDate     IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN ActualEndDate       IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN PlannedExpense      IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN DeliverableFixedPrice IS NOT NULL THEN 1 ELSE 0 END),
+               ROUND(AVG(PlannedExpense), 2)
+        FROM Deliverable
+    """)
+    r = cur.fetchone()
+    print(f"\nDeliverable Summary ({r[0]} deliverables):")
+    print(f"  PlannedStartDate     : {r[1]}/{r[0]}")
+    print(f"  PlannedEndDate       : {r[2]}/{r[0]}")
+    print(f"  ActualStartDate      : {r[3]}/{r[0]}")
+    print(f"  ActualEndDate        : {r[4]}/{r[0]}")
+    print(f"  PlannedExpense       : {r[5]}/{r[0]}  (avg {r[7]})")
+    print(f"  DeliverableFixedPrice: {r[6]}/{r[0]}")
+
+    cur.execute("""
+        SELECT COUNT(*), SUM(CASE WHEN Date IS NOT NULL THEN 1 ELSE 0 END)
+        FROM Actual_Project_Expense
+    """)
+    r = cur.fetchone()
+    print(f"\nActual_Project_Expense Summary ({r[0]} expenses):")
+    print(f"  Date             : {r[1]}/{r[0]}")
 
     conn.close()
 
