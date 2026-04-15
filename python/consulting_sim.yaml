@@ -88,7 +88,9 @@ event_simulation:
           next_steps:
             - initialize_project
 
-        # Step 2: Initialize project status
+        # Step 2: Initialize project status + set PlannedStartDate early.
+        # Setting Plan dates here (not at mark_complete) means they are populated
+        # even for projects that don't finish before simulation ends.
         - step_id: initialize_project
           step_type: assign
           assign_config:
@@ -96,6 +98,11 @@ event_simulation:
               - assignment_type: attribute
                 attribute_name: ProjectStatus
                 value: Not Started
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET PlannedStartDate = DATE(created_at)
+                  WHERE ProjectID = Entity.ProjectID AND PlannedStartDate IS NULL
           next_steps:
             - trigger_billing_rates
 
@@ -499,6 +506,30 @@ event_simulation:
                     ) expense
                   )
                   WHERE ProjectID = Entity.ProjectID
+
+              # ---- DeliverableFixedPrice parent-split (Fixed-Price projects only) ----
+              # Two-step pattern:
+              #   1. Write random weights (80-119) to DeliverableFixedPrice as scratch
+              #   2. Normalize so the shares sum exactly to Project.Fixed_Price_Amount
+              # Uses DeliverableFixedPrice as its own scratch space — no temp column needed.
+              # Skipped for Time & Materials projects (no fixed price to split).
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET DeliverableFixedPrice = (ABS(RANDOM()) % 40 + 80)
+                  WHERE ProjectID = Entity.ProjectID
+                    AND (SELECT ProjectType FROM Project_Plan WHERE ProjectID = Entity.ProjectID) = 'Fixed-Price'
+                    AND DeliverableFixedPrice IS NULL
+
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET DeliverableFixedPrice = ROUND(
+                    DeliverableFixedPrice * 1.0 /
+                      (SELECT SUM(DeliverableFixedPrice) FROM Deliverable WHERE ProjectID = Entity.ProjectID) *
+                    (SELECT Fixed_Price_Amount FROM Project_Plan WHERE ProjectID = Entity.ProjectID), 2)
+                  WHERE ProjectID = Entity.ProjectID
+                    AND (SELECT ProjectType FROM Project_Plan WHERE ProjectID = Entity.ProjectID) = 'Fixed-Price'
           next_steps:
             - release_project
 

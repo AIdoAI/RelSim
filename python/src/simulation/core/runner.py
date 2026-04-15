@@ -99,18 +99,20 @@ def _run_post_simulation_hooks(db_path, db_config=None):
 
     Currently handles:
     - Consultant_Title_History: complex promotion-chain logic (1-3 rows
-      per consultant with sequential dates and title-dependent salaries)
-    - Deliverable_Progress_Month: monthly progress records derived from
-      Consultant_Deliverable_Mapping date ranges (SnapshotManager)
-    - Residual post-processing (calculate_financials): only what cannot be
-      declared via YAML — static table created_at, DeliverableFixedPrice
-      parent-split, and edge-case backfill for projects that didn't
-      reach mark_complete before sim end.
+      per consultant with sequential dates and title-dependent salaries).
+      This is a consulting-firm domain plugin — the chain generation
+      pattern would need a new YAML primitive to express declaratively.
 
-    Most Plan vs Actual date derivations, aggregate rollups, and date-cleanup
-    operations are now done inline by the DES via `assignment_type: sql`
-    steps in consulting_sim.yaml (mark_complete step, scoped to
-    Entity.ProjectID).
+    Everything else is now declarative:
+    - Plan vs Actual dates, aggregates, Status, CDM.Month, Expense.Date
+      → assignment_type: sql steps in consulting_sim.yaml (scoped to
+        Entity.ProjectID at the mark_complete step)
+    - Project_Billing_Rate TitleID + rate distributions
+      → ordered_list + ordered_formulas generators in consulting_db.yaml
+    - Static table created_at (Region, BU, Title, Client)
+      → DISC and DATE_UNIF distribution generators in consulting_db.yaml
+    - Deliverable_Progress_Month
+      → SnapshotManager writes during simulation end
     """
     if not db_config:
         return
@@ -167,28 +169,12 @@ def _run_post_simulation_hooks(db_path, db_config=None):
         except Exception as e:
             logger.error(f"Post-simulation hook (progress months) error: {e}")
 
-    # Hook 3 removed: TitleID cycling and billing-rate distributions are now
-    # declared via `ordered_list` and `ordered_formulas` generators directly
-    # in consulting_db.yaml (Project_Billing_Rate and Deliverable_Title_Plan_Mapping).
-    # The trigger step picks values per row_index at creation time, so no
-    # post-processing pass is needed.
-
-    # Hook 4: Project_Plan financials — PlannedEndDate, PlannedHours, EstimatedBudget.
-    # Depends on Hook 3 having assigned TitleIDs so billing rate joins succeed.
-    if 'Project_Plan' in entity_names:
-        try:
-            from calculate_financials import calculate_financials
-
-            logger.info("Running post-simulation hook: calculate_financials")
-            calculate_financials(str(db_path))
-            logger.info("Post-simulation hook: project financials calculated")
-        except ImportError:
-            logger.warning(
-                "Post-simulation hook: calculate_financials module not found. "
-                "Run 'python calculate_financials.py <db_path>' manually."
-            )
-        except Exception as e:
-            logger.error(f"Post-simulation hook (calculate_financials) error: {e}")
+    # Hooks 3 and 4 removed: all post-processing that used to live in
+    # fix_billing_rates.py and calculate_financials.py is now declared in
+    # consulting_db.yaml (column generators: ordered_list, ordered_formulas,
+    # DISC, DATE_UNIF) and consulting_sim.yaml (mark_complete's SQL assigns
+    # for Plan/Actual dates, aggregates, and DeliverableFixedPrice split).
+    # The backend is now fully data-driven for post-processing.
 
 
 def run_simulation_from_config_dir(sim_config_dir: Union[str, Path],
