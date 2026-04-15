@@ -52,3 +52,6 @@ doc/
 
 # Simulation output — run artifacts, samples, generated reports
 output/
+
+# Claude Code agent context (local-only, not shared with peer)
+CLAUDE.md
