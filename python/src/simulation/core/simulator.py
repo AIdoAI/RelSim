@@ -131,9 +131,8 @@ class EventSimulator:
 
             # NOTE: snapshot_manager.flush_to_database() is intentionally NOT
             # called here. It is invoked by runner.py AFTER post-processing
-            # hooks (fix_billing_rates, calculate_financials) have populated
-            # PlannedStartDate/EndDate and other derived fields. Flushing
-            # here would snapshot NULL plan dates.
+            # hooks have populated PlannedStartDate/EndDate and other derived
+            # fields. Flushing here would snapshot NULL plan dates.
 
             logger.debug(f"Simulation completed. Processed {self.initializer.processed_events} events for {self.initializer.entity_manager.entity_count} entities")
             

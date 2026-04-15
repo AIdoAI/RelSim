@@ -98,6 +98,23 @@ def generate_attribute_value(attr_config: Dict[str, Any], row_index: int) -> Any
         # Cycle through values if there are more rows than values
         return values[row_index % len(values)]
 
+    # Ordered formulas generator - each row picks a distribution formula by index and samples from it.
+    # Useful when a bridge-table column's distribution depends on another ordered column in the
+    # same row (e.g., BillingRate varies by TitleID, with row 0 → NORM(150,20) for title 101,
+    # row 1 → NORM(200,20) for title 102, etc.).
+    elif generator_type == 'ordered_formulas':
+        formulas = generator_config.get('values', [])
+        if not formulas:
+            logger.warning(f"Ordered formulas generator for {attr_name} has no values")
+            return None
+        formula = formulas[row_index % len(formulas)]
+        try:
+            from ...distributions import generate_from_distribution
+            return generate_from_distribution(formula)
+        except Exception as e:
+            logger.error(f"Error sampling from formula '{formula}' at row {row_index} for {attr_name}: {e}")
+            raise
+
     # Simulation event type - handled by simulation system
     elif generator_type == 'simulation_event':
         values = generator_config.get('values', [])

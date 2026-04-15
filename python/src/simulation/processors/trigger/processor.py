@@ -518,15 +518,19 @@ class TriggerStepProcessor(StepProcessor):
                             row_data[attr.name] = None
                     elif attr.generator:
                         try:
-                            # Convert attribute to dict format for generate_attribute_value
+                            # Convert attribute to dict format for generate_attribute_value.
+                            # Includes 'values' and 'id_offset' so ordered_list / ordered_formulas
+                            # / template generators work for trigger-created bridge rows.
                             attr_dict = {
                                 'name': attr.name,
                                 'generator': {
                                     'type': attr.generator.type,
                                     'method': attr.generator.method,
                                     'template': attr.generator.template,
-                                    'formula': attr.generator.formula, 
-                                    'expression': getattr(attr.generator, 'expression', None)
+                                    'formula': attr.generator.formula,
+                                    'expression': getattr(attr.generator, 'expression', None),
+                                    'values': getattr(attr.generator, 'values', None),
+                                    'id_offset': getattr(attr.generator, 'id_offset', None),
                                 }
                             }
                             value = generate_attribute_value(attr_dict, current_row_index)

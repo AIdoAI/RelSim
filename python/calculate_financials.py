@@ -258,20 +258,8 @@ def calculate_financials(db_path: str) -> None:
     """)
     print(f"Updated Project_Plan.PlannedHours for {cur.rowcount} projects.")
 
-    # -------------------------------------------------------------------------
-    # DELIVERABLE.PlannedExpense — UNIF(2000, 15000) per deliverable
-    # Represents the anticipated non-labour cost for each project phase
-    # (travel, software, equipment, facilities, etc.).
-    # Only fills rows where PlannedExpense is still NULL.
-    # -------------------------------------------------------------------------
-
-    cur.execute("SELECT DeliverableID FROM Deliverable WHERE PlannedExpense IS NULL")
-    deliverable_ids = [row[0] for row in cur.fetchall()]
-    for did in deliverable_ids:
-        planned_expense = round(random.uniform(2000, 15000), 2)
-        cur.execute("UPDATE Deliverable SET PlannedExpense = ? WHERE DeliverableID = ?",
-                    (planned_expense, did))
-    print(f"Updated Deliverable.PlannedExpense for {len(deliverable_ids)} deliverables.")
+    # Deliverable.PlannedExpense migrated to a column-level distribution
+    # generator in consulting_db.yaml (UNIF(2000, 15000)). No action needed here.
 
     # -------------------------------------------------------------------------
     # PROJECT_PLAN.PlannedExpense = SUM(Deliverable.PlannedExpense) per project

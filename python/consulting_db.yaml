@@ -207,7 +207,10 @@ entities:
       - name: created_at
         type: datetime
 
-  # Table 8: ProjectBillingRate (rate fix via post-proc fix_billing_rates.py)
+  # Table 8: ProjectBillingRate
+  # TitleID cycles 101..106 across the 6 rows generated per project (by trigger step).
+  # BillingRate picks a title-specific normal distribution by the same row index.
+  # This replaces the old post-processing script fix_billing_rates.py.
   - name: Project_Billing_Rate
     type: bridge
     rows: n/a
@@ -224,13 +227,19 @@ entities:
         type: fk
         ref: Title.TitleID
         generator:
-          type: foreign_key
-          subtype: many_to_one
+          type: ordered_list
+          values: [101, 102, 103, 104, 105, 106]
       - name: BillingRate
         type: decimal(10,2)
         generator:
-          type: distribution
-          formula: NORM(275, 50)
+          type: ordered_formulas
+          values:
+            - NORM(150, 20)    # row 0 → TitleID 101 (Consultant)
+            - NORM(200, 20)    # row 1 → TitleID 102 (Senior Consultant)
+            - NORM(250, 20)    # row 2 → TitleID 103 (Manager)
+            - NORM(400, 30)    # row 3 → TitleID 104 (Senior Manager)
+            - NORM(400, 30)    # row 4 → TitleID 105 (Associate Partner)
+            - NORM(500, 30)    # row 5 → TitleID 106 (Partner)
 
   # Table 9: Deliverable
   - name: Deliverable
@@ -260,12 +269,19 @@ entities:
         type: date
       - name: DeliverableFixedPrice
         type: decimal(12,2)
+        # Populated by calculate_financials.py: Fixed-Price projects only,
+        # split from Project.Fixed_Price_Amount proportionally.
+        # TODO Phase 2: move to a YAML "parent_split" primitive.
       - name: PlannedExpense
         type: decimal(12,2)
+        generator:
+          type: distribution
+          formula: UNIF(2000, 15000)   # planned non-labour cost per deliverable phase
       - name: created_at
         type: datetime
 
   # Table 10: Deliverable_Title_Plan_Mapping
+  # TitleID cycles 101..106 across the 6 rows per deliverable (trigger generates one row per title).
   - name: Deliverable_Title_Plan_Mapping
     type: bridge
     rows: n/a
@@ -280,8 +296,8 @@ entities:
         type: fk
         ref: Title.TitleID
         generator:
-          type: foreign_key
-          subtype: many_to_one
+          type: ordered_list
+          values: [101, 102, 103, 104, 105, 106]
       - name: PlannedHours
         type: decimal(10,2)
         generator:

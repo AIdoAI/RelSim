@@ -102,10 +102,8 @@ def _run_post_simulation_hooks(db_path, db_config=None):
       per consultant with sequential dates and title-dependent salaries)
     - Deliverable_Progress_Month: monthly progress records derived from
       Consultant_Deliverable_Mapping date ranges
-    - Project_Billing_Rate / Deliverable_Title_Plan_Mapping: assign TitleIDs
-      and title-specific billing rates (fix_billing_rates)
     - Project_Plan financials: PlannedEndDate, PlannedHours, EstimatedBudget
-      (calculate_financials — must run after fix_billing_rates)
+      (calculate_financials)
     """
     if not db_config:
         return
@@ -162,23 +160,11 @@ def _run_post_simulation_hooks(db_path, db_config=None):
         except Exception as e:
             logger.error(f"Post-simulation hook (progress months) error: {e}")
 
-    # Hook 3: Project_Billing_Rate & Deliverable_Title_Plan_Mapping — assign TitleIDs
-    # and title-specific billing rates. Must run before Hook 4 (financials depend on
-    # TitleIDs being set so that EstimatedBudget = PlannedHours * BillingRate works).
-    if 'Project_Billing_Rate' in entity_names:
-        try:
-            from fix_billing_rates import fix_billing_rates
-
-            logger.info("Running post-simulation hook: fix_billing_rates")
-            fix_billing_rates(str(db_path))
-            logger.info("Post-simulation hook: billing rates and TitleIDs fixed")
-        except ImportError:
-            logger.warning(
-                "Post-simulation hook: fix_billing_rates module not found. "
-                "Run 'python fix_billing_rates.py <db_path>' manually."
-            )
-        except Exception as e:
-            logger.error(f"Post-simulation hook (fix_billing_rates) error: {e}")
+    # Hook 3 removed: TitleID cycling and billing-rate distributions are now
+    # declared via `ordered_list` and `ordered_formulas` generators directly
+    # in consulting_db.yaml (Project_Billing_Rate and Deliverable_Title_Plan_Mapping).
+    # The trigger step picks values per row_index at creation time, so no
+    # post-processing pass is needed.
 
     # Hook 4: Project_Plan financials — PlannedEndDate, PlannedHours, EstimatedBudget.
     # Depends on Hook 3 having assigned TitleIDs so billing rate joins succeed.
