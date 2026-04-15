@@ -26,12 +26,66 @@ Usage:
 import sys
 import sqlite3
 import random
+from datetime import datetime, timedelta
+
+# Conceptual model: the firm was founded N years before the simulation starts.
+# This anchors the static-table created_at dates relative to the simulation.
+SIMULATION_START_DATE = "2020-01-01"   # must match consulting_sim.yaml
+FIRM_AGE_YEARS = 5                     # years of firm history before simulation begins
+
+
+def populate_static_created_at(cur) -> None:
+    """
+    Set created_at on the firm's master/static tables.
+
+    Region, Business_Unit, Title  → all set to the firm founding date
+                                    (infrastructure that existed from day 1)
+    Client                        → uniform random between founding and
+                                    simulation start (each client onboarded
+                                    at a different point in firm history)
+    """
+    sim_start = datetime.strptime(SIMULATION_START_DATE, "%Y-%m-%d")
+    firm_founding = sim_start - timedelta(days=365 * FIRM_AGE_YEARS)
+    founding_str = firm_founding.strftime("%Y-%m-%d")
+
+    # Infrastructure tables — single founding date
+    for tbl in ("Region", "Business_Unit", "Title"):
+        cur.execute(
+            f"UPDATE {tbl} SET created_at = ? WHERE created_at IS NULL",
+            (founding_str,),
+        )
+        if cur.rowcount > 0:
+            print(f"Set {tbl}.created_at = {founding_str} for {cur.rowcount} rows.")
+
+    # Client onboarding — uniform random across the onboarding window
+    cur.execute("SELECT ClientID FROM Client WHERE created_at IS NULL")
+    client_ids = [row[0] for row in cur.fetchall()]
+    if client_ids:
+        founding_ts = firm_founding.timestamp()
+        sim_start_ts = sim_start.timestamp()
+        for cid in client_ids:
+            ts = random.uniform(founding_ts, sim_start_ts)
+            date_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
+            cur.execute(
+                "UPDATE Client SET created_at = ? WHERE ClientID = ?",
+                (date_str, cid),
+            )
+        print(
+            f"Set Client.created_at for {len(client_ids)} rows "
+            f"(uniform between {founding_str} and {SIMULATION_START_DATE})."
+        )
 
 
 def calculate_financials(db_path: str) -> None:
     """Calculate derived financial and date fields."""
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
+
+    # -------------------------------------------------------------------------
+    # STATIC TABLE created_at — Region, Business_Unit, Title, Client
+    # Conceptual model: firm founded N years before simulation starts.
+    # -------------------------------------------------------------------------
+    populate_static_created_at(cur)
 
     # -------------------------------------------------------------------------
     # DELIVERABLE DATES
