@@ -14,7 +14,7 @@ from typing import Dict, Optional, Any, List
 from dataclasses import dataclass
 from collections import deque
 from datetime import datetime, timedelta
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Float, DateTime, insert
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Float, Date, DateTime, insert
 from sqlalchemy.pool import NullPool
 
 logger = logging.getLogger(__name__)
@@ -110,7 +110,7 @@ class QueueManager:
                 Column('entity_table', String, nullable=False),
                 Column('action', String, nullable=False),  # 'entry' or 'exit'
                 Column('simulation_time', Float, nullable=False),  # Time in minutes
-                Column('simulation_datetime', DateTime, nullable=False),  # Actual datetime
+                Column('simulation_datetime', Date, nullable=False),  # Date-only (YYYY-MM-DD) — sub-day time is a continuous-clock artifact, not business-meaningful
                 Column('priority', Float, nullable=True),  # Priority value (for priority queues)
                 Column('queue_length_before', Integer, nullable=False),
                 Column('queue_length_after', Integer, nullable=False),

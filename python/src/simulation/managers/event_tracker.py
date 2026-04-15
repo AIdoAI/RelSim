@@ -5,7 +5,7 @@ Event tracker for recording simulation events in the database
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, List
-from sqlalchemy import create_engine, Table, Column, Integer, String, DateTime, Float, MetaData, insert, text, ForeignKey
+from sqlalchemy import create_engine, Table, Column, Integer, String, Date, DateTime, Float, MetaData, insert, text, ForeignKey
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.pool import NullPool
 from ..utils.column_resolver import ColumnResolver
@@ -100,10 +100,14 @@ class EventTracker:
             Column('start_time', Float, nullable=False),  # Simulation time in minutes
             Column('end_time', Float, nullable=False),
             Column('duration', Float, nullable=False),
-            Column('start_datetime', DateTime, nullable=False),
-            Column('end_datetime', DateTime, nullable=False)
+            # Use Date (not DateTime) so SQLAlchemy serialises pure YYYY-MM-DD
+            # without a spurious '00:00:00' time. The simulation has no
+            # business meaning for sub-day time — env.now is a continuous
+            # fractional-day clock.
+            Column('start_datetime', Date, nullable=False),
+            Column('end_datetime', Date, nullable=False)
         )
-        
+
         # Resource allocation table
         self.resource_allocations = Table(
             'sim_resource_allocations', self.metadata,
@@ -114,8 +118,9 @@ class EventTracker:
             Column('resource_id', Integer, nullable=False),
             Column('allocation_time', Float, nullable=False),  # Simulation time in minutes
             Column('release_time', Float, nullable=False),
-            Column('allocation_datetime', DateTime, nullable=False),
-            Column('release_datetime', DateTime, nullable=False)
+            # See comment on start_datetime above: Date, not DateTime.
+            Column('allocation_datetime', Date, nullable=False),
+            Column('release_datetime', Date, nullable=False)
         )
         
         # Reflect existing event and resource tables if names provided
