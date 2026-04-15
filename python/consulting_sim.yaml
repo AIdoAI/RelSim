@@ -14,8 +14,13 @@ simulation:
   # Snapshot settings — periodic CSV files written to {run_dir}/snapshots/{date}/
   # Set snapshot_enabled: false to skip all snapshot generation.
   # Common interval values: 30 (monthly), 90 (quarterly), 180 (biannual), 365 (annual)
+  # snapshot_alignment:
+  #   "fixed"     → exact N-day spacing (drifts with leap years)
+  #   "month_end" → snap to last day of calendar month, advancing ~N/30 months
+  #                 each time. Best for business reporting (Q1 close, year-end)
   snapshot_enabled: true
   snapshot_interval_days: 365
+  snapshot_alignment: month_end
   resources:
     - resource_table: Consultant
       capacities:

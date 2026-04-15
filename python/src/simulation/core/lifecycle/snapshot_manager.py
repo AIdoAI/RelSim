@@ -14,6 +14,7 @@ YAML settings (simulation: section):
   snapshot_interval_days: 365   # 30=monthly, 90=quarterly, 180=biannual, 365=annual
 """
 
+import calendar
 import logging
 import os
 import pandas as pd
@@ -43,8 +44,15 @@ class SnapshotManager:
             self.start_date = datetime(2020, 1, 1)
 
         # --- settings from config ---
+        # snapshot_alignment:
+        #   "fixed"     → exact N-day spacing (may drift on leap years)
+        #   "month_end" → snap to last day of calendar month, advancing N/30 months
         self.enabled = bool(getattr(config, 'snapshot_enabled', True))
         self.interval_days = int(getattr(config, 'snapshot_interval_days', 30))
+        self.alignment = str(getattr(config, 'snapshot_alignment', 'fixed')).lower()
+        if self.alignment not in ('fixed', 'month_end'):
+            logger.warning(f"SnapshotManager: unknown alignment '{self.alignment}', using 'fixed'")
+            self.alignment = 'fixed'
 
         # --- output folder: {run_dir}/snapshots/ ---
         # engine.url.database gives the absolute path to the .db file;
@@ -57,8 +65,8 @@ class SnapshotManager:
 
         if self.enabled:
             logger.info(
-                f"SnapshotManager: enabled=True  interval={self.interval_days}d  "
-                f"folder={self.snapshots_dir}"
+                f"SnapshotManager: enabled=True  interval={self.interval_days}d "
+                f"alignment={self.alignment}  folder={self.snapshots_dir}"
             )
         else:
             logger.info("SnapshotManager: disabled — no snapshots will be written")
@@ -92,11 +100,54 @@ class SnapshotManager:
     # ------------------------------------------------------------------
 
     def _snapshot_dates(self):
-        """Return list of (sim_day, datetime) tuples at each interval boundary."""
+        """Return list of (sim_day, datetime) tuples for each snapshot."""
+        if self.alignment == 'month_end':
+            return self._month_end_dates()
+        return self._fixed_dates()
+
+    def _fixed_dates(self):
+        """Exact N-day spacing — original behavior."""
         end_time = int(self.env.now / (24 * 60))   # SimPy minutes → days
         dates = []
         for sim_day in range(self.interval_days, end_time + self.interval_days, self.interval_days):
             dates.append((sim_day, self.start_date + timedelta(days=sim_day)))
+        return dates
+
+    def _month_end_dates(self):
+        """
+        Calendar-aligned snapshots — snap to last day of standard calendar
+        period boundaries. Intervals are irregular (28/29/30/31 days) but
+        dates always land on natural business reporting boundaries.
+
+        Anchor rule: month must be divisible by months_per_interval so
+        snapshots land on standard fiscal periods, not arbitrary offsets:
+
+            interval_days → cadence  → anchor months
+            30            → monthly  → all 12 months
+            90            → quarterly→ Mar, Jun, Sep, Dec  (Q1/Q2/Q3/Q4 end)
+            180           → biannual → Jun, Dec  (mid-year, year-end)
+            365           → annual   → Dec  (year-end only)
+        """
+        months_per_interval = max(1, round(self.interval_days / 30))
+        end_time_days = int(self.env.now / (24 * 60))
+        end_dt = self.start_date + timedelta(days=end_time_days)
+
+        dates = []
+        year = self.start_date.year
+        month = self.start_date.month
+        while True:
+            last_day = calendar.monthrange(year, month)[1]
+            snap_dt = datetime(year, month, last_day)
+            if snap_dt > end_dt:
+                break
+            # Emit if this month is an anchor AND the date is after start
+            if month % months_per_interval == 0 and snap_dt > self.start_date:
+                sim_day = (snap_dt - self.start_date).days
+                dates.append((sim_day, snap_dt))
+            month += 1
+            if month > 12:
+                year += 1
+                month = 1
         return dates
 
     def _ensure_snapshot_folder(self, date_str: str) -> Path:
