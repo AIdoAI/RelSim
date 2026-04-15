@@ -177,6 +177,27 @@ def calculate_financials(db_path: str) -> None:
     print(f"Updated Deliverable.PlannedExpense for {len(deliverable_ids)} deliverables.")
 
     # -------------------------------------------------------------------------
+    # PROJECT_PLAN.PlannedExpense = SUM(Deliverable.PlannedExpense) per project
+    # Runs here, after Deliverable.PlannedExpense is populated above.
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE Project_Plan
+        SET PlannedExpense = (
+            SELECT ROUND(SUM(d.PlannedExpense), 2)
+            FROM Deliverable d
+            WHERE d.ProjectID = Project_Plan.ProjectID
+              AND d.PlannedExpense IS NOT NULL
+        )
+        WHERE EXISTS (
+            SELECT 1 FROM Deliverable d
+            WHERE d.ProjectID = Project_Plan.ProjectID
+              AND d.PlannedExpense IS NOT NULL
+        )
+    """)
+    print(f"Updated Project_Plan.PlannedExpense for {cur.rowcount} projects.")
+
+    # -------------------------------------------------------------------------
     # DELIVERABLE.DeliverableFixedPrice — Fixed-Price projects only
     # Splits the project's Fixed_Price_Amount across its deliverables using
     # random weights so the shares sum exactly to Fixed_Price_Amount.
@@ -268,8 +289,10 @@ def calculate_financials(db_path: str) -> None:
                SUM(CASE WHEN PlannedStartDate IS NOT NULL THEN 1 ELSE 0 END),
                SUM(CASE WHEN PlannedEndDate   IS NOT NULL THEN 1 ELSE 0 END),
                SUM(CASE WHEN PlannedHours     > 0         THEN 1 ELSE 0 END),
+               SUM(CASE WHEN PlannedExpense   > 0         THEN 1 ELSE 0 END),
                SUM(CASE WHEN EstimatedBudget  > 0         THEN 1 ELSE 0 END),
                ROUND(AVG(PlannedHours), 2),
+               ROUND(AVG(PlannedExpense), 2),
                ROUND(AVG(EstimatedBudget), 2)
         FROM Project_Plan
     """)
@@ -277,8 +300,9 @@ def calculate_financials(db_path: str) -> None:
     print(f"\nProject_Plan Summary ({r[0]} projects):")
     print(f"  PlannedStartDate : {r[1]}/{r[0]}")
     print(f"  PlannedEndDate   : {r[2]}/{r[0]}")
-    print(f"  PlannedHours     : {r[3]}/{r[0]}  (avg {r[5]})")
-    print(f"  EstimatedBudget  : {r[4]}/{r[0]}  (avg {r[6]})")
+    print(f"  PlannedHours     : {r[3]}/{r[0]}  (avg {r[6]})")
+    print(f"  PlannedExpense   : {r[4]}/{r[0]}  (avg {r[7]})")
+    print(f"  EstimatedBudget  : {r[5]}/{r[0]}  (avg {r[8]})")
 
     cur.execute("""
         SELECT COUNT(*),
