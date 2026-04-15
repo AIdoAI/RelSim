@@ -328,6 +328,14 @@ def calculate_financials(db_path: str) -> None:
     """)
     print(f"Stripped time from sim_queue_activity.simulation_datetime for {cur.rowcount} rows.")
 
+    # Default priority to 0 for FIFO queue rows where it was left NULL
+    cur.execute("""
+        UPDATE sim_queue_activity
+        SET priority = 0
+        WHERE priority IS NULL
+    """)
+    print(f"Defaulted sim_queue_activity.priority=0 for {cur.rowcount} rows.")
+
     # -------------------------------------------------------------------------
     # SIM_EVENT_PROCESSING — strip time-of-day from start_datetime/end_datetime
     # -------------------------------------------------------------------------
