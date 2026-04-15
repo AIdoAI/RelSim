@@ -234,6 +234,17 @@ def calculate_financials(db_path: str) -> None:
     print(f"Updated Deliverable.DeliverableFixedPrice for {deliverable_fixed_price_count} deliverables"
           f" ({len(fixed_price_projects)} Fixed-Price projects).")
 
+    # -------------------------------------------------------------------------
+    # CONSULTANT_DELIVERABLE_MAPPING.Month = first day of the month of start_date
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE Consultant_Deliverable_Mapping
+        SET Month = DATE(start_date, 'start of month')
+        WHERE Month IS NULL AND start_date IS NOT NULL
+    """)
+    print(f"Updated Consultant_Deliverable_Mapping.Month for {cur.rowcount} rows.")
+
     cur.execute("""
         UPDATE Project_Plan
         SET EstimatedBudget = (
