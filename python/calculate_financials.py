@@ -306,6 +306,42 @@ def calculate_financials(db_path: str) -> None:
     print(f"Stripped time from sim_queue_activity.simulation_datetime for {cur.rowcount} rows.")
 
     # -------------------------------------------------------------------------
+    # SIM_EVENT_PROCESSING — strip time-of-day from start_datetime/end_datetime
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE sim_event_processing
+        SET start_datetime = DATE(start_datetime)
+        WHERE start_datetime IS NOT NULL AND start_datetime LIKE '% %'
+    """)
+    print(f"Stripped time from sim_event_processing.start_datetime for {cur.rowcount} rows.")
+
+    cur.execute("""
+        UPDATE sim_event_processing
+        SET end_datetime = DATE(end_datetime)
+        WHERE end_datetime IS NOT NULL AND end_datetime LIKE '% %'
+    """)
+    print(f"Stripped time from sim_event_processing.end_datetime for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
+    # SIM_RESOURCE_ALLOCATIONS — strip time-of-day from allocation_datetime/release_datetime
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE sim_resource_allocations
+        SET allocation_datetime = DATE(allocation_datetime)
+        WHERE allocation_datetime IS NOT NULL AND allocation_datetime LIKE '% %'
+    """)
+    print(f"Stripped time from sim_resource_allocations.allocation_datetime for {cur.rowcount} rows.")
+
+    cur.execute("""
+        UPDATE sim_resource_allocations
+        SET release_datetime = DATE(release_datetime)
+        WHERE release_datetime IS NOT NULL AND release_datetime LIKE '% %'
+    """)
+    print(f"Stripped time from sim_resource_allocations.release_datetime for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
     # ACTUAL_PROJECT_EXPENSE DATE
     # The DES trigger stamps created_at at the moment the expense is generated.
     # Copy it to the Date column when Date is not already set.
