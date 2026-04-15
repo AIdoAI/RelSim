@@ -89,8 +89,9 @@ class TableBuilder:
             else:
                 attrs[attr.name] = Column(column_type)
         
-        # Add automatic created_at column for entity tables
-        if entity.type == 'entity':
+        # Add automatic created_at column for entity tables only if YAML
+        # hasn't explicitly declared one (with a possibly different type).
+        if entity.type == 'entity' and 'created_at' not in attrs:
             attrs['created_at'] = Column(DateTime, nullable=True)
             logger.debug(f"Added automatic created_at column to entity table '{entity.name}'")
         

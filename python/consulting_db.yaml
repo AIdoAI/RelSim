@@ -7,6 +7,8 @@ entities:
   # ============================================================
 
   # Table 1: Region (renamed from Location per PPTX v2 Slide 7/8)
+  # created_at is set to the firm's founding date (5 years before simulation
+  # starts) — Region is existing infrastructure that predates any project.
   - name: Region
     type: entity
     rows: 30
@@ -23,6 +25,11 @@ entities:
         generator:
           type: faker
           method: location.city()
+      - name: created_at
+        type: date
+        generator:
+          type: distribution
+          formula: DISC(1.0, "2015-01-02")
 
   # Table 2: Client
   - name: Client
@@ -56,6 +63,13 @@ entities:
         generator:
           type: faker
           method: internet.email()
+      - name: created_at
+        type: date
+        # Client onboarding date — uniform random between firm founding (5 years
+        # before sim start) and simulation start itself.
+        generator:
+          type: distribution
+          formula: DATE_UNIF("2015-01-02", "2020-01-01")
 
   # Table 3: BusinessUnit (deterministic, 5 fixed rows)
   - name: Business_Unit
@@ -78,6 +92,11 @@ entities:
             - Media & Entertainment
             - Energy
             - Government
+      - name: created_at
+        type: date
+        generator:
+          type: distribution
+          formula: DISC(1.0, "2015-01-02")
 
   # Table 4: Title (deterministic, 6 fixed rows)
   - name: Title
@@ -101,6 +120,11 @@ entities:
             - Senior Manager
             - Associate Partner
             - Partner
+      - name: created_at
+        type: date
+        generator:
+          type: distribution
+          formula: DISC(1.0, "2015-01-02")
 
   # Table 5: Consultant (resource table for simulation)
   - name: Consultant

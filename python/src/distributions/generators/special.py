@@ -4,15 +4,48 @@ Special distribution generators.
 Implements special-purpose distributions and functions:
 - RAND: Random uniform [0,1]
 - FIXED: Fixed constant value (not technically a distribution)
+- DATE_UNIF: Uniform random ISO date between two date strings
 """
 
+import random
+from datetime import datetime, timedelta
 import numpy as np
 from typing import Optional, Union, Any
 
 
 class SpecialDistributions:
     """Static class containing special distribution generators and functions."""
-    
+
+    @staticmethod
+    def date_unif(start_date: str, end_date: str, size: Optional[int] = None) -> Union[str, list]:
+        """
+        DATE_UNIF(start, end) - uniform random date between two dates (inclusive).
+
+        Returns ISO date strings in 'YYYY-MM-DD' format so they can be stored
+        directly in a DATE column.
+
+        Args:
+            start_date: start date in 'YYYY-MM-DD' format
+            end_date:   end date in 'YYYY-MM-DD' format
+            size:       number of samples
+
+        Returns:
+            ISO date string (or list of strings if size is given)
+        """
+        start = datetime.strptime(str(start_date), '%Y-%m-%d')
+        end = datetime.strptime(str(end_date), '%Y-%m-%d')
+        days_between = (end - start).days
+        if days_between < 0:
+            raise ValueError(f"DATE_UNIF start ({start_date}) must be <= end ({end_date})")
+
+        def _one():
+            offset = random.randint(0, days_between) if days_between > 0 else 0
+            return (start + timedelta(days=offset)).strftime('%Y-%m-%d')
+
+        if size is None:
+            return _one()
+        return [_one() for _ in range(size)]
+
     @staticmethod
     def rand(size: Optional[int] = None) -> Union[float, np.ndarray]:
         """

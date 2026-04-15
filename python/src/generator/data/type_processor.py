@@ -107,48 +107,46 @@ def process_value_for_type(value: Any, attr_type: str) -> Any:
 
 
 def _coerce_to_date(value: Any) -> Any:
-    """Coerce a value to date-only string (YYYY-MM-DD)."""
+    """Coerce a value to a Python date object (SQLAlchemy Date columns require this)."""
     from datetime import datetime, date
-    
+
     if isinstance(value, date) and not isinstance(value, datetime):
-        return value.isoformat()
-    
+        return value
+
     if isinstance(value, datetime):
-        return value.date().isoformat()
-    
+        return value.date()
+
     if isinstance(value, str):
         try:
             # Handle ISO 8601 strings like '1961-10-11T07:25:55.709Z'
             clean = value.replace('Z', '+00:00')
-            dt = datetime.fromisoformat(clean)
-            return dt.date().isoformat()
+            return datetime.fromisoformat(clean).date()
         except (ValueError, TypeError):
             pass
         date_match = re.match(r'(\d{4}-\d{2}-\d{2})', str(value))
         if date_match:
-            return date_match.group(1)
-    
+            return datetime.strptime(date_match.group(1), '%Y-%m-%d').date()
+
     return value
 
 
 def _coerce_to_datetime(value: Any) -> Any:
-    """Coerce a value to datetime string (YYYY-MM-DD HH:MM:SS)."""
+    """Coerce a value to a Python datetime object (SQLAlchemy DateTime columns require this)."""
     from datetime import datetime, date
-    
+
     if isinstance(value, datetime):
-        return value.strftime('%Y-%m-%d %H:%M:%S')
-    
+        return value
+
     if isinstance(value, date):
-        return f"{value.isoformat()} 00:00:00"
-    
+        return datetime.combine(value, datetime.min.time())
+
     if isinstance(value, str):
         try:
             clean = value.replace('Z', '+00:00')
-            dt = datetime.fromisoformat(clean)
-            return dt.strftime('%Y-%m-%d %H:%M:%S')
+            return datetime.fromisoformat(clean)
         except (ValueError, TypeError):
             pass
-    
+
     return value
 
 

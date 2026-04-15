@@ -34,6 +34,7 @@ class DistributionRegistry:
         'beta': 'BETA',
         'rand': 'RAND',
         'fixed': 'FIXED',
+        'date_unif': 'DATE_UNIF',
     }
     
     @classmethod
@@ -118,7 +119,12 @@ class DistributionRegistry:
         
         elif normalized_type == 'FIXED':
             return SpecialDistributions.fixed(config.get('value', 0), size)
-        
+
+        elif normalized_type == 'DATE_UNIF':
+            return SpecialDistributions.date_unif(
+                config.get('start'), config.get('end'), size
+            )
+
         else:
             raise ValueError(f"Unsupported distribution type: {dist_type}")
     

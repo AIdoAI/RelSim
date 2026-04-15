@@ -8,16 +8,16 @@ generators and `assignment_type: sql` steps in consulting_sim.yaml.
 
 This script only handles what can't yet be expressed declaratively:
 
-1. Static table `created_at` — Region, Business_Unit, Title, Client.
-   These rows exist before the simulation starts, so there is no
-   entity context for an inline SQL assign.
-
-2. Deliverable.DeliverableFixedPrice — a parent-to-child proportional
+1. Deliverable.DeliverableFixedPrice — a parent-to-child proportional
    split preserving the parent total. Needs a `parent_split` YAML
    primitive (not yet implemented).
 
-3. Edge-case backfill — a few NULL values remain for projects that
+2. Edge-case backfill — a few NULL values remain for projects that
    didn't reach mark_complete before the simulation ended.
+
+Note: static table created_at (Region, Business_Unit, Title, Client) is
+now declared via column generators in consulting_db.yaml using DISC and
+DATE_UNIF distribution formulas — no Python needed.
 
 Usage:
   python calculate_financials.py <path_to_db>
@@ -26,41 +26,6 @@ Usage:
 import sys
 import sqlite3
 import random
-from datetime import datetime, timedelta
-
-# Anchor for pre-simulation history. Must match consulting_sim.yaml.
-SIMULATION_START_DATE = "2020-01-01"
-FIRM_AGE_YEARS = 5
-
-
-def populate_static_created_at(cur) -> None:
-    """Region, Business_Unit, Title get firm founding date; Client gets a
-    uniform random date between founding and simulation start."""
-    sim_start = datetime.strptime(SIMULATION_START_DATE, "%Y-%m-%d")
-    firm_founding = sim_start - timedelta(days=365 * FIRM_AGE_YEARS)
-    founding_str = firm_founding.strftime("%Y-%m-%d")
-
-    for tbl in ("Region", "Business_Unit", "Title"):
-        cur.execute(
-            f"UPDATE {tbl} SET created_at = ? WHERE created_at IS NULL",
-            (founding_str,),
-        )
-        if cur.rowcount > 0:
-            print(f"Set {tbl}.created_at for {cur.rowcount} rows.")
-
-    cur.execute("SELECT ClientID FROM Client WHERE created_at IS NULL")
-    client_ids = [row[0] for row in cur.fetchall()]
-    if client_ids:
-        founding_ts = firm_founding.timestamp()
-        sim_start_ts = sim_start.timestamp()
-        for cid in client_ids:
-            ts = random.uniform(founding_ts, sim_start_ts)
-            date_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
-            cur.execute(
-                "UPDATE Client SET created_at = ? WHERE ClientID = ?",
-                (date_str, cid),
-            )
-        print(f"Set Client.created_at for {len(client_ids)} rows.")
 
 
 def populate_deliverable_fixed_price(cur) -> None:
@@ -124,7 +89,6 @@ def calculate_financials(db_path: str) -> None:
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
-    populate_static_created_at(cur)
     populate_deliverable_fixed_price(cur)
     backfill_edge_case_projects(cur)
 

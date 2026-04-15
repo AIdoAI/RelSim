@@ -45,8 +45,8 @@ def parse_distribution_formula(formula: str) -> Dict[str, Any]:
     """
     formula = formula.strip()
     
-    # Match distribution name and parameters
-    match = re.match(r'^([A-Z]+)\s*\((.*)\)$', formula)
+    # Match distribution name and parameters (underscores allowed for names like DATE_UNIF)
+    match = re.match(r'^([A-Z][A-Z_]*)\s*\((.*)\)$', formula)
     if not match:
         raise ValueError(f"Invalid formula syntax: {formula}")
     
@@ -256,7 +256,12 @@ def _convert_to_config(dist_name: str, params: List[Union[float, int, str]]) -> 
         if len(params) != 1:
             raise ValueError(f"FIXED requires 1 parameter (value), got {len(params)}")
         return {"type": "FIXED", "value": params[0]}
-    
+
+    elif dist_name == 'DATE_UNIF':
+        if len(params) != 2:
+            raise ValueError(f"DATE_UNIF requires 2 parameters (start_date, end_date), got {len(params)}")
+        return {"type": "DATE_UNIF", "start": str(params[0]), "end": str(params[1])}
+
     else:
         raise ValueError(f"Unsupported distribution: {dist_name}")
 
