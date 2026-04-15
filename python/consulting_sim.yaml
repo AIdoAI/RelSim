@@ -61,6 +61,8 @@ event_simulation:
       event_flow: Project_Lifecycle
       steps:
         # Step 1: Create Project entity (~1 arrival per month)
+        # This timestamp becomes Project.created_at, which post-processing
+        # copies into Project_Plan.PlannedStartDate (the "contract signed" moment).
         - step_id: create_project
           step_type: create
           create_config:
@@ -69,6 +71,20 @@ event_simulation:
               formula: EXPO(30)
               time_unit: days
             max_entities: n/a
+          next_steps:
+            - onboarding_lag
+
+        # Step 1b: Onboarding lag — time between contract signing (planned start)
+        # and actual kickoff of the first deliverable (contract review,
+        # client alignment, resource scheduling). No resources required, pure delay.
+        # This gap is what makes Project.ActualStartDate > Project.PlannedStartDate.
+        - step_id: onboarding_lag
+          step_type: event
+          event_config:
+            entity_table: Project_Plan
+            duration:
+              formula: NORM(3, 1)
+              time_unit: days
           next_steps:
             - initialize_project
 

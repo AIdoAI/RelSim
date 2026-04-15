@@ -189,8 +189,22 @@ def main():
             logger.error(f"Error in generate-simulate: {e}")
             sys.exit(1)
     elif args.command == 'generate-plan-simulate':
+        # NOTE: The standalone "plan generator" module is deprecated per
+        # Option D redesign. Plan information is now generated inline by the
+        # DES's create/trigger steps (spec slide 11 "rule-based generator" is
+        # implemented by the YAML flow itself), and Plan vs Actual dates are
+        # derived in calculate_financials.py from created_at (Plan) vs
+        # Consultant_Deliverable_Mapping (Actual).
+        #
+        # This command now behaves identically to generate-simulate; the
+        # plan_config argument is accepted for backward compatibility but
+        # ignored. Use `generate-simulate` for new work.
         try:
-            # Step 1: Generate static tables
+            logger.warning(
+                "'generate-plan-simulate' is deprecated — plan generation is now "
+                "handled inline by the DES flow. Use 'generate-simulate' instead. "
+                "This command will run generate-simulate and ignore the plan_config."
+            )
             db_path, generator = generate_database_with_formula_support(
                 args.db_config,
                 args.output_dir,
@@ -199,27 +213,14 @@ def main():
             )
             logger.info(f"Step 1 complete: Static tables generated at {db_path}")
 
-            # Step 2: Run plan generator
-            from src.plan_generator import parse_plan_config, PlanGenerator
-            plan_config = parse_plan_config(args.plan_config)
-            plan_gen = PlanGenerator(plan_config, db_path)
-            stats = plan_gen.generate()
-            logger.info(f"Step 2 complete: Plan generation stats: {stats}")
-
-            # Step 3: Run DES execution
             results = run_simulation(args.sim_config, args.db_config, db_path)
-            logger.info(f"Step 3 complete: Simulation results: {results}")
+            logger.info(f"Step 2-3 complete: Simulation + inline plan generation results: {results}")
 
-            # Resolve formulas after simulation if any are pending
             if generator.has_pending_formulas():
                 logger.info("Resolving formula-based attributes after simulation")
                 generator.resolve_formulas(db_path)
 
-            # Step 4: Generate monthly snapshots (Now handled natively in Step 3)
-            if not args.skip_snapshots:
-                logger.info("Step 4: Monthly snapshots and progress metrics were captured natively during Step 3 execution.")
-
-            logger.info("4-step pipeline complete!")
+            logger.info("Pipeline complete (Plan/Actual dates set by post-processing hooks).")
 
         except Exception as e:
             logger.error(f"Error in generate-plan-simulate: {e}")

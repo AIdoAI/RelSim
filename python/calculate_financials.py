@@ -88,13 +88,43 @@ def calculate_financials(db_path: str) -> None:
     populate_static_created_at(cur)
 
     # -------------------------------------------------------------------------
-    # DELIVERABLE DATES
-    # ActualStartDate / ActualEndDate — derived from Consultant_Deliverable_Mapping
-    # PlannedStartDate / PlannedEndDate — use same values when not already set
-    #   (plan generator sets them when using generate-plan-simulate; otherwise
-    #    actual dates are the best available proxy)
+    # PLAN vs ACTUAL DATES (spec slide 3: database must track both)
+    #
+    # Plan dates come from the DES scheduling (when the entity was created),
+    # Actual dates come from Consultant_Deliverable_Mapping (when resources
+    # actually started/finished work). The gap between them captures the
+    # "onboarding_lag" event on the project side and queue wait on the
+    # deliverable side.
+    #
+    # Project_Plan:
+    #   PlannedStartDate = DATE(Project_Plan.created_at)
+    #     = the moment the project "enters the system" in SimPy (spec slide 24
+    #       "a new project enters the system following EXPO distribution")
+    #   ActualStartDate  = MIN(cdm.start_date) across the project's deliverables
+    #     = first moment any consultant actually started work
+    #   PlannedEndDate   = PlannedStartDate + (ActualEndDate - ActualStartDate)
+    #     = the "should have ended by" date if the plan schedule had held
+    #   ActualEndDate    = MAX(cdm.end_date) across the project's deliverables
+    #
+    # Deliverable:
+    #   PlannedStartDate = DATE(Deliverable.created_at)
+    #     = when the deliverable entity was created by the DES (before
+    #       waiting for resources)
+    #   ActualStartDate  = MIN(cdm.start_date) for this deliverable
+    #     = when resources actually became available and work began
+    #   PlannedEndDate   = PlannedStartDate + (ActualEndDate - ActualStartDate)
+    #   ActualEndDate    = MAX(cdm.end_date) for this deliverable
     # -------------------------------------------------------------------------
 
+    # ---- Deliverable: Planned dates from created_at ----
+    cur.execute("""
+        UPDATE Deliverable
+        SET PlannedStartDate = DATE(created_at)
+        WHERE created_at IS NOT NULL
+    """)
+    print(f"Updated Deliverable.PlannedStartDate for {cur.rowcount} deliverables.")
+
+    # ---- Deliverable: Actual dates from CDM ----
     cur.execute("""
         UPDATE Deliverable
         SET ActualStartDate = (
@@ -127,29 +157,33 @@ def calculate_financials(db_path: str) -> None:
     """)
     print(f"Updated Deliverable.ActualEndDate for {cur.rowcount} deliverables.")
 
-    # Only fill Planned dates when they aren't already set (plan generator sets them)
+    # ---- Deliverable: PlannedEndDate = PlannedStart + actual duration ----
+    # Keeps the variance coming from the DES (duration of NORM(28,7) draws)
+    # while anchoring the planned end at the planned-start schedule.
     cur.execute("""
         UPDATE Deliverable
-        SET PlannedStartDate = ActualStartDate
-        WHERE PlannedStartDate IS NULL AND ActualStartDate IS NOT NULL
-    """)
-    print(f"Updated Deliverable.PlannedStartDate for {cur.rowcount} deliverables.")
-
-    cur.execute("""
-        UPDATE Deliverable
-        SET PlannedEndDate = ActualEndDate
-        WHERE PlannedEndDate IS NULL AND ActualEndDate IS NOT NULL
+        SET PlannedEndDate = DATE(
+            PlannedStartDate,
+            '+' || CAST(julianday(ActualEndDate) - julianday(ActualStartDate) AS INTEGER) || ' days'
+        )
+        WHERE PlannedStartDate IS NOT NULL
+          AND ActualStartDate  IS NOT NULL
+          AND ActualEndDate    IS NOT NULL
     """)
     print(f"Updated Deliverable.PlannedEndDate for {cur.rowcount} deliverables.")
 
-    # -------------------------------------------------------------------------
-    # PROJECT_PLAN DATES
-    # -------------------------------------------------------------------------
-
-    # PlannedStartDate = earliest deliverable start across the project
+    # ---- Project_Plan: Planned dates from project created_at ----
     cur.execute("""
         UPDATE Project_Plan
-        SET PlannedStartDate = (
+        SET PlannedStartDate = DATE(created_at)
+        WHERE created_at IS NOT NULL
+    """)
+    print(f"Updated Project_Plan.PlannedStartDate for {cur.rowcount} projects.")
+
+    # ---- Project_Plan: Actual dates aggregated from deliverable CDM ----
+    cur.execute("""
+        UPDATE Project_Plan
+        SET ActualStartDate = (
             SELECT DATE(MIN(cdm.start_date))
             FROM Deliverable d
             JOIN Consultant_Deliverable_Mapping cdm
@@ -166,30 +200,39 @@ def calculate_financials(db_path: str) -> None:
               AND cdm.start_date IS NOT NULL
         )
     """)
-    print(f"Updated Project_Plan.PlannedStartDate for {cur.rowcount} projects.")
+    print(f"Updated Project_Plan.ActualStartDate for {cur.rowcount} projects.")
 
-    # PlannedEndDate = latest deliverable end; prefer Deliverable.PlannedEndDate,
-    # fall back to sim_event_processing when Deliverable dates are still unset.
     cur.execute("""
         UPDATE Project_Plan
-        SET PlannedEndDate = (
-            SELECT DATE(MAX(COALESCE(d.PlannedEndDate, sep.end_datetime)))
+        SET ActualEndDate = (
+            SELECT DATE(MAX(cdm.end_date))
             FROM Deliverable d
-            LEFT JOIN sim_event_processing sep
-                ON sep.entity_id = d.DeliverableID
-               AND sep.entity_table = 'Deliverable'
+            JOIN Consultant_Deliverable_Mapping cdm
+                ON cdm.DeliverableID = d.DeliverableID
             WHERE d.ProjectID = Project_Plan.ProjectID
-              AND (d.PlannedEndDate IS NOT NULL OR sep.end_datetime IS NOT NULL)
+              AND cdm.end_date IS NOT NULL
         )
         WHERE EXISTS (
             SELECT 1
             FROM Deliverable d
-            LEFT JOIN sim_event_processing sep
-                ON sep.entity_id = d.DeliverableID
-               AND sep.entity_table = 'Deliverable'
+            JOIN Consultant_Deliverable_Mapping cdm
+                ON cdm.DeliverableID = d.DeliverableID
             WHERE d.ProjectID = Project_Plan.ProjectID
-              AND (d.PlannedEndDate IS NOT NULL OR sep.end_datetime IS NOT NULL)
+              AND cdm.end_date IS NOT NULL
         )
+    """)
+    print(f"Updated Project_Plan.ActualEndDate for {cur.rowcount} projects.")
+
+    # ---- Project_Plan: PlannedEndDate = PlannedStart + actual duration ----
+    cur.execute("""
+        UPDATE Project_Plan
+        SET PlannedEndDate = DATE(
+            PlannedStartDate,
+            '+' || CAST(julianday(ActualEndDate) - julianday(ActualStartDate) AS INTEGER) || ' days'
+        )
+        WHERE PlannedStartDate IS NOT NULL
+          AND ActualStartDate  IS NOT NULL
+          AND ActualEndDate    IS NOT NULL
     """)
     print(f"Updated Project_Plan.PlannedEndDate for {cur.rowcount} projects.")
 
@@ -466,9 +509,12 @@ def calculate_financials(db_path: str) -> None:
         SELECT COUNT(*),
                SUM(CASE WHEN PlannedStartDate IS NOT NULL THEN 1 ELSE 0 END),
                SUM(CASE WHEN PlannedEndDate   IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN ActualStartDate  IS NOT NULL THEN 1 ELSE 0 END),
+               SUM(CASE WHEN ActualEndDate    IS NOT NULL THEN 1 ELSE 0 END),
                SUM(CASE WHEN PlannedHours     > 0         THEN 1 ELSE 0 END),
                SUM(CASE WHEN PlannedExpense   > 0         THEN 1 ELSE 0 END),
                SUM(CASE WHEN EstimatedBudget  > 0         THEN 1 ELSE 0 END),
+               ROUND(AVG(julianday(ActualStartDate) - julianday(PlannedStartDate)), 2),
                ROUND(AVG(PlannedHours), 2),
                ROUND(AVG(PlannedExpense), 2),
                ROUND(AVG(EstimatedBudget), 2)
@@ -478,9 +524,12 @@ def calculate_financials(db_path: str) -> None:
     print(f"\nProject_Plan Summary ({r[0]} projects):")
     print(f"  PlannedStartDate : {r[1]}/{r[0]}")
     print(f"  PlannedEndDate   : {r[2]}/{r[0]}")
-    print(f"  PlannedHours     : {r[3]}/{r[0]}  (avg {r[6]})")
-    print(f"  PlannedExpense   : {r[4]}/{r[0]}  (avg {r[7]})")
-    print(f"  EstimatedBudget  : {r[5]}/{r[0]}  (avg {r[8]})")
+    print(f"  ActualStartDate  : {r[3]}/{r[0]}")
+    print(f"  ActualEndDate    : {r[4]}/{r[0]}")
+    print(f"  Plan→Actual lag  : avg {r[8]} days  (should be roughly NORM(3,1) = onboarding_lag)")
+    print(f"  PlannedHours     : {r[5]}/{r[0]}  (avg {r[9]})")
+    print(f"  PlannedExpense   : {r[6]}/{r[0]}  (avg {r[10]})")
+    print(f"  EstimatedBudget  : {r[7]}/{r[0]}  (avg {r[11]})")
 
     cur.execute("""
         SELECT COUNT(*),

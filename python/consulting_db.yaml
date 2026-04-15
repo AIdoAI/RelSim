@@ -190,6 +190,12 @@ entities:
         type: date
       - name: PlannedEndDate
         type: date
+      # Actual execution dates — derived from CDM after the DES finishes
+      # so we can report plan vs actual variance (spec slide 3).
+      - name: ActualStartDate
+        type: date
+      - name: ActualEndDate
+        type: date
       - name: PlannedExpense
         type: decimal(12,2)
       - name: EstimatedBudget
