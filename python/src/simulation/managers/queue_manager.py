@@ -183,7 +183,8 @@ class QueueManager:
             return  # Database logging not enabled
 
         try:
-            simulation_datetime = self.start_date + timedelta(minutes=self.env.now)
+            # Date-only — time-of-day is a continuous-time artifact with no business meaning
+            simulation_datetime = (self.start_date + timedelta(minutes=self.env.now)).date()
 
             with self.engine.connect() as conn:
                 stmt = insert(self.queue_activity_table).values(

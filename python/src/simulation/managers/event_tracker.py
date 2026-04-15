@@ -276,11 +276,12 @@ class EventTracker:
                     bridge_data = {}
                     bridge_col_names = [c.name for c in target_bridge.columns]
                     
-                    # Only include start_date/end_date if columns exist in bridge table
+                    # Only include start_date/end_date if columns exist in bridge table.
+                    # Store date-only — time-of-day is a continuous-time artifact.
                     if 'start_date' in bridge_col_names:
-                        bridge_data['start_date'] = allocation_datetime
+                        bridge_data['start_date'] = allocation_datetime.date() if allocation_datetime else None
                     if 'end_date' in bridge_col_names:
-                        bridge_data['end_date'] = release_datetime
+                        bridge_data['end_date'] = release_datetime.date() if release_datetime else None
                     
                     # Add resource FK if present
                     if resource_fk:

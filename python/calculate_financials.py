@@ -277,6 +277,35 @@ def calculate_financials(db_path: str) -> None:
     print(f"Updated Project_Plan.EstimatedBudget for {cur.rowcount} projects.")
 
     # -------------------------------------------------------------------------
+    # CONSULTANT_DELIVERABLE_MAPPING — strip time-of-day from start_date/end_date
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE Consultant_Deliverable_Mapping
+        SET start_date = DATE(start_date)
+        WHERE start_date IS NOT NULL AND start_date LIKE '% %'
+    """)
+    print(f"Stripped time from Consultant_Deliverable_Mapping.start_date for {cur.rowcount} rows.")
+
+    cur.execute("""
+        UPDATE Consultant_Deliverable_Mapping
+        SET end_date = DATE(end_date)
+        WHERE end_date IS NOT NULL AND end_date LIKE '% %'
+    """)
+    print(f"Stripped time from Consultant_Deliverable_Mapping.end_date for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
+    # SIM_QUEUE_ACTIVITY — strip time-of-day from simulation_datetime
+    # -------------------------------------------------------------------------
+
+    cur.execute("""
+        UPDATE sim_queue_activity
+        SET simulation_datetime = DATE(simulation_datetime)
+        WHERE simulation_datetime IS NOT NULL AND simulation_datetime LIKE '% %'
+    """)
+    print(f"Stripped time from sim_queue_activity.simulation_datetime for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
     # ACTUAL_PROJECT_EXPENSE DATE
     # The DES trigger stamps created_at at the moment the expense is generated.
     # Copy it to the Date column when Date is not already set.
