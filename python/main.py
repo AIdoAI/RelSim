@@ -97,16 +97,6 @@ def main():
     gen_sim_parser.add_argument('--output-dir', '-o', default='output', help='Output directory')
     gen_sim_parser.add_argument('--name', '-n', help='Database name (without extension)')
     
-    # 4-step pipeline command: generate → plan → simulate → snapshots
-    pipeline_parser = subparsers.add_parser('generate-plan-simulate',
-                                           help='Full 4-step pipeline: generate static tables, generate plans, run simulation, generate snapshots')
-    pipeline_parser.add_argument('db_config', help='Path to database configuration file')
-    pipeline_parser.add_argument('plan_config', help='Path to plan generation configuration file')
-    pipeline_parser.add_argument('sim_config', help='Path to simulation configuration file')
-    pipeline_parser.add_argument('--output-dir', '-o', default='output', help='Output directory')
-    pipeline_parser.add_argument('--name', '-n', help='Database name (without extension)')
-    pipeline_parser.add_argument('--skip-snapshots', action='store_true', help='Skip Step 4 snapshot generation')
-
     # Parse arguments
     args = parser.parse_args()
     
@@ -187,45 +177,6 @@ def main():
                 logger.info("No formula attributes found, skipping formula resolution")
         except Exception as e:
             logger.error(f"Error in generate-simulate: {e}")
-            sys.exit(1)
-    elif args.command == 'generate-plan-simulate':
-        # NOTE: The standalone "plan generator" module is deprecated per
-        # Option D redesign. Plan information is now generated inline by the
-        # DES's create/trigger steps (spec slide 11 "rule-based generator" is
-        # implemented by the YAML flow itself), and Plan vs Actual dates are
-        # derived in calculate_financials.py from created_at (Plan) vs
-        # Consultant_Deliverable_Mapping (Actual).
-        #
-        # This command now behaves identically to generate-simulate; the
-        # plan_config argument is accepted for backward compatibility but
-        # ignored. Use `generate-simulate` for new work.
-        try:
-            logger.warning(
-                "'generate-plan-simulate' is deprecated — plan generation is now "
-                "handled inline by the DES flow. Use 'generate-simulate' instead. "
-                "This command will run generate-simulate and ignore the plan_config."
-            )
-            db_path, generator = generate_database_with_formula_support(
-                args.db_config,
-                args.output_dir,
-                args.name,
-                sim_config_path_or_content=args.sim_config
-            )
-            logger.info(f"Step 1 complete: Static tables generated at {db_path}")
-
-            results = run_simulation(args.sim_config, args.db_config, db_path)
-            logger.info(f"Step 2-3 complete: Simulation + inline plan generation results: {results}")
-
-            if generator.has_pending_formulas():
-                logger.info("Resolving formula-based attributes after simulation")
-                generator.resolve_formulas(db_path)
-
-            logger.info("Pipeline complete (Plan/Actual dates set by post-processing hooks).")
-
-        except Exception as e:
-            logger.error(f"Error in generate-plan-simulate: {e}")
-            import traceback
-            traceback.print_exc()
             sys.exit(1)
     else:
         parser.print_help()

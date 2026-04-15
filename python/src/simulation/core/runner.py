@@ -75,11 +75,20 @@ def run_simulation(sim_config_path_or_content: Union[str, Path],
     logger.info("Initializing EventSimulator...")
     simulator = EventSimulator(config=sim_config, db_config=db_config, db_path=db_path)
     results = simulator.run()
-    
-    # Post-simulation hooks: run any post-processing that cannot be
-    # expressed in the declarative YAML (e.g., multi-row conditional chaining)
+
+    # Post-simulation hooks: fill derived fields (billing rates, financials,
+    # Planned/Actual dates) that the DES cannot express declaratively.
     _run_post_simulation_hooks(db_path, db_config)
-    
+
+    # Snapshots must be flushed AFTER post-processing hooks so the captured
+    # Project_Plan state includes PlannedStartDate/EndDate and other derived
+    # columns. Flushing earlier would snapshot NULLs.
+    if hasattr(simulator, 'snapshot_manager') and simulator.snapshot_manager:
+        try:
+            simulator.snapshot_manager.flush_to_database()
+        except Exception as e:
+            logger.error(f"Snapshot flush error: {e}")
+
     logger.info(f"Simulation completed: {results}")
     return results
 

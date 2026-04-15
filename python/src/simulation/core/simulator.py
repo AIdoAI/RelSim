@@ -128,11 +128,13 @@ class EventSimulator:
             
             # Clean up any remaining allocated resources
             self._cleanup_remaining_resources()
-            
-            # Flush simulated snapshots to DB before finishing
-            if hasattr(self, 'snapshot_manager') and self.snapshot_manager:
-                self.snapshot_manager.flush_to_database()
-            
+
+            # NOTE: snapshot_manager.flush_to_database() is intentionally NOT
+            # called here. It is invoked by runner.py AFTER post-processing
+            # hooks (fix_billing_rates, calculate_financials) have populated
+            # PlannedStartDate/EndDate and other derived fields. Flushing
+            # here would snapshot NULL plan dates.
+
             logger.debug(f"Simulation completed. Processed {self.initializer.processed_events} events for {self.initializer.entity_manager.entity_count} entities")
             
             # Collect and return final results
