@@ -373,6 +373,23 @@ def calculate_financials(db_path: str) -> None:
     print(f"Stripped time from sim_resource_allocations.release_datetime for {cur.rowcount} rows.")
 
     # -------------------------------------------------------------------------
+    # CREATED_AT consistency — strip time-of-day from any business table
+    # whose created_at column was written before the date-only fix landed.
+    # All these are simulation-time dates (the in-simulation business date
+    # when the row was generated), not wall-clock time.
+    # -------------------------------------------------------------------------
+
+    for tbl in ('Project_Plan', 'Project_Billing_Rate', 'Deliverable',
+                'Deliverable_Title_Plan_Mapping', 'Actual_Project_Expense'):
+        cur.execute(f"""
+            UPDATE {tbl}
+            SET created_at = DATE(created_at)
+            WHERE created_at IS NOT NULL AND created_at LIKE '% %'
+        """)
+        if cur.rowcount > 0:
+            print(f"Stripped time from {tbl}.created_at for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
     # ACTUAL_PROJECT_EXPENSE DATE
     # The DES trigger stamps created_at at the moment the expense is generated.
     # Copy it to the Date column when Date is not already set.
