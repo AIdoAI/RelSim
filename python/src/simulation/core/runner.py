@@ -101,9 +101,16 @@ def _run_post_simulation_hooks(db_path, db_config=None):
     - Consultant_Title_History: complex promotion-chain logic (1-3 rows
       per consultant with sequential dates and title-dependent salaries)
     - Deliverable_Progress_Month: monthly progress records derived from
-      Consultant_Deliverable_Mapping date ranges
-    - Project_Plan financials: PlannedEndDate, PlannedHours, EstimatedBudget
-      (calculate_financials)
+      Consultant_Deliverable_Mapping date ranges (SnapshotManager)
+    - Residual post-processing (calculate_financials): only what cannot be
+      declared via YAML — static table created_at, DeliverableFixedPrice
+      parent-split, and edge-case backfill for projects that didn't
+      reach mark_complete before sim end.
+
+    Most Plan vs Actual date derivations, aggregate rollups, and date-cleanup
+    operations are now done inline by the DES via `assignment_type: sql`
+    steps in consulting_sim.yaml (mark_complete step, scoped to
+    Entity.ProjectID).
     """
     if not db_config:
         return

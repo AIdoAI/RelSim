@@ -343,7 +343,10 @@ event_simulation:
           next_steps:
             - mark_complete
 
-        # Step 14: Mark project as complete
+        # Step 14: Mark project complete + derive all Plan/Actual fields for this project.
+        # Runs inline per-project instead of as post-processing, so the derivation is
+        # scoped to Entity.ProjectID (spec slide 3: "the database must track its actuals").
+        # Each SQL runs only for the current project; no cross-project coupling.
         - step_id: mark_complete
           step_type: assign
           assign_config:
@@ -351,6 +354,151 @@ event_simulation:
               - assignment_type: attribute
                 attribute_name: ProjectStatus
                 value: Complete
+
+              # ---- Deliverable: Planned date from created_at ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET PlannedStartDate = DATE(created_at)
+                  WHERE ProjectID = Entity.ProjectID AND PlannedStartDate IS NULL
+
+              # ---- Deliverable: Actual dates from Consultant_Deliverable_Mapping ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET ActualStartDate = (
+                    SELECT DATE(MIN(cdm.start_date))
+                    FROM Consultant_Deliverable_Mapping cdm
+                    WHERE cdm.DeliverableID = Deliverable.DeliverableID
+                      AND cdm.start_date IS NOT NULL
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET ActualEndDate = (
+                    SELECT DATE(MAX(cdm.end_date))
+                    FROM Consultant_Deliverable_Mapping cdm
+                    WHERE cdm.DeliverableID = Deliverable.DeliverableID
+                      AND cdm.end_date IS NOT NULL
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              # ---- Deliverable: PlannedEndDate = PlannedStart + actual duration ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Deliverable
+                  SET PlannedEndDate = DATE(
+                    PlannedStartDate,
+                    '+' || CAST(julianday(ActualEndDate) - julianday(ActualStartDate) AS INTEGER) || ' days'
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+                    AND PlannedStartDate IS NOT NULL
+                    AND ActualStartDate IS NOT NULL
+                    AND ActualEndDate   IS NOT NULL
+
+              # ---- CDM.Month = first day of the month of start_date ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Consultant_Deliverable_Mapping
+                  SET Month = DATE(start_date, 'start of month')
+                  WHERE DeliverableID IN (SELECT DeliverableID FROM Deliverable WHERE ProjectID = Entity.ProjectID)
+                    AND Month IS NULL AND start_date IS NOT NULL
+
+              # ---- Actual_Project_Expense.Date = DATE(created_at) ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Actual_Project_Expense
+                  SET Date = DATE(created_at)
+                  WHERE DeliverableID IN (SELECT DeliverableID FROM Deliverable WHERE ProjectID = Entity.ProjectID)
+                    AND Date IS NULL AND created_at IS NOT NULL
+
+              # ---- Project_Plan: Planned dates ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET PlannedStartDate = DATE(created_at)
+                  WHERE ProjectID = Entity.ProjectID AND created_at IS NOT NULL
+
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET ActualStartDate = (
+                    SELECT DATE(MIN(cdm.start_date))
+                    FROM Deliverable d
+                    JOIN Consultant_Deliverable_Mapping cdm ON cdm.DeliverableID = d.DeliverableID
+                    WHERE d.ProjectID = Entity.ProjectID AND cdm.start_date IS NOT NULL
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET ActualEndDate = (
+                    SELECT DATE(MAX(cdm.end_date))
+                    FROM Deliverable d
+                    JOIN Consultant_Deliverable_Mapping cdm ON cdm.DeliverableID = d.DeliverableID
+                    WHERE d.ProjectID = Entity.ProjectID AND cdm.end_date IS NOT NULL
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              # PlannedEndDate anchored at planned start, offset by actual duration
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET PlannedEndDate = DATE(
+                    PlannedStartDate,
+                    '+' || CAST(julianday(ActualEndDate) - julianday(ActualStartDate) AS INTEGER) || ' days'
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+                    AND PlannedStartDate IS NOT NULL
+                    AND ActualStartDate  IS NOT NULL
+                    AND ActualEndDate    IS NOT NULL
+
+              # ---- Project_Plan financial rollups ----
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET PlannedHours = (
+                    SELECT COALESCE(SUM(dtpm.PlannedHours), 0)
+                    FROM Deliverable d
+                    JOIN Deliverable_Title_Plan_Mapping dtpm ON d.DeliverableID = dtpm.DeliverableID
+                    WHERE d.ProjectID = Entity.ProjectID
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET PlannedExpense = (
+                    SELECT ROUND(COALESCE(SUM(d.PlannedExpense), 0), 2)
+                    FROM Deliverable d
+                    WHERE d.ProjectID = Entity.ProjectID AND d.PlannedExpense IS NOT NULL
+                  )
+                  WHERE ProjectID = Entity.ProjectID
+
+              # EstimatedBudget = SUM(PlannedHours * BillingRate) + SUM(PlannedExpense)
+              - assignment_type: sql
+                expression: |
+                  UPDATE Project_Plan
+                  SET EstimatedBudget = (
+                    SELECT COALESCE(labor.total_labor, 0) + COALESCE(expense.total_expense, 0)
+                    FROM (
+                      SELECT SUM(dtpm.PlannedHours * COALESCE(pbr.BillingRate, 0)) AS total_labor
+                      FROM Deliverable d
+                      JOIN Deliverable_Title_Plan_Mapping dtpm ON d.DeliverableID = dtpm.DeliverableID
+                      LEFT JOIN Project_Billing_Rate pbr
+                        ON pbr.ProjectID = d.ProjectID AND pbr.TitleID = dtpm.TitleID
+                      WHERE d.ProjectID = Entity.ProjectID
+                    ) labor,
+                    (
+                      SELECT SUM(COALESCE(d2.PlannedExpense, 0)) AS total_expense
+                      FROM Deliverable d2
+                      WHERE d2.ProjectID = Entity.ProjectID
+                    ) expense
+                  )
+                  WHERE ProjectID = Entity.ProjectID
           next_steps:
             - release_project
 
