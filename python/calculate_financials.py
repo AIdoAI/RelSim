@@ -277,6 +277,29 @@ def calculate_financials(db_path: str) -> None:
     print(f"Updated Project_Plan.EstimatedBudget for {cur.rowcount} projects.")
 
     # -------------------------------------------------------------------------
+    # DELIVERABLE_PROGRESS_MONTH.Status — derived from PercentageComplete
+    # 'Complete' (=100), 'In Progress' (0<pct<100), 'Not Started' (=0)
+    # Adds the column if it doesn't yet exist (older DBs).
+    # -------------------------------------------------------------------------
+
+    cur.execute("PRAGMA table_info(Deliverable_Progress_Month)")
+    dpm_cols = [row[1] for row in cur.fetchall()]
+    if 'Status' not in dpm_cols:
+        cur.execute("ALTER TABLE Deliverable_Progress_Month ADD COLUMN Status VARCHAR")
+        print("Added Status column to Deliverable_Progress_Month.")
+
+    cur.execute("""
+        UPDATE Deliverable_Progress_Month
+        SET Status = CASE
+            WHEN PercentageComplete >= 100 THEN 'Complete'
+            WHEN PercentageComplete > 0    THEN 'In Progress'
+            ELSE 'Not Started'
+        END
+        WHERE Status IS NULL
+    """)
+    print(f"Updated Deliverable_Progress_Month.Status for {cur.rowcount} rows.")
+
+    # -------------------------------------------------------------------------
     # CONSULTANT_DELIVERABLE_MAPPING — strip time-of-day from start_date/end_date
     # -------------------------------------------------------------------------
 

@@ -152,17 +152,27 @@ class SnapshotManager:
                     if not pd.isna(end) and current_dt >= end:
                         pct = 100.0
 
+                    # Derive status from percentage complete
+                    if pct >= 100:
+                        status = 'Complete'
+                    elif pct > 0:
+                        status = 'In Progress'
+                    else:
+                        status = 'Not Started'
+
                     snapshot_rows.append({
                         'DeliverableID':     row['DeliverableID'],
                         'ProjectID':         row['ProjectID'],
                         'DeliverableName':   row['DeliverableName'],
                         'SnapshotDate':      date_str,
                         'PercentageComplete': pct,
+                        'Status':            status,
                     })
                     db_rows.append({
                         'DeliverableID':     row['DeliverableID'],
                         'Report_Month':      date_str,
                         'PercentageComplete': pct,
+                        'Status':            status,
                     })
 
                 # Write CSV for this snapshot date
@@ -174,7 +184,7 @@ class SnapshotManager:
 
             # Write all progress rows to DB table
             if db_rows:
-                progress_df = pd.DataFrame(db_rows)[['DeliverableID', 'Report_Month', 'PercentageComplete']]
+                progress_df = pd.DataFrame(db_rows)[['DeliverableID', 'Report_Month', 'PercentageComplete', 'Status']]
                 progress_df.to_sql('Deliverable_Progress_Month', self.engine, if_exists='append', index=False)
                 logger.info(
                     f"SnapshotManager: wrote {len(db_rows)} Deliverable_Progress_Month rows  "

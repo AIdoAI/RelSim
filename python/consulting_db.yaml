@@ -357,3 +357,6 @@ entities:
         generator:
           type: distribution
           formula: UNIF(0, 100)
+      - name: Status
+        type: string
+        # Derived from PercentageComplete: 'Complete' (=100), 'In Progress' (0<pct<100), 'Not Started' (=0)
