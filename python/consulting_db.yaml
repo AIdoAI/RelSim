@@ -127,9 +127,14 @@ entities:
           formula: DISC(1.0, "2015-01-02")
 
   # Table 5: Consultant (resource table for simulation)
+  # Moderate headcount — creates realistic contention so sim_queue_activity
+  # shows meaningful wait_times and queue_length > 1, while still letting
+  # most projects complete within the 10-year simulation window.
+  # Rough mix with current DISC distribution:
+  #   Junior ~8  Mid ~8  Senior ~5  Lead ~3  Principal ~1-2  Executive ~1-2
   - name: Consultant
     type: resource
-    rows: 60
+    rows: 25
     attributes:
       - name: ConsultantID
         type: pk

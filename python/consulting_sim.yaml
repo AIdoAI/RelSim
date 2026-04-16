@@ -34,21 +34,32 @@ simulation:
 event_simulation:
   resource_capacities:
     Consultant:
+      # Tight capacities create realistic resource contention. With EXPO(30)
+      # arrivals and NORM(28,7) deliverable durations, multiple projects
+      # overlap, and with only 1 Lead + 2 Seniors + 2 Mid + 3 Junior, the
+      # ProjectQueue actually builds up and shows meaningful wait_time /
+      # queue_length in sim_queue_activity.
       capacity_rules:
         - resource_type: Junior
-          capacity: 30
+          capacity: 3
         - resource_type: Mid
-          capacity: 30
+          capacity: 2
         - resource_type: Senior
-          capacity: 20
+          capacity: 2
         - resource_type: Lead
-          capacity: 10
+          capacity: 1
         - resource_type: Principal
-          capacity: 5
+          capacity: 1
         - resource_type: Executive
-          capacity: 5
+          capacity: 1
 
   queues:
+    # NOTE: priority queues (LowAttribute / HighAttribute) are supported by
+    # queue_manager but the event processor does not currently populate
+    # `entity_attributes` when calling allocate_resources (see event/processor.py:99),
+    # so priority attributes aren't available at enqueue time. Keeping FIFO
+    # until that pipeline is wired — priority column will stay 0 but
+    # queue_length and wait_time reflect real contention.
     - name: ProjectQueue
       type: FIFO
 
