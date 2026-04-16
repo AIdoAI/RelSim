@@ -54,14 +54,14 @@ event_simulation:
           capacity: 1
 
   queues:
-    # NOTE: priority queues (LowAttribute / HighAttribute) are supported by
-    # queue_manager but the event processor does not currently populate
-    # `entity_attributes` when calling allocate_resources (see event/processor.py:99),
-    # so priority attributes aren't available at enqueue time. Keeping FIFO
-    # until that pipeline is wired — priority column will stay 0 but
-    # queue_length and wait_time reflect real contention.
+    # LowAttribute priority queue: smaller DeliverableID is served first.
+    # Event processor now populates entity_attributes with all DB columns
+    # of the current entity, so priority queues can read any column.
+    # The `priority` column in sim_queue_activity carries the actual
+    # DeliverableID used for ordering (instead of a fixed 0 under FIFO).
     - name: ProjectQueue
-      type: FIFO
+      type: LowAttribute
+      attribute: DeliverableID
 
   event_flows:
 

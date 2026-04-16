@@ -10,6 +10,8 @@ import random
 from datetime import timedelta
 from typing import Any, Generator, Optional
 
+from sqlalchemy import text
+
 from ..base import StepProcessor
 from ..utils import extract_distribution_config, extract_distribution_config_with_time_unit
 from ....distributions import generate_from_distribution
@@ -95,8 +97,31 @@ class EventStepProcessor(StepProcessor):
                 )
                 event_id = self._next_synthetic_event_id(step)
 
-            # Retrieve entity attributes for queue priority calculation (if needed)
+            # Retrieve entity attributes for queue priority calculation.
+            # Required by LowAttribute / HighAttribute queues so they can
+            # read a column of the entity at enqueue time (e.g. priority =
+            # DeliverableID for a "smaller ID first" ordering). Loads all
+            # DB columns of the current entity row; if the fetch fails or
+            # there's no db_config, falls back to an empty dict and FIFO
+            # queues still work unchanged.
             entity_attributes = {}
+            if entity_id is not None and entity_table and self.db_config:
+                try:
+                    from ...utils.column_resolver import ColumnResolver
+                    resolver = ColumnResolver(self.db_config)
+                    pk_column = resolver.get_primary_key(entity_table)
+                    with self.engine.connect() as conn:
+                        row = conn.execute(
+                            text(f'SELECT * FROM "{entity_table}" WHERE "{pk_column}" = :id'),
+                            {'id': entity_id}
+                        ).fetchone()
+                        if row:
+                            entity_attributes = dict(row._mapping)
+                except Exception as e:
+                    self.logger.debug(
+                        f"Could not load {entity_table} {entity_id} "
+                        f"attributes for queue priority: {e}"
+                    )
 
             # Determine if this step is part of a resource group
             current_group_id = step.group_id
